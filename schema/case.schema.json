@@ -1,0 +1,31 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "verda.case",
+  "description": "装饰案例（cases_manifest.csv 一行对应一个对象，供检索与校准）",
+  "type": "object",
+  "required": ["case_id", "room", "style", "license", "source_url"],
+  "additionalProperties": false,
+  "properties": {
+    "case_id": {"type": "string", "pattern": "^C-\\d{3}$"},
+    "file_path": {"type": "string"},
+    "source": {"enum": ["unsplash", "pexels", "commons", "inat"]},
+    "source_url": {"type": "string", "format": "uri"},
+    "author": {"type": "string"},
+    "license": {"type": "string"},
+    "license_url": {"type": "string"},
+    "room": {"enum": ["bedroom", "study", "living", "balcony", "desk"]},
+    "style": {"enum": ["nordic", "wabi", "midcentury", "minimal", "tropical", "industrial"]},
+    "palette_hex": {"type": "string", "pattern": "^(#[0-9A-Fa-f]{6})(/(#[0-9A-Fa-f]{6})){0,4}$"},
+    "plant_count": {"type": "integer", "minimum": 0, "maximum": 9},
+    "height_profile": {"enum": ["high", "mid", "low", "none"]},
+    "has_plant": {"type": "boolean"},
+    "background": {"enum": ["white_product", "wall", "room", "outdoor"]},
+    "usable_for": {"type": "array", "items": {"enum": ["reference", "calibration", "eval"]}},
+    "collected_at": {"type": "string"},
+    "note": {"type": "string"}
+  },
+  "allOf": [{
+    "not": {"properties": {"background": {"const": "white_product"}, "usable_for": {"contains": {"const": "reference"}}},
+            "required": ["background", "usable_for"]}
+  }]
+}
