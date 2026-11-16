@@ -1,0 +1,21 @@
+{
+  "schema": "verda.kb/1.0",
+  "generated_at": "2026-11-16",
+  "plants": 36,
+  "entries": 288,
+  "fields": [
+    "光照需求",
+    "原产地",
+    "土壤配比",
+    "学名与科属",
+    "形态特征",
+    "毒性",
+    "浇水频率",
+    "适温范围"
+  ],
+  "verified": 280,
+  "files": {
+    "jsonl": "data/knowledge_base.jsonl",
+    "source": "data/encyclopedia_entries.csv"
+  }
+}
