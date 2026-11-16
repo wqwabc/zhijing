@@ -287,3 +287,99 @@ BK-36-05,P36,球兰,土壤配比,泥炭:珍珠岩:松树皮=5:3:2,Hoya carnosa,h
 BK-36-06,P36,球兰,适温范围,18-28℃,Hoya carnosa,http://en.wikipedia.org/wiki/Hoya_carnosa,CC BY-SA 4.0,verified,2026-11-15
 BK-36-07,P36,球兰,原产地,中国南部至东南亚,Hoya carnosa,http://en.wikipedia.org/wiki/Hoya_carnosa,CC BY-SA 4.0,verified,2026-11-15
 BK-36-08,P36,球兰,毒性,无毒（ASPCA 收录）,Hoya carnosa,http://en.wikipedia.org/wiki/Hoya_carnosa,CC BY-SA 4.0,verified,2026-11-15
+BK-37-01,P37,吊竹梅,学名与科属,Tradescantia zebrina（鸭跖草科）,Tradescantia zebrina,http://en.wikipedia.org/wiki/Tradescantia_zebrina,CC BY-SA 4.0,verified,2026-11-17
+BK-37-02,P37,吊竹梅,形态特征,常绿匍匐草本，叶椭圆、银绿与紫红相间条纹，茎节易生根。,Tradescantia zebrina,http://en.wikipedia.org/wiki/Tradescantia_zebrina,CC BY-SA 4.0,verified,2026-11-17
+BK-37-03,P37,吊竹梅,光照需求,1500-3500 lux；光照等级 L2,Tradescantia zebrina,http://en.wikipedia.org/wiki/Tradescantia_zebrina,CC BY-SA 4.0,verified,2026-11-17
+BK-37-04,P37,吊竹梅,浇水频率,5-7 天/次（表土干后浇透）,Tradescantia zebrina,http://en.wikipedia.org/wiki/Tradescantia_zebrina,CC BY-SA 4.0,verified,2026-11-17
+BK-37-05,P37,吊竹梅,土壤配比,泥炭:珍珠岩:松树皮=5:3:2,Tradescantia zebrina,http://en.wikipedia.org/wiki/Tradescantia_zebrina,CC BY-SA 4.0,verified,2026-11-17
+BK-37-06,P37,吊竹梅,适温范围,18-28℃,Tradescantia zebrina,http://en.wikipedia.org/wiki/Tradescantia_zebrina,CC BY-SA 4.0,verified,2026-11-17
+BK-37-07,P37,吊竹梅,原产地,墨西哥,Tradescantia zebrina,http://en.wikipedia.org/wiki/Tradescantia_zebrina,CC BY-SA 4.0,verified,2026-11-17
+BK-37-08,P37,吊竹梅,毒性,猫狗误食呕吐、腹泻,Tradescantia zebrina,http://en.wikipedia.org/wiki/Tradescantia_zebrina,CC BY-SA 4.0,verified,2026-11-17
+BK-38-01,P38,铜钱草,学名与科属,Hydrocotyle vulgaris（五加科）,Hydrocotyle vulgaris,http://en.wikipedia.org/wiki/Hydrocotyle_vulgaris,CC BY-SA 4.0,verified,2026-11-17
+BK-38-02,P38,铜钱草,形态特征,多年生水生草本，叶圆形盾状、边缘浅裂，茎细长匍匐。,Hydrocotyle vulgaris,http://en.wikipedia.org/wiki/Hydrocotyle_vulgaris,CC BY-SA 4.0,verified,2026-11-17
+BK-38-03,P38,铜钱草,光照需求,1500-3500 lux；光照等级 L2,Hydrocotyle vulgaris,http://en.wikipedia.org/wiki/Hydrocotyle_vulgaris,CC BY-SA 4.0,verified,2026-11-17
+BK-38-04,P38,铜钱草,浇水频率,2-3 天/次（表土干后浇透）,Hydrocotyle vulgaris,http://en.wikipedia.org/wiki/Hydrocotyle_vulgaris,CC BY-SA 4.0,verified,2026-11-17
+BK-38-05,P38,铜钱草,土壤配比,清水（每周换水）,Hydrocotyle vulgaris,http://en.wikipedia.org/wiki/Hydrocotyle_vulgaris,CC BY-SA 4.0,verified,2026-11-17
+BK-38-06,P38,铜钱草,适温范围,15-28℃,Hydrocotyle vulgaris,http://en.wikipedia.org/wiki/Hydrocotyle_vulgaris,CC BY-SA 4.0,verified,2026-11-17
+BK-38-07,P38,铜钱草,原产地,欧洲至北非,Hydrocotyle vulgaris,http://en.wikipedia.org/wiki/Hydrocotyle_vulgaris,CC BY-SA 4.0,verified,2026-11-17
+BK-38-08,P38,铜钱草,毒性,园艺资料未见毒性，ASPCA 未收录,Hydrocotyle vulgaris,http://en.wikipedia.org/wiki/Hydrocotyle_vulgaris,CC BY-SA 4.0,verified,2026-11-17
+BK-39-01,P39,铁线蕨,学名与科属,Adiantum raddianum（凤尾蕨科）,Adiantum raddianum,http://en.wikipedia.org/wiki/Adiantum_raddianum,CC BY-SA 4.0,verified,2026-11-17
+BK-39-02,P39,铁线蕨,形态特征,蕨类，叶柄细黑如铁丝，羽片扇形、边缘细裂。,Adiantum raddianum,http://en.wikipedia.org/wiki/Adiantum_raddianum,CC BY-SA 4.0,verified,2026-11-17
+BK-39-03,P39,铁线蕨,光照需求,1500-3500 lux；光照等级 L2,Adiantum raddianum,http://en.wikipedia.org/wiki/Adiantum_raddianum,CC BY-SA 4.0,verified,2026-11-17
+BK-39-04,P39,铁线蕨,浇水频率,3-4 天/次（表土干后浇透）,Adiantum raddianum,http://en.wikipedia.org/wiki/Adiantum_raddianum,CC BY-SA 4.0,verified,2026-11-17
+BK-39-05,P39,铁线蕨,土壤配比,泥炭:珍珠岩:椰糠=5:3:2,Adiantum raddianum,http://en.wikipedia.org/wiki/Adiantum_raddianum,CC BY-SA 4.0,verified,2026-11-17
+BK-39-06,P39,铁线蕨,适温范围,18-25℃,Adiantum raddianum,http://en.wikipedia.org/wiki/Adiantum_raddianum,CC BY-SA 4.0,verified,2026-11-17
+BK-39-07,P39,铁线蕨,原产地,南美,Adiantum raddianum,http://en.wikipedia.org/wiki/Adiantum_raddianum,CC BY-SA 4.0,verified,2026-11-17
+BK-39-08,P39,铁线蕨,毒性,无毒（ASPCA 收录）,Adiantum raddianum,http://en.wikipedia.org/wiki/Adiantum_raddianum,CC BY-SA 4.0,verified,2026-11-17
+BK-40-01,P40,花叶芋,学名与科属,Caladium bicolor（天南星科）,Caladium bicolor,http://en.wikipedia.org/wiki/Caladium,CC BY-SA 4.0,verified,2026-11-17
+BK-40-02,P40,花叶芋,形态特征,多年生草本，叶心形、薄，具粉白、红、绿复色斑纹。,Caladium bicolor,http://en.wikipedia.org/wiki/Caladium,CC BY-SA 4.0,verified,2026-11-17
+BK-40-03,P40,花叶芋,光照需求,3500-8000 lux；光照等级 L3,Caladium bicolor,http://en.wikipedia.org/wiki/Caladium,CC BY-SA 4.0,verified,2026-11-17
+BK-40-04,P40,花叶芋,浇水频率,3-5 天/次（表土干后浇透）,Caladium bicolor,http://en.wikipedia.org/wiki/Caladium,CC BY-SA 4.0,verified,2026-11-17
+BK-40-05,P40,花叶芋,土壤配比,泥炭:珍珠岩:松树皮=5:3:2,Caladium bicolor,http://en.wikipedia.org/wiki/Caladium,CC BY-SA 4.0,verified,2026-11-17
+BK-40-06,P40,花叶芋,适温范围,20-30℃,Caladium bicolor,http://en.wikipedia.org/wiki/Caladium,CC BY-SA 4.0,verified,2026-11-17
+BK-40-07,P40,花叶芋,原产地,南美亚马逊,Caladium bicolor,http://en.wikipedia.org/wiki/Caladium,CC BY-SA 4.0,verified,2026-11-17
+BK-40-08,P40,花叶芋,毒性,草酸钙针晶，误食口腔刺激,Caladium bicolor,http://en.wikipedia.org/wiki/Caladium,CC BY-SA 4.0,verified,2026-11-17
+BK-41-01,P41,酒瓶兰,学名与科属,Beaucarnea recurvata（天门冬科）,Beaucarnea recurvata,http://en.wikipedia.org/wiki/Beaucarnea_recurvata,CC BY-SA 4.0,verified,2026-11-17
+BK-41-02,P41,酒瓶兰,形态特征,常绿小乔木，基部膨大如酒瓶，叶线形细长、拱形下垂。,Beaucarnea recurvata,http://en.wikipedia.org/wiki/Beaucarnea_recurvata,CC BY-SA 4.0,verified,2026-11-17
+BK-41-03,P41,酒瓶兰,光照需求,8000-20000 lux；光照等级 L4,Beaucarnea recurvata,http://en.wikipedia.org/wiki/Beaucarnea_recurvata,CC BY-SA 4.0,verified,2026-11-17
+BK-41-04,P41,酒瓶兰,浇水频率,14-21 天/次（表土干后浇透）,Beaucarnea recurvata,http://en.wikipedia.org/wiki/Beaucarnea_recurvata,CC BY-SA 4.0,verified,2026-11-17
+BK-41-05,P41,酒瓶兰,土壤配比,颗粒土:泥炭=6:4,Beaucarnea recurvata,http://en.wikipedia.org/wiki/Beaucarnea_recurvata,CC BY-SA 4.0,verified,2026-11-17
+BK-41-06,P41,酒瓶兰,适温范围,15-30℃,Beaucarnea recurvata,http://en.wikipedia.org/wiki/Beaucarnea_recurvata,CC BY-SA 4.0,verified,2026-11-17
+BK-41-07,P41,酒瓶兰,原产地,墨西哥,Beaucarnea recurvata,http://en.wikipedia.org/wiki/Beaucarnea_recurvata,CC BY-SA 4.0,verified,2026-11-17
+BK-41-08,P41,酒瓶兰,毒性,无毒（ASPCA 收录）,Beaucarnea recurvata,http://en.wikipedia.org/wiki/Beaucarnea_recurvata,CC BY-SA 4.0,verified,2026-11-17
+BK-42-01,P42,蟹爪兰,学名与科属,Schlumbergera truncata（仙人掌科）,Schlumbergera truncata,http://en.wikipedia.org/wiki/Schlumbergera_truncata,CC BY-SA 4.0,verified,2026-11-17
+BK-42-02,P42,蟹爪兰,形态特征,附生仙人掌，茎节扁平、边缘具齿，冬春开粉红花。,Schlumbergera truncata,http://en.wikipedia.org/wiki/Schlumbergera_truncata,CC BY-SA 4.0,verified,2026-11-17
+BK-42-03,P42,蟹爪兰,光照需求,3500-8000 lux；光照等级 L3,Schlumbergera truncata,http://en.wikipedia.org/wiki/Schlumbergera_truncata,CC BY-SA 4.0,verified,2026-11-17
+BK-42-04,P42,蟹爪兰,浇水频率,7-10 天/次（表土干后浇透）,Schlumbergera truncata,http://en.wikipedia.org/wiki/Schlumbergera_truncata,CC BY-SA 4.0,verified,2026-11-17
+BK-42-05,P42,蟹爪兰,土壤配比,颗粒土:泥炭=6:4,Schlumbergera truncata,http://en.wikipedia.org/wiki/Schlumbergera_truncata,CC BY-SA 4.0,verified,2026-11-17
+BK-42-06,P42,蟹爪兰,适温范围,15-25℃,Schlumbergera truncata,http://en.wikipedia.org/wiki/Schlumbergera_truncata,CC BY-SA 4.0,verified,2026-11-17
+BK-42-07,P42,蟹爪兰,原产地,巴西,Schlumbergera truncata,http://en.wikipedia.org/wiki/Schlumbergera_truncata,CC BY-SA 4.0,verified,2026-11-17
+BK-42-08,P42,蟹爪兰,毒性,无毒（ASPCA 收录）,Schlumbergera truncata,http://en.wikipedia.org/wiki/Schlumbergera_truncata,CC BY-SA 4.0,verified,2026-11-17
+BK-43-01,P43,长寿花,学名与科属,Kalanchoe blossfeldiana（景天科）,Kalanchoe blossfeldiana,http://en.wikipedia.org/wiki/Kalanchoe_blossfeldiana,CC BY-SA 4.0,verified,2026-11-17
+BK-43-02,P43,长寿花,形态特征,多肉草本，叶肉质深绿有齿，花序密集、花色多。,Kalanchoe blossfeldiana,http://en.wikipedia.org/wiki/Kalanchoe_blossfeldiana,CC BY-SA 4.0,verified,2026-11-17
+BK-43-03,P43,长寿花,光照需求,8000-20000 lux；光照等级 L4,Kalanchoe blossfeldiana,http://en.wikipedia.org/wiki/Kalanchoe_blossfeldiana,CC BY-SA 4.0,verified,2026-11-17
+BK-43-04,P43,长寿花,浇水频率,10-14 天/次（表土干后浇透）,Kalanchoe blossfeldiana,http://en.wikipedia.org/wiki/Kalanchoe_blossfeldiana,CC BY-SA 4.0,verified,2026-11-17
+BK-43-05,P43,长寿花,土壤配比,颗粒土:泥炭=6:4,Kalanchoe blossfeldiana,http://en.wikipedia.org/wiki/Kalanchoe_blossfeldiana,CC BY-SA 4.0,verified,2026-11-17
+BK-43-06,P43,长寿花,适温范围,15-25℃,Kalanchoe blossfeldiana,http://en.wikipedia.org/wiki/Kalanchoe_blossfeldiana,CC BY-SA 4.0,verified,2026-11-17
+BK-43-07,P43,长寿花,原产地,马达加斯加,Kalanchoe blossfeldiana,http://en.wikipedia.org/wiki/Kalanchoe_blossfeldiana,CC BY-SA 4.0,verified,2026-11-17
+BK-43-08,P43,长寿花,毒性,猫狗误食呕吐、腹泻,Kalanchoe blossfeldiana,http://en.wikipedia.org/wiki/Kalanchoe_blossfeldiana,CC BY-SA 4.0,verified,2026-11-17
+BK-44-01,P44,尤加利,学名与科属,Eucalyptus cinerea（桃金娘科）,Eucalyptus cinerea,http://en.wikipedia.org/wiki/Eucalyptus_cinerea,CC BY-SA 4.0,verified,2026-11-17
+BK-44-02,P44,尤加利,形态特征,常绿乔木，叶圆形、被白粉呈银灰蓝，茎红褐。,Eucalyptus cinerea,http://en.wikipedia.org/wiki/Eucalyptus_cinerea,CC BY-SA 4.0,verified,2026-11-17
+BK-44-03,P44,尤加利,光照需求,8000-20000 lux；光照等级 L4,Eucalyptus cinerea,http://en.wikipedia.org/wiki/Eucalyptus_cinerea,CC BY-SA 4.0,verified,2026-11-17
+BK-44-04,P44,尤加利,浇水频率,7-10 天/次（表土干后浇透）,Eucalyptus cinerea,http://en.wikipedia.org/wiki/Eucalyptus_cinerea,CC BY-SA 4.0,verified,2026-11-17
+BK-44-05,P44,尤加利,土壤配比,泥炭:珍珠岩:松树皮=5:3:2,Eucalyptus cinerea,http://en.wikipedia.org/wiki/Eucalyptus_cinerea,CC BY-SA 4.0,verified,2026-11-17
+BK-44-06,P44,尤加利,适温范围,15-28℃,Eucalyptus cinerea,http://en.wikipedia.org/wiki/Eucalyptus_cinerea,CC BY-SA 4.0,verified,2026-11-17
+BK-44-07,P44,尤加利,原产地,澳洲,Eucalyptus cinerea,http://en.wikipedia.org/wiki/Eucalyptus_cinerea,CC BY-SA 4.0,verified,2026-11-17
+BK-44-08,P44,尤加利,毒性,桉叶油对猫狗有毒,Eucalyptus cinerea,http://en.wikipedia.org/wiki/Eucalyptus_cinerea,CC BY-SA 4.0,verified,2026-11-17
+BK-45-01,P45,油橄榄,学名与科属,Olea europaea（木犀科）,Olea europaea,http://en.wikipedia.org/wiki/Olive,CC BY-SA 4.0,verified,2026-11-17
+BK-45-02,P45,油橄榄,形态特征,常绿小乔木，叶披针形、背面银灰，老干灰褐。,Olea europaea,http://en.wikipedia.org/wiki/Olive,CC BY-SA 4.0,verified,2026-11-17
+BK-45-03,P45,油橄榄,光照需求,8000-20000 lux；光照等级 L4,Olea europaea,http://en.wikipedia.org/wiki/Olive,CC BY-SA 4.0,verified,2026-11-17
+BK-45-04,P45,油橄榄,浇水频率,14-21 天/次（表土干后浇透）,Olea europaea,http://en.wikipedia.org/wiki/Olive,CC BY-SA 4.0,verified,2026-11-17
+BK-45-05,P45,油橄榄,土壤配比,颗粒土:泥炭=6:4,Olea europaea,http://en.wikipedia.org/wiki/Olive,CC BY-SA 4.0,verified,2026-11-17
+BK-45-06,P45,油橄榄,适温范围,15-30℃,Olea europaea,http://en.wikipedia.org/wiki/Olive,CC BY-SA 4.0,verified,2026-11-17
+BK-45-07,P45,油橄榄,原产地,地中海,Olea europaea,http://en.wikipedia.org/wiki/Olive,CC BY-SA 4.0,verified,2026-11-17
+BK-45-08,P45,油橄榄,毒性,ASPCA 未收录，园艺资料未见毒性,Olea europaea,http://en.wikipedia.org/wiki/Olive,CC BY-SA 4.0,verified,2026-11-17
+BK-46-01,P46,量天尺,学名与科属,Hylocereus undatus（仙人掌科）,Hylocereus undatus,https://en.wikipedia.org/wiki/Selenicereus_undatus,CC BY-SA 4.0,verified,2026-11-17
+BK-46-02,P46,量天尺,形态特征,攀援仙人掌，茎三棱柱状、边缘波状，气生根攀附。,Hylocereus undatus,https://en.wikipedia.org/wiki/Selenicereus_undatus,CC BY-SA 4.0,verified,2026-11-17
+BK-46-03,P46,量天尺,光照需求,8000-20000 lux；光照等级 L4,Hylocereus undatus,https://en.wikipedia.org/wiki/Selenicereus_undatus,CC BY-SA 4.0,verified,2026-11-17
+BK-46-04,P46,量天尺,浇水频率,20-30 天/次（表土干后浇透）,Hylocereus undatus,https://en.wikipedia.org/wiki/Selenicereus_undatus,CC BY-SA 4.0,verified,2026-11-17
+BK-46-05,P46,量天尺,土壤配比,颗粒土:泥炭=6:4,Hylocereus undatus,https://en.wikipedia.org/wiki/Selenicereus_undatus,CC BY-SA 4.0,verified,2026-11-17
+BK-46-06,P46,量天尺,适温范围,15-30℃,Hylocereus undatus,https://en.wikipedia.org/wiki/Selenicereus_undatus,CC BY-SA 4.0,verified,2026-11-17
+BK-46-07,P46,量天尺,原产地,中美洲,Hylocereus undatus,https://en.wikipedia.org/wiki/Selenicereus_undatus,CC BY-SA 4.0,verified,2026-11-17
+BK-46-08,P46,量天尺,毒性,无毒（ASPCA 收录）,Hylocereus undatus,https://en.wikipedia.org/wiki/Selenicereus_undatus,CC BY-SA 4.0,verified,2026-11-17
+BK-47-01,P47,白脉椒草,学名与科属,Peperomia obtusifolia（胡椒科）,Peperomia obtusifolia,https://en.wikipedia.org/wiki/Peperomia_obtusifolia,CC BY-SA 4.0,verified,2026-11-17
+BK-47-02,P47,白脉椒草,形态特征,多年生草本，叶倒卵形、厚肉质，具白脉或全绿。,Peperomia obtusifolia,https://en.wikipedia.org/wiki/Peperomia_obtusifolia,CC BY-SA 4.0,verified,2026-11-17
+BK-47-03,P47,白脉椒草,光照需求,1500-3500 lux；光照等级 L2,Peperomia obtusifolia,https://en.wikipedia.org/wiki/Peperomia_obtusifolia,CC BY-SA 4.0,verified,2026-11-17
+BK-47-04,P47,白脉椒草,浇水频率,7-10 天/次（表土干后浇透）,Peperomia obtusifolia,https://en.wikipedia.org/wiki/Peperomia_obtusifolia,CC BY-SA 4.0,verified,2026-11-17
+BK-47-05,P47,白脉椒草,土壤配比,泥炭:珍珠岩:松树皮=5:3:2,Peperomia obtusifolia,https://en.wikipedia.org/wiki/Peperomia_obtusifolia,CC BY-SA 4.0,verified,2026-11-17
+BK-47-06,P47,白脉椒草,适温范围,18-28℃,Peperomia obtusifolia,https://en.wikipedia.org/wiki/Peperomia_obtusifolia,CC BY-SA 4.0,verified,2026-11-17
+BK-47-07,P47,白脉椒草,原产地,南美北部,Peperomia obtusifolia,https://en.wikipedia.org/wiki/Peperomia_obtusifolia,CC BY-SA 4.0,verified,2026-11-17
+BK-47-08,P47,白脉椒草,毒性,无毒（ASPCA 收录）,Peperomia obtusifolia,https://en.wikipedia.org/wiki/Peperomia_obtusifolia,CC BY-SA 4.0,verified,2026-11-17
+BK-48-01,P48,镜面草,学名与科属,Pilea peperomioides（荨麻科）,Pilea peperomioides,http://en.wikipedia.org/wiki/Pilea_peperomioides,CC BY-SA 4.0,verified,2026-11-17
+BK-48-02,P48,镜面草,形态特征,多年生草本，叶圆形盾状、肉质有光泽，茎直立。,Pilea peperomioides,http://en.wikipedia.org/wiki/Pilea_peperomioides,CC BY-SA 4.0,verified,2026-11-17
+BK-48-03,P48,镜面草,光照需求,3500-8000 lux；光照等级 L3,Pilea peperomioides,http://en.wikipedia.org/wiki/Pilea_peperomioides,CC BY-SA 4.0,verified,2026-11-17
+BK-48-04,P48,镜面草,浇水频率,7-10 天/次（表土干后浇透）,Pilea peperomioides,http://en.wikipedia.org/wiki/Pilea_peperomioides,CC BY-SA 4.0,verified,2026-11-17
+BK-48-05,P48,镜面草,土壤配比,泥炭:珍珠岩:松树皮=5:3:2,Pilea peperomioides,http://en.wikipedia.org/wiki/Pilea_peperomioides,CC BY-SA 4.0,verified,2026-11-17
+BK-48-06,P48,镜面草,适温范围,18-25℃,Pilea peperomioides,http://en.wikipedia.org/wiki/Pilea_peperomioides,CC BY-SA 4.0,verified,2026-11-17
+BK-48-07,P48,镜面草,原产地,中国云南,Pilea peperomioides,http://en.wikipedia.org/wiki/Pilea_peperomioides,CC BY-SA 4.0,verified,2026-11-17
+BK-48-08,P48,镜面草,毒性,ASPCA 未收录，园艺资料未见毒性,Pilea peperomioides,http://en.wikipedia.org/wiki/Pilea_peperomioides,CC BY-SA 4.0,verified,2026-11-17

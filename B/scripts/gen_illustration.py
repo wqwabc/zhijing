@@ -28,6 +28,16 @@ SPEC = {
     "P31": dict(form="upright", leaf="#3F7A34", accent=None, pot="#D7CCC8", n=8, serrate=True),
     "P32": dict(form="epiphyte", leaf="#8FA37A", accent=None, pot=None, n=12, needle=True),
     "P33": dict(form="epiphyte", leaf="#4C7A4A", accent=None, pot=None, n=6, antler=True),
+    "P37": dict(form="trail", leaf="#3B6E8F", accent="#7FB3C8", pot="#E0E0E0", n=12, stripe=True),
+    "P38": dict(form="clump", leaf="#2F7A3E", accent=None, pot="#F0EDE8", n=14, round=True),
+    "P39": dict(form="clump", leaf="#4E7A4A", accent=None, pot="#D7CCC8", n=12, needle=True),
+    "P40": dict(form="clump", leaf="#2E7D32", accent="#E8A0B4", pot="#EFEBE9", n=7),
+    "P41": dict(form="tree", leaf="#3F6B34", accent=None, pot="#C8A165", n=7),
+    "P42": dict(form="trail", leaf="#3F7A4A", accent="#E58FA8", pot="#D7CCC8", n=10),
+    "P43": dict(form="clump", leaf="#2F6B3A", accent="#E4C441", pot="#EFEBE9", n=9, flower="ball"),
+    "P44": dict(form="tree", leaf="#9DB4A8", accent=None, pot="#B0BEC5", n=9),
+    "P46": dict(form="upright", leaf="#3F7A4A", accent=None, pot="#5D4037", n=5, needle=True),
+    "P47": dict(form="clump", leaf="#2F6B3A", accent=None, pot="#D7CCC8", n=9),
     "P35": dict(form="tree", leaf="#2E6B34", accent=None, pot="#5D4037", n=9, palmate=True),
 }
 

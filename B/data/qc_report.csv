@@ -35,6 +35,18 @@ A-P33,asset,P33,assets/illustrations/P33_front_illustration.png,pass,,1600,0.16,
 A-P34,asset,P34,assets/cutout/P34/P34_front_pexels.png,pass,,1200,0.368,0.0,1.0,34.7
 A-P35,asset,P35,assets/illustrations/P35_front_illustration.png,pass,,1600,0.134,0.0,1.0,24.9
 A-P36,asset,P36,assets/cutout/P36/P36_front_pexels.png,pass,,1200,0.298,0.0,1.0,10.3
+A-P37,asset,P37,assets/illustrations/P37_front_illustration.png,pass,,1600,0.089,0.0,1.0,-17.8
+A-P38,asset,P38,assets/illustrations/P38_front_illustration.png,pass,,1600,0.182,0.0,1.0,26.0
+A-P39,asset,P39,assets/illustrations/P39_front_illustration.png,pass,,1600,0.179,0.0,1.0,21.6
+A-P40,asset,P40,assets/illustrations/P40_front_illustration.png,pass,,1600,0.147,0.0,1.0,33.3
+A-P41,asset,P41,assets/illustrations/P41_front_illustration.png,pass,,1600,0.119,0.0,1.0,26.0
+A-P42,asset,P42,assets/illustrations/P42_front_illustration.png,pass,,1600,0.076,0.0,1.0,20.5
+A-P43,asset,P43,assets/illustrations/P43_front_illustration.png,pass,,1600,0.178,0.0,1.0,21.7
+A-P44,asset,P44,assets/illustrations/P44_front_illustration.png,pass,,1600,0.125,0.0,1.0,3.4
+A-P45,asset,P45,assets\cutout\P45\P45_front_pexels.png,pass,,1600,0.153,0.0,1.0,21.5
+A-P46,asset,P46,assets/illustrations/P46_front_illustration.png,pass,,1600,0.069,0.0,1.0,10.5
+A-P47,asset,P47,assets/illustrations/P47_front_illustration.png,pass,,1600,0.139,0.0,1.0,21.7
+A-P48,asset,P48,assets\cutout\P48\P48_front_pexels.png,pass,,1600,0.386,0.0,1.0,28.8
 C-001,case,,assets/cases/nordic_living_01.jpg,warn,绿色占比过低 0.2%,,,,,
 C-002,case,,assets/cases/nordic_living_02.jpg,warn,绿色占比过低 1.5%,,,,,
 C-003,case,,assets/cases/nordic_living_03.jpg,warn,绿色占比过低 2.4%,,,,,

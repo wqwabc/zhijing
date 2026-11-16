@@ -1,8 +1,8 @@
 {
   "schema": "verda.kb/1.0",
   "generated_at": "2026-11-16",
-  "plants": 36,
-  "entries": 288,
+  "plants": 48,
+  "entries": 384,
   "fields": [
     "光照需求",
     "原产地",
@@ -13,7 +13,7 @@
     "浇水频率",
     "适温范围"
   ],
-  "verified": 280,
+  "verified": 376,
   "files": {
     "jsonl": "data/knowledge_base.jsonl",
     "source": "data/encyclopedia_entries.csv"

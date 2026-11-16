@@ -3,8 +3,8 @@
   "generated_at": "2026-11-16",
   "note": "has_cutout=false 的植物在前端标记为「仅参考」并灰显；file 为相对包根路径。",
   "count": {
-    "total": 36,
-    "cutout_ready": 36
+    "total": 48,
+    "cutout_ready": 48
   },
   "items": [
     {
@@ -832,6 +832,282 @@
       "style_tags": [
         "midcentury",
         "wabi"
+      ],
+      "priority": "P1"
+    },
+    {
+      "plant_id": "P37",
+      "name_cn": "吊竹梅",
+      "name_latin": "Tradescantia zebrina",
+      "has_cutout": true,
+      "file": "assets/illustrations/P37_front_illustration.png",
+      "width": 1200,
+      "height": 1600,
+      "height_range_cm": [
+        15,
+        30
+      ],
+      "spread_cm": 35,
+      "dominant_hex": "#3B6E8F",
+      "light_level": "L2",
+      "pet_safe": false,
+      "toxic": "toxic",
+      "style_tags": [
+        "tropical",
+        "wabi"
+      ],
+      "priority": "P1"
+    },
+    {
+      "plant_id": "P38",
+      "name_cn": "铜钱草",
+      "name_latin": "Hydrocotyle vulgaris",
+      "has_cutout": true,
+      "file": "assets/illustrations/P38_front_illustration.png",
+      "width": 1200,
+      "height": 1600,
+      "height_range_cm": [
+        10,
+        25
+      ],
+      "spread_cm": 35,
+      "dominant_hex": "#2F7A3E",
+      "light_level": "L2",
+      "pet_safe": true,
+      "toxic": "safe",
+      "style_tags": [
+        "nordic",
+        "wabi"
+      ],
+      "priority": "P1"
+    },
+    {
+      "plant_id": "P39",
+      "name_cn": "铁线蕨",
+      "name_latin": "Adiantum raddianum",
+      "has_cutout": true,
+      "file": "assets/illustrations/P39_front_illustration.png",
+      "width": 1200,
+      "height": 1600,
+      "height_range_cm": [
+        20,
+        40
+      ],
+      "spread_cm": 50,
+      "dominant_hex": "#4E7A4A",
+      "light_level": "L2",
+      "pet_safe": true,
+      "toxic": "safe",
+      "style_tags": [
+        "wabi",
+        "nordic"
+      ],
+      "priority": "P1"
+    },
+    {
+      "plant_id": "P40",
+      "name_cn": "花叶芋",
+      "name_latin": "Caladium bicolor",
+      "has_cutout": true,
+      "file": "assets/illustrations/P40_front_illustration.png",
+      "width": 1200,
+      "height": 1600,
+      "height_range_cm": [
+        30,
+        60
+      ],
+      "spread_cm": 50,
+      "dominant_hex": "#2E7D32",
+      "light_level": "L3",
+      "pet_safe": false,
+      "toxic": "toxic",
+      "style_tags": [
+        "tropical",
+        "midcentury"
+      ],
+      "priority": "P1"
+    },
+    {
+      "plant_id": "P41",
+      "name_cn": "酒瓶兰",
+      "name_latin": "Beaucarnea recurvata",
+      "has_cutout": true,
+      "file": "assets/illustrations/P41_front_illustration.png",
+      "width": 1200,
+      "height": 1600,
+      "height_range_cm": [
+        60,
+        150
+      ],
+      "spread_cm": 60,
+      "dominant_hex": "#3F6B34",
+      "light_level": "L4",
+      "pet_safe": true,
+      "toxic": "safe",
+      "style_tags": [
+        "minimal",
+        "industrial"
+      ],
+      "priority": "P1"
+    },
+    {
+      "plant_id": "P42",
+      "name_cn": "蟹爪兰",
+      "name_latin": "Schlumbergera truncata",
+      "has_cutout": true,
+      "file": "assets/illustrations/P42_front_illustration.png",
+      "width": 1200,
+      "height": 1600,
+      "height_range_cm": [
+        20,
+        40
+      ],
+      "spread_cm": 50,
+      "dominant_hex": "#3F7A4A",
+      "light_level": "L3",
+      "pet_safe": true,
+      "toxic": "safe",
+      "style_tags": [
+        "midcentury",
+        "wabi"
+      ],
+      "priority": "P1"
+    },
+    {
+      "plant_id": "P43",
+      "name_cn": "长寿花",
+      "name_latin": "Kalanchoe blossfeldiana",
+      "has_cutout": true,
+      "file": "assets/illustrations/P43_front_illustration.png",
+      "width": 1200,
+      "height": 1600,
+      "height_range_cm": [
+        20,
+        40
+      ],
+      "spread_cm": 35,
+      "dominant_hex": "#2F6B3A",
+      "light_level": "L4",
+      "pet_safe": false,
+      "toxic": "toxic",
+      "style_tags": [
+        "nordic",
+        "minimal"
+      ],
+      "priority": "P1"
+    },
+    {
+      "plant_id": "P44",
+      "name_cn": "尤加利",
+      "name_latin": "Eucalyptus cinerea",
+      "has_cutout": true,
+      "file": "assets/illustrations/P44_front_illustration.png",
+      "width": 1200,
+      "height": 1600,
+      "height_range_cm": [
+        80,
+        180
+      ],
+      "spread_cm": 80,
+      "dominant_hex": "#9DB4A8",
+      "light_level": "L4",
+      "pet_safe": false,
+      "toxic": "toxic",
+      "style_tags": [
+        "minimal",
+        "industrial"
+      ],
+      "priority": "P1"
+    },
+    {
+      "plant_id": "P45",
+      "name_cn": "油橄榄",
+      "name_latin": "Olea europaea",
+      "has_cutout": true,
+      "file": "assets\\cutout\\P45\\P45_front_pexels.png",
+      "width": 1041,
+      "height": 1600,
+      "height_range_cm": [
+        80,
+        160
+      ],
+      "spread_cm": 70,
+      "dominant_hex": "#D7AC90",
+      "light_level": "L4",
+      "pet_safe": true,
+      "toxic": "safe",
+      "style_tags": [
+        "midcentury",
+        "minimal"
+      ],
+      "priority": "P1"
+    },
+    {
+      "plant_id": "P46",
+      "name_cn": "量天尺",
+      "name_latin": "Hylocereus undatus",
+      "has_cutout": true,
+      "file": "assets/illustrations/P46_front_illustration.png",
+      "width": 1200,
+      "height": 1600,
+      "height_range_cm": [
+        40,
+        120
+      ],
+      "spread_cm": 30,
+      "dominant_hex": "#3F7A4A",
+      "light_level": "L4",
+      "pet_safe": true,
+      "toxic": "safe",
+      "style_tags": [
+        "industrial",
+        "minimal"
+      ],
+      "priority": "P1"
+    },
+    {
+      "plant_id": "P47",
+      "name_cn": "白脉椒草",
+      "name_latin": "Peperomia obtusifolia",
+      "has_cutout": true,
+      "file": "assets/illustrations/P47_front_illustration.png",
+      "width": 1200,
+      "height": 1600,
+      "height_range_cm": [
+        20,
+        40
+      ],
+      "spread_cm": 40,
+      "dominant_hex": "#2F6B3A",
+      "light_level": "L2",
+      "pet_safe": true,
+      "toxic": "safe",
+      "style_tags": [
+        "minimal",
+        "nordic"
+      ],
+      "priority": "P1"
+    },
+    {
+      "plant_id": "P48",
+      "name_cn": "镜面草",
+      "name_latin": "Pilea peperomioides",
+      "has_cutout": true,
+      "file": "assets\\cutout\\P48\\P48_front_pexels.png",
+      "width": 1213,
+      "height": 1600,
+      "height_range_cm": [
+        20,
+        40
+      ],
+      "spread_cm": 40,
+      "dominant_hex": "#B27152",
+      "light_level": "L3",
+      "pet_safe": true,
+      "toxic": "safe",
+      "style_tags": [
+        "nordic",
+        "minimal"
       ],
       "priority": "P1"
     }
