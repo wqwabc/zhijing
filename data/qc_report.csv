@@ -1,0 +1,10 @@
+﻿item,type,plant_id,file,verdict,issues,long_edge,alpha_ratio,border_alpha,component,b_star
+A-P01,asset,P01,assets/cutout/P01/P01_front_pexels.png,pass,,1600,0.324,0.0,1.0,7.6
+A-P02,asset,P02,assets/cutout/P02/P02_front_pexels.png,pass,,1600,0.431,0.031,1.0,17.7
+A-P03,asset,P03,assets/cutout/P03/P03_front_pexels.png,pass,,1600,0.339,0.0,1.0,22.2
+A-P04,asset,P04,assets/cutout/P04/P04_front_pexels.png,pass,,1600,0.338,0.0,1.0,31.5
+A-P05,asset,P05,assets/cutout/P05/P05_front_pexels.png,pass,,1200,0.43,0.0,1.0,45.3
+A-P15,asset,P15,assets/cutout/P15/P15_front_pexels.png,pass,,1361,0.542,0.0,1.0,0.0
+A-P16,asset,P16,assets/cutout/P16/P16_front_pexels.png,pass,,1600,0.258,0.0,1.0,21.2
+A-P17,asset,P17,assets/cutout/P17/P17_front_pexels.png,pass,,1600,0.342,0.0,1.0,13.0
+A-P23,asset,P23,assets/cutout/P23/P23_front_pexels.png,pass,,1395,0.531,0.0,1.0,4.5

@@ -1,0 +1,37 @@
+﻿asset_id,plant_id,name_cn,view,status,file_path,source_url,author,license,license_url,width,height,has_alpha,dominant_hex,cutout_engine,height_cm,collected_at,note
+A-P01,P01,龟背竹,front,ready,assets/cutout/P01/P01_front_pexels.png,https://www.pexels.com/photo/a-monstera-deliciosa-green-plant-7318283/,Anca,Pexels License,https://www.pexels.com/license/,1177,1600,yes,#2A2E26,onnx,80-180,2026-11-16,alpha 覆盖 24.3%；原图 assets/inbox/P01/P01_pexels_7318283.jpg
+A-P02,P02,琴叶榕,front,ready,assets/cutout/P02/P02_front_pexels.png,https://www.pexels.com/photo/ficus-with-lush-green-leaves-in-pot-at-home-6044736/,Skylar Kang,Pexels License,https://www.pexels.com/license/,536,1600,yes,#56704A,onnx,100-200,2026-11-16,alpha 覆盖 39.4%；原图 assets/inbox/P02/P02_pexels_6044736.jpg
+A-P03,P03,橡皮树,front,ready,assets/cutout/P03/P03_front_pexels.png,https://www.pexels.com/photo/green-plant-on-brown-pot-8989427/,Hanna Pad,Pexels License,https://www.pexels.com/license/,911,1600,yes,#6A5434,onnx,80-180,2026-11-16,alpha 覆盖 26.7%；原图 assets/inbox/P03/P03_pexels_8989427.jpg
+A-P04,P04,虎尾兰,front,ready,assets/cutout/P04/P04_front_pexels.png,https://www.pexels.com/photo/3075352/,Nextvoyage,Pexels License,https://www.pexels.com/license/,1267,1600,yes,#057404,onnx,40-90,2026-11-16,alpha 覆盖 28.2%；原图 assets/inbox/P04/P04_pexels_3075352.jpg
+A-P05,P05,绿萝,front,ready,assets/cutout/P05/P05_front_pexels.png,https://www.pexels.com/photo/green-leaf-plant-1084199/,Faraz Ahmad,Pexels License,https://www.pexels.com/license/,1200,1120,yes,#51CC55,onnx,20-150,2026-11-16,alpha 覆盖 36.6%；原图 assets/inbox/P05/P05_pexels_1084199.jpg
+A-P06,P06,白掌,front,pending,,,,,,,,,,,40-70,,需正面平视、纯色背景、单株；长边≥1200
+A-P07,P07,红掌,front,pending,,,,,,,,,,,30-60,,需正面平视、纯色背景、单株；长边≥1200
+A-P08,P08,孔雀竹芋,front,pending,,,,,,,,,,,30-60,,需正面平视、纯色背景、单株；长边≥1200
+A-P09,P09,青苹果竹芋,front,pending,,,,,,,,,,,50-90,,需正面平视、纯色背景、单株；长边≥1200
+A-P10,P10,散尾葵,front,pending,,,,,,,,,,,120-200,,需正面平视、纯色背景、单株；长边≥1200
+A-P11,P11,波士顿蕨,front,pending,,,,,,,,,,,40-70,,需正面平视、纯色背景、单株；长边≥1200
+A-P12,P12,春羽,front,pending,,,,,,,,,,,80-150,,需正面平视、纯色背景、单株；长边≥1200
+A-P13,P13,天堂鸟,front,pending,,,,,,,,,,,150-200,,需正面平视、纯色背景、单株；长边≥1200
+A-P14,P14,玉树,front,pending,,,,,,,,,,,40-100,,需正面平视、纯色背景、单株；长边≥1200
+A-P15,P15,芦荟,front,ready,assets/cutout/P15/P15_front_pexels.png,https://www.pexels.com/photo/plant-in-flowerpot-16599776/,Jennie Ra,Pexels License,https://www.pexels.com/license/,989,1361,yes,#2A302E,onnx,30-60,2026-11-16,alpha 覆盖 49.7%；原图 assets/inbox/P15/P15_pexels_16599776.jpg
+A-P16,P16,金钱树,front,ready,assets/cutout/P16/P16_front_pexels.png,https://www.pexels.com/photo/a-trinket-hanging-on-a-plant-10651639/,Elena Golovchenko,Pexels License,https://www.pexels.com/license/,1576,1600,yes,#0D3317,onnx,60-100,2026-11-16,alpha 覆盖 16.8%；原图 assets/inbox/P16/P16_pexels_10651639.jpg
+A-P17,P17,发财树,front,ready,assets/cutout/P17/P17_front_pexels.png,https://www.pexels.com/photo/potted-plant-beside-the-window-7047366/,Daan Rink,Pexels License,https://www.pexels.com/license/,838,1600,yes,#4B3831,onnx,80-150,2026-11-16,alpha 覆盖 30.4%；原图 assets/inbox/P17/P17_pexels_7047366.jpg
+A-P18,P18,幸福树,front,pending,,,,,,,,,,,100-180,,需正面平视、纯色背景、单株；长边≥1200
+A-P19,P19,合果芋,front,pending,,,,,,,,,,,30-80,,需正面平视、纯色背景、单株；长边≥1200
+A-P20,P20,常春藤,front,pending,,,,,,,,,,,20-100,,需正面平视、纯色背景、单株；长边≥1200
+A-P21,P21,吊兰,front,pending,,,,,,,,,,,20-40,,需正面平视、纯色背景、单株；长边≥1200
+A-P22,P22,文竹,front,pending,,,,,,,,,,,30-60,,需正面平视、纯色背景、单株；长边≥1200
+A-P23,P23,一叶兰,front,ready,assets/cutout/P23/P23_front_pexels.png,https://www.pexels.com/photo/potted-plant-outside-in-front-of-a-painted-window-16710149/,Ala J Graczyk,Pexels License,https://www.pexels.com/license/,1123,1395,yes,#D5D3D2,onnx,50-80,2026-11-16,alpha 覆盖 40.4%；原图 assets/inbox/P23/P23_pexels_16710149.jpg
+A-P24,P24,龙血树,front,rejected,,https://www.pexels.com/photo/indoor-dracaena-marginata-plant-in-modern-pot-35839037/,Will Chen,Pexels License,https://www.pexels.com/license/,,,,,,80-180,2026-11-16,候选背景有暖色物体残留，去底后穿帮；W1 内换源重做
+A-P25,P25,富贵竹,front,pending,,,,,,,,,,,40-100,,需正面平视、纯色背景、单株；长边≥1200
+A-P26,P26,蝴蝶兰,front,pending,,,,,,,,,,,30-60,,需正面平视、纯色背景、单株；长边≥1200
+A-P27,P27,茉莉,front,pending,,,,,,,,,,,60-120,,需正面平视、纯色背景、单株；长边≥1200
+A-P28,P28,栀子,front,pending,,,,,,,,,,,50-90,,需正面平视、纯色背景、单株；长边≥1200
+A-P29,P29,绣球,front,pending,,,,,,,,,,,60-120,,需正面平视、纯色背景、单株；长边≥1200
+A-P30,P30,迷迭香,front,pending,,,,,,,,,,,30-60,,需正面平视、纯色背景、单株；长边≥1200
+A-P31,P31,薄荷,front,pending,,,,,,,,,,,20-40,,需正面平视、纯色背景、单株；长边≥1200
+A-P32,P32,空气凤梨,front,pending,,,,,,,,,,,8-25,,需正面平视、纯色背景、单株；长边≥1200
+A-P33,P33,鹿角蕨,front,pending,,,,,,,,,,,30-80,,需正面平视、纯色背景、单株；长边≥1200
+A-P34,P34,鸟巢蕨,front,pending,,,,,,,,,,,40-80,,需正面平视、纯色背景、单株；长边≥1200
+A-P35,P35,鹅掌柴,front,pending,,,,,,,,,,,80-150,,alpha 覆盖 28.8%；原图 assets/inbox/P35/P35_pexels_8103477.jpg
+A-P36,P36,球兰,front,pending,,,,,,,,,,,30-100,,需正面平视、纯色背景、单株；长边≥1200

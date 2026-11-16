@@ -1,0 +1,839 @@
+{
+  "schema": "verda.assets.index/1.0",
+  "generated_at": "2026-11-16",
+  "note": "has_cutout=false 的植物在前端标记为「仅参考」并灰显；file 为相对包根路径。",
+  "count": {
+    "total": 36,
+    "cutout_ready": 9
+  },
+  "items": [
+    {
+      "plant_id": "P01",
+      "name_cn": "龟背竹",
+      "name_latin": "Monstera deliciosa",
+      "has_cutout": true,
+      "file": "assets/cutout/P01/P01_front_pexels.png",
+      "width": 1177,
+      "height": 1600,
+      "height_range_cm": [
+        80,
+        180
+      ],
+      "spread_cm": 80,
+      "dominant_hex": "#2A2E26",
+      "light_level": "L2",
+      "pet_safe": false,
+      "toxic": "toxic",
+      "style_tags": [
+        "tropical",
+        "minimal"
+      ],
+      "priority": "P0"
+    },
+    {
+      "plant_id": "P02",
+      "name_cn": "琴叶榕",
+      "name_latin": "Ficus lyrata",
+      "has_cutout": true,
+      "file": "assets/cutout/P02/P02_front_pexels.png",
+      "width": 536,
+      "height": 1600,
+      "height_range_cm": [
+        100,
+        200
+      ],
+      "spread_cm": 60,
+      "dominant_hex": "#56704A",
+      "light_level": "L3",
+      "pet_safe": false,
+      "toxic": "toxic",
+      "style_tags": [
+        "nordic",
+        "minimal"
+      ],
+      "priority": "P0"
+    },
+    {
+      "plant_id": "P03",
+      "name_cn": "橡皮树",
+      "name_latin": "Ficus elastica",
+      "has_cutout": true,
+      "file": "assets/cutout/P03/P03_front_pexels.png",
+      "width": 911,
+      "height": 1600,
+      "height_range_cm": [
+        80,
+        180
+      ],
+      "spread_cm": 50,
+      "dominant_hex": "#6A5434",
+      "light_level": "L2",
+      "pet_safe": false,
+      "toxic": "toxic",
+      "style_tags": [
+        "midcentury",
+        "industrial"
+      ],
+      "priority": "P0"
+    },
+    {
+      "plant_id": "P04",
+      "name_cn": "虎尾兰",
+      "name_latin": "Dracaena trifasciata",
+      "has_cutout": true,
+      "file": "assets/cutout/P04/P04_front_pexels.png",
+      "width": 1267,
+      "height": 1600,
+      "height_range_cm": [
+        40,
+        90
+      ],
+      "spread_cm": 25,
+      "dominant_hex": "#057404",
+      "light_level": "L1",
+      "pet_safe": false,
+      "toxic": "toxic",
+      "style_tags": [
+        "minimal",
+        "industrial"
+      ],
+      "priority": "P0"
+    },
+    {
+      "plant_id": "P05",
+      "name_cn": "绿萝",
+      "name_latin": "Epipremnum aureum",
+      "has_cutout": true,
+      "file": "assets/cutout/P05/P05_front_pexels.png",
+      "width": 1200,
+      "height": 1120,
+      "height_range_cm": [
+        20,
+        150
+      ],
+      "spread_cm": 40,
+      "dominant_hex": "#51CC55",
+      "light_level": "L1",
+      "pet_safe": false,
+      "toxic": "toxic",
+      "style_tags": [
+        "nordic",
+        "wabi"
+      ],
+      "priority": "P0"
+    },
+    {
+      "plant_id": "P06",
+      "name_cn": "白掌",
+      "name_latin": "Spathiphyllum wallisii",
+      "has_cutout": false,
+      "file": null,
+      "width": null,
+      "height": null,
+      "height_range_cm": [
+        40,
+        70
+      ],
+      "spread_cm": 40,
+      "dominant_hex": null,
+      "light_level": "L2",
+      "pet_safe": false,
+      "toxic": "toxic",
+      "style_tags": [
+        "nordic",
+        "wabi"
+      ],
+      "priority": "P1"
+    },
+    {
+      "plant_id": "P07",
+      "name_cn": "红掌",
+      "name_latin": "Anthurium andraeanum",
+      "has_cutout": false,
+      "file": null,
+      "width": null,
+      "height": null,
+      "height_range_cm": [
+        30,
+        60
+      ],
+      "spread_cm": 30,
+      "dominant_hex": null,
+      "light_level": "L3",
+      "pet_safe": false,
+      "toxic": "toxic",
+      "style_tags": [
+        "tropical",
+        "midcentury"
+      ],
+      "priority": "P1"
+    },
+    {
+      "plant_id": "P08",
+      "name_cn": "孔雀竹芋",
+      "name_latin": "Goeppertia makoyana",
+      "has_cutout": false,
+      "file": null,
+      "width": null,
+      "height": null,
+      "height_range_cm": [
+        30,
+        60
+      ],
+      "spread_cm": 35,
+      "dominant_hex": null,
+      "light_level": "L2",
+      "pet_safe": true,
+      "toxic": "safe",
+      "style_tags": [
+        "wabi",
+        "midcentury"
+      ],
+      "priority": "P1"
+    },
+    {
+      "plant_id": "P09",
+      "name_cn": "青苹果竹芋",
+      "name_latin": "Goeppertia orbifolia",
+      "has_cutout": false,
+      "file": null,
+      "width": null,
+      "height": null,
+      "height_range_cm": [
+        50,
+        90
+      ],
+      "spread_cm": 50,
+      "dominant_hex": null,
+      "light_level": "L2",
+      "pet_safe": true,
+      "toxic": "safe",
+      "style_tags": [
+        "wabi",
+        "minimal"
+      ],
+      "priority": "P1"
+    },
+    {
+      "plant_id": "P10",
+      "name_cn": "散尾葵",
+      "name_latin": "Dypsis lutescens",
+      "has_cutout": false,
+      "file": null,
+      "width": null,
+      "height": null,
+      "height_range_cm": [
+        120,
+        200
+      ],
+      "spread_cm": 100,
+      "dominant_hex": null,
+      "light_level": "L3",
+      "pet_safe": true,
+      "toxic": "safe",
+      "style_tags": [
+        "tropical",
+        "nordic"
+      ],
+      "priority": "P1"
+    },
+    {
+      "plant_id": "P11",
+      "name_cn": "波士顿蕨",
+      "name_latin": "Nephrolepis exaltata",
+      "has_cutout": false,
+      "file": null,
+      "width": null,
+      "height": null,
+      "height_range_cm": [
+        40,
+        70
+      ],
+      "spread_cm": 60,
+      "dominant_hex": null,
+      "light_level": "L2",
+      "pet_safe": true,
+      "toxic": "safe",
+      "style_tags": [
+        "wabi",
+        "nordic"
+      ],
+      "priority": "P1"
+    },
+    {
+      "plant_id": "P12",
+      "name_cn": "春羽",
+      "name_latin": "Thaumatophyllum bipinnatifidum",
+      "has_cutout": false,
+      "file": null,
+      "width": null,
+      "height": null,
+      "height_range_cm": [
+        80,
+        150
+      ],
+      "spread_cm": 100,
+      "dominant_hex": null,
+      "light_level": "L2",
+      "pet_safe": false,
+      "toxic": "toxic",
+      "style_tags": [
+        "tropical",
+        "midcentury"
+      ],
+      "priority": "P1"
+    },
+    {
+      "plant_id": "P13",
+      "name_cn": "天堂鸟",
+      "name_latin": "Strelitzia nicolai",
+      "has_cutout": false,
+      "file": null,
+      "width": null,
+      "height": null,
+      "height_range_cm": [
+        150,
+        200
+      ],
+      "spread_cm": 100,
+      "dominant_hex": null,
+      "light_level": "L4",
+      "pet_safe": false,
+      "toxic": "toxic",
+      "style_tags": [
+        "tropical",
+        "minimal"
+      ],
+      "priority": "P1"
+    },
+    {
+      "plant_id": "P14",
+      "name_cn": "玉树",
+      "name_latin": "Crassula ovata",
+      "has_cutout": false,
+      "file": null,
+      "width": null,
+      "height": null,
+      "height_range_cm": [
+        40,
+        100
+      ],
+      "spread_cm": 50,
+      "dominant_hex": null,
+      "light_level": "L4",
+      "pet_safe": false,
+      "toxic": "toxic",
+      "style_tags": [
+        "midcentury",
+        "wabi"
+      ],
+      "priority": "P1"
+    },
+    {
+      "plant_id": "P15",
+      "name_cn": "芦荟",
+      "name_latin": "Aloe vera",
+      "has_cutout": true,
+      "file": "assets/cutout/P15/P15_front_pexels.png",
+      "width": 989,
+      "height": 1361,
+      "height_range_cm": [
+        30,
+        60
+      ],
+      "spread_cm": 40,
+      "dominant_hex": "#2A302E",
+      "light_level": "L4",
+      "pet_safe": false,
+      "toxic": "toxic",
+      "style_tags": [
+        "minimal",
+        "industrial"
+      ],
+      "priority": "P1"
+    },
+    {
+      "plant_id": "P16",
+      "name_cn": "金钱树",
+      "name_latin": "Zamioculcas zamiifolia",
+      "has_cutout": true,
+      "file": "assets/cutout/P16/P16_front_pexels.png",
+      "width": 1576,
+      "height": 1600,
+      "height_range_cm": [
+        60,
+        100
+      ],
+      "spread_cm": 50,
+      "dominant_hex": "#0D3317",
+      "light_level": "L1",
+      "pet_safe": false,
+      "toxic": "toxic",
+      "style_tags": [
+        "minimal",
+        "industrial"
+      ],
+      "priority": "P0"
+    },
+    {
+      "plant_id": "P17",
+      "name_cn": "发财树",
+      "name_latin": "Pachira aquatica",
+      "has_cutout": true,
+      "file": "assets/cutout/P17/P17_front_pexels.png",
+      "width": 838,
+      "height": 1600,
+      "height_range_cm": [
+        80,
+        150
+      ],
+      "spread_cm": 60,
+      "dominant_hex": "#4B3831",
+      "light_level": "L2",
+      "pet_safe": true,
+      "toxic": "safe",
+      "style_tags": [
+        "midcentury",
+        "nordic"
+      ],
+      "priority": "P0"
+    },
+    {
+      "plant_id": "P18",
+      "name_cn": "幸福树",
+      "name_latin": "Radermachera sinica",
+      "has_cutout": false,
+      "file": null,
+      "width": null,
+      "height": null,
+      "height_range_cm": [
+        100,
+        180
+      ],
+      "spread_cm": 70,
+      "dominant_hex": null,
+      "light_level": "L3",
+      "pet_safe": false,
+      "toxic": "unknown",
+      "style_tags": [
+        "nordic",
+        "minimal"
+      ],
+      "priority": "P1"
+    },
+    {
+      "plant_id": "P19",
+      "name_cn": "合果芋",
+      "name_latin": "Syngonium podophyllum",
+      "has_cutout": false,
+      "file": null,
+      "width": null,
+      "height": null,
+      "height_range_cm": [
+        30,
+        80
+      ],
+      "spread_cm": 40,
+      "dominant_hex": null,
+      "light_level": "L2",
+      "pet_safe": false,
+      "toxic": "toxic",
+      "style_tags": [
+        "tropical",
+        "wabi"
+      ],
+      "priority": "P1"
+    },
+    {
+      "plant_id": "P20",
+      "name_cn": "常春藤",
+      "name_latin": "Hedera helix",
+      "has_cutout": false,
+      "file": null,
+      "width": null,
+      "height": null,
+      "height_range_cm": [
+        20,
+        100
+      ],
+      "spread_cm": 50,
+      "dominant_hex": null,
+      "light_level": "L3",
+      "pet_safe": false,
+      "toxic": "toxic",
+      "style_tags": [
+        "industrial",
+        "midcentury"
+      ],
+      "priority": "P1"
+    },
+    {
+      "plant_id": "P21",
+      "name_cn": "吊兰",
+      "name_latin": "Chlorophytum comosum",
+      "has_cutout": false,
+      "file": null,
+      "width": null,
+      "height": null,
+      "height_range_cm": [
+        20,
+        40
+      ],
+      "spread_cm": 45,
+      "dominant_hex": null,
+      "light_level": "L2",
+      "pet_safe": true,
+      "toxic": "safe",
+      "style_tags": [
+        "nordic",
+        "wabi"
+      ],
+      "priority": "P1"
+    },
+    {
+      "plant_id": "P22",
+      "name_cn": "文竹",
+      "name_latin": "Asparagus setaceus",
+      "has_cutout": false,
+      "file": null,
+      "width": null,
+      "height": null,
+      "height_range_cm": [
+        30,
+        60
+      ],
+      "spread_cm": 40,
+      "dominant_hex": null,
+      "light_level": "L3",
+      "pet_safe": false,
+      "toxic": "toxic",
+      "style_tags": [
+        "wabi",
+        "midcentury"
+      ],
+      "priority": "P1"
+    },
+    {
+      "plant_id": "P23",
+      "name_cn": "一叶兰",
+      "name_latin": "Aspidistra elatior",
+      "has_cutout": true,
+      "file": "assets/cutout/P23/P23_front_pexels.png",
+      "width": 1123,
+      "height": 1395,
+      "height_range_cm": [
+        50,
+        80
+      ],
+      "spread_cm": 50,
+      "dominant_hex": "#D5D3D2",
+      "light_level": "L1",
+      "pet_safe": true,
+      "toxic": "safe",
+      "style_tags": [
+        "wabi",
+        "industrial"
+      ],
+      "priority": "P0"
+    },
+    {
+      "plant_id": "P24",
+      "name_cn": "龙血树",
+      "name_latin": "Dracaena marginata",
+      "has_cutout": false,
+      "file": null,
+      "width": null,
+      "height": null,
+      "height_range_cm": [
+        80,
+        180
+      ],
+      "spread_cm": 50,
+      "dominant_hex": null,
+      "light_level": "L3",
+      "pet_safe": false,
+      "toxic": "toxic",
+      "style_tags": [
+        "minimal",
+        "industrial"
+      ],
+      "priority": "P0"
+    },
+    {
+      "plant_id": "P25",
+      "name_cn": "富贵竹",
+      "name_latin": "Dracaena sanderiana",
+      "has_cutout": false,
+      "file": null,
+      "width": null,
+      "height": null,
+      "height_range_cm": [
+        40,
+        100
+      ],
+      "spread_cm": 25,
+      "dominant_hex": null,
+      "light_level": "L2",
+      "pet_safe": false,
+      "toxic": "toxic",
+      "style_tags": [
+        "midcentury",
+        "minimal"
+      ],
+      "priority": "P1"
+    },
+    {
+      "plant_id": "P26",
+      "name_cn": "蝴蝶兰",
+      "name_latin": "Phalaenopsis",
+      "has_cutout": false,
+      "file": null,
+      "width": null,
+      "height": null,
+      "height_range_cm": [
+        30,
+        60
+      ],
+      "spread_cm": 30,
+      "dominant_hex": null,
+      "light_level": "L3",
+      "pet_safe": true,
+      "toxic": "safe",
+      "style_tags": [
+        "minimal",
+        "wabi"
+      ],
+      "priority": "P1"
+    },
+    {
+      "plant_id": "P27",
+      "name_cn": "茉莉",
+      "name_latin": "Jasminum sambac",
+      "has_cutout": false,
+      "file": null,
+      "width": null,
+      "height": null,
+      "height_range_cm": [
+        60,
+        120
+      ],
+      "spread_cm": 50,
+      "dominant_hex": null,
+      "light_level": "L4",
+      "pet_safe": true,
+      "toxic": "safe",
+      "style_tags": [
+        "wabi",
+        "midcentury"
+      ],
+      "priority": "P1"
+    },
+    {
+      "plant_id": "P28",
+      "name_cn": "栀子",
+      "name_latin": "Gardenia jasminoides",
+      "has_cutout": false,
+      "file": null,
+      "width": null,
+      "height": null,
+      "height_range_cm": [
+        50,
+        90
+      ],
+      "spread_cm": 50,
+      "dominant_hex": null,
+      "light_level": "L3",
+      "pet_safe": true,
+      "toxic": "safe",
+      "style_tags": [
+        "midcentury",
+        "wabi"
+      ],
+      "priority": "P1"
+    },
+    {
+      "plant_id": "P29",
+      "name_cn": "绣球",
+      "name_latin": "Hydrangea macrophylla",
+      "has_cutout": false,
+      "file": null,
+      "width": null,
+      "height": null,
+      "height_range_cm": [
+        60,
+        120
+      ],
+      "spread_cm": 70,
+      "dominant_hex": null,
+      "light_level": "L3",
+      "pet_safe": false,
+      "toxic": "toxic",
+      "style_tags": [
+        "midcentury",
+        "nordic"
+      ],
+      "priority": "P1"
+    },
+    {
+      "plant_id": "P30",
+      "name_cn": "迷迭香",
+      "name_latin": "Salvia rosmarinus",
+      "has_cutout": false,
+      "file": null,
+      "width": null,
+      "height": null,
+      "height_range_cm": [
+        30,
+        60
+      ],
+      "spread_cm": 40,
+      "dominant_hex": null,
+      "light_level": "L4",
+      "pet_safe": true,
+      "toxic": "safe",
+      "style_tags": [
+        "industrial",
+        "nordic"
+      ],
+      "priority": "P1"
+    },
+    {
+      "plant_id": "P31",
+      "name_cn": "薄荷",
+      "name_latin": "Mentha spicata",
+      "has_cutout": false,
+      "file": null,
+      "width": null,
+      "height": null,
+      "height_range_cm": [
+        20,
+        40
+      ],
+      "spread_cm": 35,
+      "dominant_hex": null,
+      "light_level": "L3",
+      "pet_safe": false,
+      "toxic": "toxic",
+      "style_tags": [
+        "nordic",
+        "industrial"
+      ],
+      "priority": "P1"
+    },
+    {
+      "plant_id": "P32",
+      "name_cn": "空气凤梨",
+      "name_latin": "Tillandsia ionantha",
+      "has_cutout": false,
+      "file": null,
+      "width": null,
+      "height": null,
+      "height_range_cm": [
+        8,
+        25
+      ],
+      "spread_cm": 10,
+      "dominant_hex": null,
+      "light_level": "L3",
+      "pet_safe": true,
+      "toxic": "safe",
+      "style_tags": [
+        "minimal",
+        "industrial"
+      ],
+      "priority": "P1"
+    },
+    {
+      "plant_id": "P33",
+      "name_cn": "鹿角蕨",
+      "name_latin": "Platycerium bifurcatum",
+      "has_cutout": false,
+      "file": null,
+      "width": null,
+      "height": null,
+      "height_range_cm": [
+        30,
+        80
+      ],
+      "spread_cm": 60,
+      "dominant_hex": null,
+      "light_level": "L2",
+      "pet_safe": true,
+      "toxic": "safe",
+      "style_tags": [
+        "tropical",
+        "industrial"
+      ],
+      "priority": "P1"
+    },
+    {
+      "plant_id": "P34",
+      "name_cn": "鸟巢蕨",
+      "name_latin": "Asplenium nidus",
+      "has_cutout": false,
+      "file": null,
+      "width": null,
+      "height": null,
+      "height_range_cm": [
+        40,
+        80
+      ],
+      "spread_cm": 60,
+      "dominant_hex": null,
+      "light_level": "L2",
+      "pet_safe": true,
+      "toxic": "safe",
+      "style_tags": [
+        "tropical",
+        "wabi"
+      ],
+      "priority": "P1"
+    },
+    {
+      "plant_id": "P35",
+      "name_cn": "鹅掌柴",
+      "name_latin": "Schefflera arboricola",
+      "has_cutout": false,
+      "file": null,
+      "width": null,
+      "height": null,
+      "height_range_cm": [
+        80,
+        150
+      ],
+      "spread_cm": 60,
+      "dominant_hex": null,
+      "light_level": "L3",
+      "pet_safe": false,
+      "toxic": "toxic",
+      "style_tags": [
+        "midcentury",
+        "minimal"
+      ],
+      "priority": "P0"
+    },
+    {
+      "plant_id": "P36",
+      "name_cn": "球兰",
+      "name_latin": "Hoya carnosa",
+      "has_cutout": false,
+      "file": null,
+      "width": null,
+      "height": null,
+      "height_range_cm": [
+        30,
+        100
+      ],
+      "spread_cm": 40,
+      "dominant_hex": null,
+      "light_level": "L3",
+      "pet_safe": true,
+      "toxic": "safe",
+      "style_tags": [
+        "midcentury",
+        "wabi"
+      ],
+      "priority": "P1"
+    }
+  ]
+}
