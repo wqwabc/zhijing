@@ -1,12 +1,10 @@
 # -*- coding: utf-8 -*-
-"""痛点样本：百度搜索结果（标题 + 真实落地 URL），按查询维度打原因标签。
+"""痛点样本：公开搜索结果（标题 + 落地 URL），按查询维度打原因标签。
 
-合规：
-  · 只取公开搜索结果的标题与链接，不复制正文；
-  · 不记录用户名、联系方式等个人信息；
-  · 单条 ≤120 字，仅用于课程需求分析。
+双通道：百度优先，被限流时自动切搜狗。
+合规：只取标题与链接，不复制正文；不记录个人信息；单条 ≤120 字。
 
-    python collect_pain_points.py --target 200
+    python collect_pain_points.py --target 200 --sleep 5
 """
 from __future__ import annotations
 import argparse, html, re, time
@@ -39,13 +37,18 @@ QUERIES = [
     ("书房放什么绿植不挡光", "尺寸不符"), ("绿植摆放在哪个位置好", "搭配"),
     ("新买的绿植蔫了怎么办", "购买体验"), ("植物烂根怎么救", "浇水"),
     ("绿植多久浇一次水", "浇水"), ("卧室放植物影响睡眠吗", "光照"),
+    ("客厅植物怎么摆好看", "搭配"), ("植物叶子上有白点", "虫害"),
+    ("阳台种什么花好养", "光照"), ("刚装修完放什么植物", "搭配"),
+    ("花盆太小要不要换盆", "尺寸不符"), ("猫咪啃绿萝怎么办", "宠物风险"),
+    ("植物掉叶子是什么原因", "养死"), ("客厅放绿植有什么讲究", "搭配"),
 ]
 
 PLATFORM = {
     "zhidao.baidu.com": "百度知道", "zhihu.com": "知乎", "www.zhihu.com": "知乎",
-    "douban.com": "豆瓣", "www.douban.com": "豆瓣", "xiaohongshu.com": "小红书",
-    "tieba.baidu.com": "百度贴吧", "baijiahao.baidu.com": "百家号",
-    "jingyan.baidu.com": "百度经验", "bilibili.com": "B站",
+    "douban.com": "豆瓣", "xiaohongshu.com": "小红书", "tieba.baidu.com": "百度贴吧",
+    "baijiahao.baidu.com": "百家号", "jingyan.baidu.com": "百度经验",
+    "baike.baidu.com": "百度百科", "post.smzdm.com": "什么值得买",
+    "www.douyin.com": "抖音", "wenku.baidu.com": "百度文库",
 }
 
 
@@ -57,10 +60,41 @@ def resolve(link: str) -> str:
         return link
 
 
+def fetch_hits(q: str):
+    """百度 → 搜狗 双通道，返回 [(url, title)]。"""
+    for name, url, params in (
+        ("baidu", "https://www.baidu.com/s", {"wd": q, "ie": "utf-8", "rn": 20}),
+        ("sogou", "https://www.sogou.com/web", {"query": q}),
+    ):
+        try:
+            r = S.get(url, params=params, timeout=25)
+            t = r.content.decode("utf-8", "ignore")
+        except Exception as e:
+            print("  ERR", name, type(e).__name__, flush=True)
+            continue
+        if len(t) < 50000:
+            print("  BLOCK", name, len(t), flush=True)
+            continue
+        hits = re.findall(r'<h3[^>]*>\s*<a[^>]*href="([^"]+)"[^>]*>(.*?)</a>', t, re.S)
+        out = []
+        for link, title in hits:
+            link = html.unescape(link)
+            if link.startswith("/"):
+                link = "https://www.sogou.com" + link
+            title = re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", "", title))).strip()
+            if len(title) < 10 or "视频" in title or "图片" in title or "最新相关信息" in title:
+                continue
+            out.append((link, title))
+        if out:
+            print("  via", name, len(out), flush=True)
+            return out
+    return []
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--target", type=int, default=200)
-    ap.add_argument("--sleep", type=float, default=3.0)
+    ap.add_argument("--sleep", type=float, default=5.0)
     a = ap.parse_args()
     rows = read_csv("pain_points.csv")
     seen = {r["url"] for r in rows}
@@ -69,42 +103,17 @@ def main() -> None:
     for q, cause in QUERIES:
         if len(rows) >= a.target:
             break
-        try:
-            r = S.get("https://www.baidu.com/s", params={"wd": q, "ie": "utf-8", "rn": 20},
-                      timeout=25)
-            t = r.content.decode("utf-8", "ignore")
-        except Exception as e:
-            print("ERR", q, type(e).__name__, flush=True)
-            continue
-        if len(t) < 50000:
-            print("BLOCK?", q, len(t), flush=True)
-            time.sleep(20)
-            continue
-        hits = re.findall(
-            r'<h3[^>]*>\s*<a[^>]*href="([^"]+)"[^>]*>(.*?)</a>', t, re.S)
+        hits = fetch_hits(q)
         if not hits:
-            try:
-                s2 = S.get("https://www.sogou.com/web", params={"query": q}, timeout=25)
-                t2 = s2.content.decode("utf-8", "ignore")
-                hits = re.findall(r'<h3[^>]*>\s*<a[^>]*href="([^"]+)"[^>]*>(.*?)</a>', t2, re.S)
-                hits = [(h if h.startswith("http") else "https://www.sogou.com" + h, ti) for h, ti in hits]
-            except Exception:
-                hits = []
-        cand = []
-        for link, title in hits:
-            title = html.unescape(re.sub(r"<[^>]+>", "", title)).strip()
-            title = re.sub(r"\s+", " ", title)
-            if len(title) < 10 or "视频" in title or "图片" in title or "最新相关信息" in title:
-                continue
-            cand.append((link, title))
-        links = [c[0] for c in cand]
+            time.sleep(a.sleep)
+            continue
         with ThreadPoolExecutor(6) as ex:
-            finals = list(ex.map(resolve, links))
+            finals = list(ex.map(resolve, [h[0] for h in hits]))
         add = 0
-        for (link, title), final in zip(cand, finals):
+        for (link, title), final in zip(hits, finals):
             if len(rows) >= a.target:
                 break
-            if final in seen or "baidu.com/link" in final or "wappass.baidu.com" in final:
+            if final in seen or "baidu.com/link" in final or "wappass" in final or "/link?url=" in final:
                 continue
             dom = urlparse(final).netloc
             rows.append({
