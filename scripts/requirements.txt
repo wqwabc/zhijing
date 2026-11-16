@@ -1,8 +1,0 @@
-# 核心依赖（必装）
-requests>=2.31
-pillow>=10.0
-numpy>=1.24
-
-# 去底（可选但推荐）：装不上时用 cutout.py --engine simple
-# rembg[cpu]>=2.0.50
-# onnxruntime>=1.16
