@@ -23,19 +23,25 @@ from .models import (                                       # noqa: F401
     STYLE_NAMES, STYLES, TEXTURES,
     Combo, ComboScore, DimensionScore, Plant, Scene,
 )
+from .recommend import (                                    # noqa: F401
+    JACCARD_LIMIT, PERSONALITIES, build_pool, enumerate_combos,
+    jaccard, recommend, weights_for,
+)
 from .scoring import (                                      # noqa: F401
     AESTHETIC_RATIO, FIT_RATIO, WEIGHTS, WEIGHTS_RAW,
-    explain_weights, score_combo,
+    explain_weights, normalize_weights, rescore, score_combo,
 )
 
 __all__ = [
     "Plant", "Scene", "Combo", "DimensionScore", "ComboScore",
-    "score_combo", "explain_weights", "WEIGHTS", "WEIGHTS_RAW",
-    "AESTHETIC_RATIO", "FIT_RATIO",
+    "score_combo", "rescore", "normalize_weights", "explain_weights",
+    "recommend", "jaccard", "build_pool", "enumerate_combos", "weights_for",
+    "PERSONALITIES", "JACCARD_LIMIT",
+    "WEIGHTS", "WEIGHTS_RAW", "AESTHETIC_RATIO", "FIT_RATIO",
     "load_plants", "load_styles", "load_scenes",
     "FORMS", "TEXTURES", "LEAF_SIZES", "STYLES", "ROOMS",
     "STYLE_NAMES", "ROOM_NAMES", "LIGHT_LEVELS", "LIGHT_VALUE",
     "LIGHT_BY_VALUE", "ROOM_HEIGHT_RANGE", "ROOM_WIDTH",
 ]
 
-__version__ = "0.2.0"
+__version__ = "0.3.0"

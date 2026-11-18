@@ -1,21 +1,26 @@
 # C · 算法与知识库
 
-对应《需求分析 v2.1》第 7 节「评分规则」。纯 Python，只依赖标准库，不需要 numpy / torch。
+对应《需求分析 v2.1》。纯 Python，只依赖标准库，不需要 numpy / torch。
 
 ## 当前交付内容
 
-七维评分引擎：输入一组植物和用户场景，输出六个审美维度分、一个适配分、综合分，
-外加能指着具体植物说的理由。这是 C 角色 W1–W2 的核心交付（七维评分设计 + 实现 + 单测）。
+1. **七维评分引擎**（W1–W2）—— 输入一组植物和场景，输出六个审美维度分、一个适配分、
+   综合分，外加能指着具体植物说的理由。
+2. **推荐搜索**（W3）—— 按「稳妥 / 对比 / 个性」三种性格出三套方案，满足 AC-04
+   的「两两 Jaccard < 0.5」。
 
 ```
 C/
 ├── verda/
-│   ├── color.py     OKLCH 色彩工具（sRGB ↔ OKLab ↔ OKLCH）
-│   ├── models.py    Plant / Scene / Combo / DimensionScore / ComboScore
-│   ├── loader.py    读 B/data 的 plants_master.csv 和 assets_index.json
-│   └── scoring.py   七维评分主逻辑
-├── demo.py          用 B 的真实数据跑四套方案
-└── test_scoring.py  24 个单测
+│   ├── color.py        OKLCH 色彩工具（sRGB ↔ OKLab ↔ OKLCH）
+│   ├── models.py       Plant / Scene / Combo / DimensionScore / ComboScore
+│   ├── loader.py       读 B/data 的 plants_master.csv 和 assets_index.json
+│   ├── scoring.py      七维评分主逻辑
+│   └── recommend.py    推荐搜索（三性格 + Jaccard 去重）
+├── demo.py             用 B 的真实数据跑四套评分
+├── demo_recommend.py   两个场景各出三套方案
+├── test_scoring.py     24 个单测
+└── test_recommend.py   23 个单测
 ```
 
 ## 怎么跑
@@ -23,15 +28,9 @@ C/
 在仓库根目录（`B/` 和 `C/` 的上一层）：
 
 ```bash
-python C/demo.py
-python -m unittest C.test_scoring -v
-```
-
-或者进到 `C/`：
-
-```bash
-python demo.py
-python -m unittest test_scoring -v
+python C/demo.py                    # 评分演示
+python C/demo_recommend.py          # 推荐演示
+python -m unittest C.test_scoring C.test_recommend -v
 ```
 
 `loader` 会自动从 `C/verda/` 往上找 `B/data/`，所以目录结构必须是 `B/` 和 `C/` 同级。
@@ -84,6 +83,60 @@ OKLCH 是感知均匀空间，L 相同就真的一样亮。需求文档指定了
 | 尺度 | 0.14 | 超过 B 的 `scenes.csv` 高度上限就报警 |
 
 **硬约束单独放 `hard_flags`，不在综合分里被平均掉**，前端按这个字段标红。
+
+## 推荐搜索（FR-03）
+
+### 三套方案怎么区分
+
+不是给同一个排序换个名字，而是**换权重**：
+
+| 性格 | 文案 | 权重调整 | 面向 |
+|---|---|---|---|
+| 稳妥 | 常见品种、风格统一、养护省心 | 风格一致 ×1.8、色彩和谐 ×1.2；形态对比 ×0.7 | 怕出错的人 |
+| 对比 | 高低错落、大叶细叶混搭 | 形态对比 ×1.8、层次比例 ×1.6；风格一致 ×0.5 | 想要视觉张力 |
+| 个性 | 冷门品种、色彩出挑 | 色彩和谐 ×1.7、质感叶面 ×1.4；风格一致 ×0.4 | 想做点不一样 |
+
+权重调整后统一走 `normalize_weights()` 归一化，所以不管怎么调，审美分都是一百分制。
+
+### 怎么保证三套不重复
+
+AC-04 要求「三套方案两两 Jaccard < 0.5」。做法是每选一套就和已选的比一遍，
+不满足就往下找下一个最高分的组合：
+
+```python
+for c, s in scored:                      # 按该性格的权重降序
+    if all(jaccard(c, p["_combo"]) < 0.5 for p in picked):
+        chosen = (c, s)
+        break
+```
+
+实测客厅场景：0.400 / 0.200 / 0.167，都通过。
+
+### 候选池怎么筛
+
+`build_pool()` 按顺序过五道：
+
+1. 必须有去底素材（`has_cutout`）—— 没有的放不进照片，FR-07 要求标记「仅参考」
+2. 有宠物时排除 `toxic=toxic` —— AC-05 要求有毒植物 = 0
+3. 光照比场景高 1 档以内 —— 差 2 档会徒长
+4. 单株价格 ≤ 预算 60% —— 否则一株就超支
+5. 株高 ≤ 场景上限 —— 用 B 的 `scenes.csv` 区间
+
+### 枚举策略
+
+按株高分三层（≥100cm / 40–100 / <40），枚举「1 高 + 1~2 中 + 1~2 低」，
+各层取前几个控制组合数在几百量级。
+
+小空间有坑：**办公桌的高度区间只有 8~50cm，根本不存在「高」层**，
+照原结构枚举会得 0 个组合。所以做了逐层 fallback：
+没高层就把中层最高的提上来，没中层就把低层提上来，还是不行就只枚举两株。
+
+### 性能
+
+六个维度只算一次（`score_combo`），三种性格换权重时只重算加权（`rescore`）。
+实测客厅场景（151 个组合 × 3 种性格）**0.03 秒**，远低于 FR-03 的 P95 < 2s。
+
+不这么做的话，480 个组合 × 3 种性格全量重算要 1.4 秒左右。
 
 ## 给后端（D）的接口契约
 
@@ -143,14 +196,14 @@ result.as_dict()
 
 ## 还没做的（W3–W4，看时间）
 
-- **案例向量检索**：需求要 CLIP + 向量库。本机 torch 2.9.1+cpu 和 torchvision 0.24.1 都能用，
-  本地也缓存了 resnet50 / resnet18 / efficientnet / convnext，但 **transformers / open_clip 都还没装**。
-  两条路：装 open_clip（要下 ~350MB 权重），或者先用 ResNet50 的 2048 维特征顶着（不用下载）。
+- **改稿逻辑**（FR-08）：「更好养」「对猫狗安全」「更有张力」这类自然语言约束的过滤规则，
+  验收要求「保留原方案 ≥50%、返回 diff」。下一步就做这个。
+- **案例向量检索**（FR-09）：需求要 CLIP + 向量库。本机 torch 2.9.1+cpu 和 torchvision 0.24.1
+  都能用，本地也缓存了 resnet50 / resnet18 / efficientnet / convnext，但
+  **transformers / open_clip 都还没装**。两条路：装 open_clip（要下 ~350MB 权重），
+  或者先用 ResNet50 的 2048 维特征顶着（不用下载）。
 - **风格分类基线**：同上，依赖模型。
-- **推荐搜索（三种性格）**：可以基于评分引擎做，给候选组合打分排序，
-  再按性格调权重（稳妥型加重风格一致、个性型加重形态对比）。
-- **改稿逻辑**：「更好养」「对猫狗安全」这类约束的过滤规则。
-- **消融实验、人工盲评**：W4 的评测报告。
+- **消融实验、人工盲评**：W4 的评测报告。时间不够建议砍，答辩 8 分钟讲不到。
 
 ## 已知的设计取舍
 

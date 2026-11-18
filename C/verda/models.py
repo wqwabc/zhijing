@@ -73,14 +73,18 @@ ROOM_WIDTH = {
 
 
 def _mid_value(text) -> float:
-    """把 "7-10" 这种区间字符串取中值；单个数字原样返回"""
+    """把 "7-10" 这种区间字符串取中值；单个数字原样返回
+
+    注意连字符要当分隔符处理，否则 "80-200" 会整个丢给 float() 报错。
+    价格不会是负数，所以把 "-" 直接换成空格是安全的。
+    """
     if text is None:
         return 0.0
     s = str(text).strip()
     if not s:
         return 0.0
-    # 只保留数字和小数点、连字符
-    cleaned = "".join(ch if ch.isdigit() or ch in ".-" else " " for ch in s)
+    # 连字符换成空格（区间分隔），只保留数字和小数点
+    cleaned = "".join(ch if (ch.isdigit() or ch == ".") else " " for ch in s)
     parts = [p for p in cleaned.split() if p]
     if not parts:
         return 0.0
