@@ -27,6 +27,9 @@ from .recommend import (                                    # noqa: F401
     JACCARD_LIMIT, PERSONALITIES, build_pool, enumerate_combos,
     jaccard, recommend, weights_for,
 )
+from .revise import (                                       # noqa: F401
+    INTENTS, MIN_KEEP_RATIO, Diff, Intent, parse_intent, revise,
+)
 from .scoring import (                                      # noqa: F401
     AESTHETIC_RATIO, FIT_RATIO, WEIGHTS, WEIGHTS_RAW,
     explain_weights, normalize_weights, rescore, score_combo,
@@ -37,6 +40,7 @@ __all__ = [
     "score_combo", "rescore", "normalize_weights", "explain_weights",
     "recommend", "jaccard", "build_pool", "enumerate_combos", "weights_for",
     "PERSONALITIES", "JACCARD_LIMIT",
+    "revise", "parse_intent", "Intent", "Diff", "INTENTS", "MIN_KEEP_RATIO",
     "WEIGHTS", "WEIGHTS_RAW", "AESTHETIC_RATIO", "FIT_RATIO",
     "load_plants", "load_styles", "load_scenes",
     "FORMS", "TEXTURES", "LEAF_SIZES", "STYLES", "ROOMS",
@@ -44,4 +48,4 @@ __all__ = [
     "LIGHT_BY_VALUE", "ROOM_HEIGHT_RANGE", "ROOM_WIDTH",
 ]
 
-__version__ = "0.3.0"
+__version__ = "0.4.0"
