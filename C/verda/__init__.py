@@ -48,4 +48,11 @@ __all__ = [
     "LIGHT_BY_VALUE", "ROOM_HEIGHT_RANGE", "ROOM_WIDTH",
 ]
 
-__version__ = "0.4.0"
+__version__ = "0.5.0"
+
+# 注意：图像相关的 case_index / embedding 故意不在这里导出。
+# 它们依赖 torch + torchvision，而评分和推荐是纯标准库实现的，
+# 顶层 import 会让「只想算个分」的场景也背上 2GB 的 torch 依赖。
+# 需要时直接：
+#     from verda.embedding import ImageEmbedder
+#     from verda.case_index import CaseIndex

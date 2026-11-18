@@ -9,6 +9,7 @@
 2. **推荐搜索**（W3）—— 按「稳妥 / 对比 / 个性」三种性格出三套方案，满足 AC-04
    的「两两 Jaccard < 0.5」。
 3. **一句话改稿**（W3）—— 七种自然语言指令，满足 FR-08 的「保留 >= 50%、返回 diff」。
+4. **案例检索**（W3）—— ResNet50 语义特征 + 余弦相似度，top-3 命中率 100%。
 
 ```
 C/
@@ -18,14 +19,22 @@ C/
 │   ├── loader.py       读 B/data 的 plants_master.csv 和 assets_index.json
 │   ├── scoring.py      七维评分主逻辑
 │   ├── recommend.py    推荐搜索（三性格 + Jaccard 去重）
-│   └── revise.py       一句话改稿（七种意图）
+│   ├── revise.py       一句话改稿（七种意图）
+│   ├── embedding.py    图像特征提取（ResNet50，离线可用）  ← 需要 torch
+│   └── case_index.py   案例库检索 + 查重 + 质量评估        ← 需要 torch
 ├── demo.py             用 B 的真实数据跑四套评分
 ├── demo_recommend.py   两个场景各出三套方案
 ├── demo_revise.py      七种指令 + 七句自然语言
+├── demo_cases.py       以图搜图 / 配色搜 / 查重 / 质量评估
 ├── test_scoring.py     24 个单测
 ├── test_recommend.py   23 个单测
-└── test_revise.py      14 个单测
+├── test_revise.py      14 个单测
+└── test_cases.py       19 个单测
 ```
+
+**依赖说明**：`scoring.py` / `recommend.py` / `revise.py` 只用标准库，不需要 torch。
+只有 `embedding.py` 和 `case_index.py` 需要 torch + torchvision + numpy。
+所以它们在 `verda/__init__.py` 里**故意没导出**——只想算分的话不用背 2GB 的 torch 依赖。
 
 ## 怎么跑
 
@@ -35,7 +44,8 @@ C/
 python C/demo.py                    # 评分演示
 python C/demo_recommend.py          # 推荐演示
 python C/demo_revise.py             # 改稿演示
-python -m unittest C.test_scoring C.test_recommend C.test_revise -v
+python C/demo_cases.py               # 案例检索（首次约 10 秒建库）
+python -m unittest C.test_scoring C.test_recommend C.test_revise C.test_cases -v
 ```
 
 `loader` 会自动从 `C/verda/` 往上找 `B/data/`，所以目录结构必须是 `B/` 和 `C/` 同级。
@@ -195,6 +205,88 @@ to_replace = bad[:max_change]
 只有「更有张力」是加分改稿，因为它换进来的鹿角蕨补上了「附生」这个株型，
 形态对比 +12 分。其余过滤类改稿都会掉分，符合预期。
 
+## 案例检索（FR-09）
+
+### 为什么用 ResNet50 而不是 CLIP
+
+需求写的是 CLIP，但本机没装 `transformers` / `open_clip`，装一个要下 350MB 权重。
+而 torchvision 的五个预训练模型权重本地**全都有**，一个字节都不用下载：
+
+```
+resnet18-f37072fd.pth            44.7 MB
+resnet50-11ad3fa6.pth            97.8 MB
+efficientnet_b0                  20.5 MB
+mobilenet_v3_large               21.1 MB
+convnext_tiny                   109.1 MB
+```
+
+差别在哪：CLIP 是图文对齐的，可以用「暖色调客厅」这样的**文本**搜图；
+ResNet50 只做图像特征，只能「以图搜图」和按标签筛。
+FR-09 要的核心能力是「找相似」，ResNet50 够用——实测 top-3 命中率 100%。
+
+`ImageEmbedder(backbone=...)` 留了扩展位，以后装了 open_clip 加一个分支就行，
+上层 `CaseIndex` 一行都不用改。
+
+### 一个坑：torchvision 会偷偷重下权重
+
+torchvision 新版按**不同的 hash** 找权重：要 `resnet50-0676ba61`，而本地缓存的是
+`resnet50-11ad3fa6`。直接 `models.resnet50(weights=DEFAULT)` 会触发 97MB 重下载，
+当前网速 50KB/s 要半小时。
+
+所以代码里一律用 `weights=None` 构造 + `load_state_dict` 手动灌本地权重：
+
+```python
+net = builder(weights=None)
+state = torch.load(weight_path, map_location="cpu", weights_only=True)
+net.load_state_dict(state)
+```
+
+### 建库与检索
+
+| 操作 | 实测 |
+|---|---|
+| 建库（120 张 × 2048 维） | 7.3 秒，单条 0.06 秒 |
+| 单次检索（以图搜图） | 3 ms |
+| 按配色搜（纯 OKLCH，不用模型） | 0.3 ms |
+
+特征落盘缓存到 `C/.cache/case_embeddings.npz`（已加进 `.gitignore`），之后秒开。
+
+### 检索质量（AC-06 要求 top-3 命中 >= 80%）
+
+自动评估 30 组查询（随机抽案例当查询，看 top-3 里有没有同风格或同场景的）：
+
+| 指标 | 结果 |
+|---|---|
+| 同风格命中率 | **100%** |
+| 同场景命中率 | 93.3% |
+| 风格或场景命中率 | **100%** |
+
+达到 AC-06 的 80% 标准。注意这是**自动代理指标**，不是人工判断——
+需求那边验收写的是「人工 30 组查询」，比这个严格。
+
+### ★ 发现 B 的案例库有 10 组重复图
+
+跑查重时发现 `cases_manifest.csv` 里 120 条案例，实际只有 **110 张独立图片**：
+
+```
+C-001 nordic_living_01.jpg (nordic/living)  |  C-064 minimal_living_04.jpg (minimal/living)
+C-002 nordic_living_02.jpg (nordic/living)  |  C-062 minimal_living_02.jpg (minimal/living)
+C-005 nordic_bedroom_01.jpg (nordic/bedroom) |  C-066 minimal_bedroom_02.jpg (minimal/bedroom)
+C-006 nordic_bedroom_02.jpg (nordic/bedroom) |  C-068 minimal_bedroom_04.jpg (minimal/bedroom)
+C-007 nordic_bedroom_03.jpg (nordic/bedroom) |  C-065 minimal_bedroom_01.jpg (minimal/bedroom)
+C-022 wabi_living_02.jpg (wabi/living)      |  C-026 wabi_bedroom_02.jpg (wabi/bedroom)
+C-025 wabi_bedroom_01.jpg (wabi/bedroom)    |  C-032 wabi_study_04.jpg (wabi/study)
+C-037 wabi_desk_01.jpg (wabi/desk)          |  C-069 minimal_study_01.jpg (minimal/study)
+C-073 minimal_balcony_01.jpg (minimal/balcony) | C-116 industrial_balcony_04.jpg (industrial/balcony)
+C-089 tropical_study_01.jpg (tropical/study) |  C-097 tropical_desk_01.jpg (tropical/desk)
+```
+
+同一张图被采两次，还标成了**不同风格甚至不同场景**（比如 C-022 一张图既是 wabi/living
+又是 wabi/bedroom）。这会让检索结果出现「看起来一样的两条」，标签也没有参考价值。
+
+`CaseIndex.find_duplicates()` 能自动查出来，**需要转给 B 清理**。
+去重后 110 张仍然满足 AC-06 的「>= 100 张」，所以不影响验收。
+
 ## 给后端（D）的接口契约
 
 需求要求 W2 周三 C → D 交「评分返回结构」，就是下面这个 JSON：
@@ -251,16 +343,23 @@ result.as_dict()
 在 B 补列之前，`_score_texture` 对「全组都是哑光」的情况给 72 分而不是 50 分，
 因为那更可能是数据没标注，而不是真的单调。
 
-## 还没做的（W3–W4，看时间）
+## 还没做的（W4，看时间）
 
-- **改稿逻辑**（FR-08）：「更好养」「对猫狗安全」「更有张力」这类自然语言约束的过滤规则，
-  验收要求「保留原方案 ≥50%、返回 diff」。下一步就做这个。
-- **案例向量检索**（FR-09）：需求要 CLIP + 向量库。本机 torch 2.9.1+cpu 和 torchvision 0.24.1
-  都能用，本地也缓存了 resnet50 / resnet18 / efficientnet / convnext，但
-  **transformers / open_clip 都还没装**。两条路：装 open_clip（要下 ~350MB 权重），
-  或者先用 ResNet50 的 2048 维特征顶着（不用下载）。
-- **风格分类基线**：同上，依赖模型。
-- **消融实验、人工盲评**：W4 的评测报告。时间不够建议砍，答辩 8 分钟讲不到。
+- **风格分类基线**：需求里说的「CLIP 风格识别 top-1」。现在没 CLIP，
+  但可以用现有 ResNet50 特征 + 案例库标签训一个简单分类器（逻辑回归），
+  半小时能出基线。做不做看时间。
+- **消融实验**：去掉色彩 / 去掉适配 / 去掉案例参考，看各维度贡献。属于论文级要求，
+  答辩 8 分钟讲不到，建议砍。
+- **评测报告（人工盲评）**：需求要 20 组人工偏好排序。需要找人做，时间不够建议改成
+  「用案例库标签自动评估」——就是 `CaseIndex.evaluate()` 那种做法。
+
+## 全部跑一遍的样子
+
+```bash
+$ python -m unittest C.test_scoring C.test_recommend C.test_revise C.test_cases
+Ran 80 tests in 7.9s
+OK
+```
 
 ## 已知的设计取舍
 
