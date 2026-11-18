@@ -10,6 +10,7 @@
    的「两两 Jaccard < 0.5」。
 3. **一句话改稿**（W3）—— 七种自然语言指令，满足 FR-08 的「保留 >= 50%、返回 diff」。
 4. **案例检索**（W3）—— ResNet50 语义特征 + 余弦相似度，top-3 命中率 100%。
+5. **风格分类基线** —— 六类 top-1 40%，比随机基线高 24 个百分点。
 
 ```
 C/
@@ -21,19 +22,23 @@ C/
 │   ├── recommend.py    推荐搜索（三性格 + Jaccard 去重）
 │   ├── revise.py       一句话改稿（七种意图）
 │   ├── embedding.py    图像特征提取（ResNet50，离线可用）  ← 需要 torch
-│   └── case_index.py   案例库检索 + 查重 + 质量评估        ← 需要 torch
+│   ├── case_index.py   案例库检索 + 查重 + 质量评估        ← 需要 torch
+│   └── style_clf.py    风格分类基线（逻辑回归）            ← 需要 sklearn
 ├── demo.py             用 B 的真实数据跑四套评分
 ├── demo_recommend.py   两个场景各出三套方案
 ├── demo_revise.py      七种指令 + 七句自然语言
 ├── demo_cases.py       以图搜图 / 配色搜 / 查重 / 质量评估
+├── demo_style.py       风格分类基线 + 混淆矩阵
 ├── test_scoring.py     24 个单测
 ├── test_recommend.py   23 个单测
 ├── test_revise.py      14 个单测
-└── test_cases.py       19 个单测
+├── test_cases.py       19 个单测
+└── test_style.py       11 个单测
 ```
 
 **依赖说明**：`scoring.py` / `recommend.py` / `revise.py` 只用标准库，不需要 torch。
-只有 `embedding.py` 和 `case_index.py` 需要 torch + torchvision + numpy。
+`embedding.py` / `case_index.py` 需要 torch + torchvision + numpy，
+`style_clf.py` 额外需要 sklearn。
 所以它们在 `verda/__init__.py` 里**故意没导出**——只想算分的话不用背 2GB 的 torch 依赖。
 
 ## 怎么跑
@@ -45,7 +50,8 @@ python C/demo.py                    # 评分演示
 python C/demo_recommend.py          # 推荐演示
 python C/demo_revise.py             # 改稿演示
 python C/demo_cases.py               # 案例检索（首次约 10 秒建库）
-python -m unittest C.test_scoring C.test_recommend C.test_revise C.test_cases -v
+python C/demo_style.py               # 风格分类基线（约 15 秒）
+python -m unittest C.test_scoring C.test_recommend C.test_revise C.test_cases C.test_style -v
 ```
 
 `loader` 会自动从 `C/verda/` 往上找 `B/data/`，所以目录结构必须是 `B/` 和 `C/` 同级。
@@ -286,6 +292,39 @@ C-089 tropical_study_01.jpg (tropical/study) |  C-097 tropical_desk_01.jpg (trop
 
 `CaseIndex.find_duplicates()` 能自动查出来，**需要转给 B 清理**。
 去重后 110 张仍然满足 AC-06 的「>= 100 张」，所以不影响验收。
+
+## 风格分类基线
+
+对应需求里的「CLIP 选型与评测方案 + 风格分类基线（top-1）」。
+没有 CLIP，用 ResNet50 特征 + 逻辑回归先立个基线，把「top-1 准确率」这个指标做出来。
+
+**样本**：B 的案例库去重后 110 条，6 类（北欧 20 / 中古 20 / 热带 19 / 工业 19 / 日式 18 / 极简 14）
+
+**方法**：5 折分层交叉验证。不用单次 70/30 划分——110 条上抖得太厉害。
+
+**结果**：
+
+| 指标 | 数值 |
+|---|---|
+| top-1 准确率 | **40.0%** |
+| 多数类基线（全猜北欧） | 18.2% |
+| 随机基线 | 16.7% |
+| 比多数类高 | **+21.8 个百分点** |
+
+各类 F1：日式 0.476 / 北欧 0.455 / 中古 0.444 / 工业 0.381 / 热带 0.343 / 极简 0.190
+
+**怎么看这个 40%**：
+
+1. **6 类分类 40% 是有意义的**——随机是 16.7%，翻了一倍多。
+2. **但不算好**。原因有三个：样本只有 110 条；ResNet50 训的是 ImageNet 物体分类，
+   对「室内风格」这种抽象语义不敏感；北欧和极简在视觉上本来就相近（混淆矩阵里这两类互串最多）。
+3. **这正好说明为什么需要 CLIP**。CLIP 在图文对齐的语义空间里，对「北欧」「侘寂」
+   这类风格词更敏感。换上 CLIP 特征后重跑 `evaluate()` 就能对比，
+   评估代码一行都不用改——这就是把特征提取器做成可替换的原因。
+
+**答辩时怎么说**：「我们用 ResNet50 特征训了个基线，6 类 top-1 是 40%，比随机高 24 个百分点。
+这个数字不高，主要受限于样本量和特征语义粒度，所以我们把 CLIP 列为下一步升级方向，
+评估框架已经搭好了，换特征就能验证。」
 
 ## 给后端（D）的接口契约
 
