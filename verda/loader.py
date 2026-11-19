@@ -2,10 +2,10 @@
 """数据加载：读 B 交付包里的 plants_master.csv 和 assets_index.json
 
 B 的包结构（相对仓库根）：
-    B/data/plants_master.csv     植物主数据，31 列
-    B/data/assets_index.json     素材索引，含 dominant_hex（主色）和 has_cutout
-    B/data/styles.csv            风格 key -> 中文名
-    B/data/scenes.csv            场景 key -> 高度范围
+    data/plants_master.csv     植物主数据，31 列
+    data/assets_index.json     素材索引，含 dominant_hex（主色）和 has_cutout
+    data/styles.csv            风格 key -> 中文名
+    data/scenes.csv            场景 key -> 高度范围
 
 B 没给评分需要的三个字段，这里派生：
     leaf_size     从 leaf 字段解析（"大叶深裂" -> 大叶）
@@ -14,8 +14,8 @@ B 没给评分需要的三个字段，这里派生：
 
 用法：
     from verda.loader import load_plants
-    plants = load_plants()           # 自动找仓库里的 B/data
-    plants = load_plants("其他路径/B/data")
+    plants = load_plants()           # 自动找仓库里的 data
+    plants = load_plants("其他路径/data")
 """
 
 import csv
@@ -77,22 +77,22 @@ def _parse_texture(leaf: str, morphology: str) -> str:
 
 
 def _find_data_dir(explicit: str = None) -> str:
-    """找 B/data 目录：优先用传入的，否则从当前文件往上找"""
+    """找 data 目录：优先用传入的，否则从当前文件往上找"""
     if explicit:
         if os.path.isdir(explicit):
             return explicit
         raise FileNotFoundError("指定的数据目录不存在：%s" % explicit)
 
     here = os.path.dirname(os.path.abspath(__file__))
-    # 从 C/verda/ 往上找，最多 4 层
+    # 从 verda/ 往上找，最多 4 层
     cur = here
     for _ in range(5):
         cur = os.path.dirname(cur)
-        candidate = os.path.join(cur, "B", "data")
+        candidate = os.path.join(cur, "data")
         if os.path.isdir(candidate):
             return candidate
     raise FileNotFoundError(
-        "没找到 B/data 目录。请确认仓库结构里 B/ 和 C/ 是同级，"
+        "没找到 data 目录。请确认 data/ 与 verda/ 同级，"
         "或者显式传路径给 load_plants()")
 
 

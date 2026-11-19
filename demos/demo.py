@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 """演示：用 B 的真实植物数据跑四套方案
 
-跑法（在仓库根目录，即 B/ C/ 的上一层）：
-    python C/demo.py
+跑法（在仓库根目录）：
+    python demos/demo.py
 """
 
 import os
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from verda import Combo, Scene, explain_weights, score_combo
 from verda.loader import load_plants

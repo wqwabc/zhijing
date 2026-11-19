@@ -7,7 +7,7 @@
     from verda import Combo, Scene, score_combo
     from verda.loader import load_plants
 
-    plants = load_plants()                    # 读 B/data/plants_master.csv
+    plants = load_plants()                    # 读 data/plants_master.csv
     by_id = {p.plant_id: p for p in plants}
 
     combo = Combo([by_id["P01"], by_id["P10"], by_id["P15"]])

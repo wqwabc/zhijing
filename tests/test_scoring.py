@@ -2,9 +2,9 @@
 """评分引擎单元测试
 
 跑法（在仓库根目录）：
-    python -m unittest C.test_scoring -v
-或进到 C/ 目录：
-    python -m unittest test_scoring -v
+    python -m unittest discover -s tests -p test_scoring.py -v
+或在仓库根目录：
+    python -m unittest discover -s tests -p test_scoring.py -v
 """
 
 import json
@@ -12,7 +12,7 @@ import os
 import sys
 import unittest
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from verda import Combo, Plant, Scene, score_combo
 from verda.loader import load_plants

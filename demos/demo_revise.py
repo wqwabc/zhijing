@@ -2,13 +2,13 @@
 """改稿演示：拿一套方案，试七种指令
 
 跑法（在仓库根目录）：
-    python C/demo_revise.py
+    python demos/demo_revise.py
 """
 
 import os
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from verda import Combo, Scene
 from verda.loader import load_plants

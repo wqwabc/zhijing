@@ -2,14 +2,14 @@
 """推荐演示：给一个场景出三套方案
 
 跑法（在仓库根目录）：
-    python C/demo_recommend.py
+    python demos/demo_recommend.py
 """
 
 import os
 import sys
 import time
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from verda import Scene
 from verda.loader import load_plants

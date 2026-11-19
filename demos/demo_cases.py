@@ -2,7 +2,7 @@
 """案例库检索演示（FR-09）
 
 跑法（在仓库根目录）：
-    python C/demo_cases.py
+    python demos/demo_cases.py
 
 第一次跑要算 120 张图的特征，CPU 上大约 30~60 秒；
 之后有缓存，秒开。
@@ -12,7 +12,7 @@ import os
 import sys
 import time
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from verda.case_index import CaseIndex
 from verda.embedding import ImageEmbedder

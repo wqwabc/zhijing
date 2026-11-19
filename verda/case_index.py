@@ -9,7 +9,7 @@
     · 验收 AC-06：top-3 相关案例命中率 ≥80%（人工 30 组查询）
 
 实现：用 ResNet50 的 2048 维语义特征 + 余弦相似度。特征只在第一次建库时算，
-落盘缓存到 `B/.cache/case_embeddings.npz`，之后秒开。
+落盘缓存到 `.cache/case_embeddings.npz`，之后秒开。
 
 两种检索入口：
     search_by_image()   以图搜图（用户上传自己的房间照片，找相似的案例）
@@ -62,11 +62,11 @@ class CaseIndex:
             manifest_csv = manifest_csv or os.path.join(data_dir,
                                                         "cases_manifest.csv")
             # B 的 file_path 是相对「B 包的根目录」写的（assets/cases/xxx.jpg），
-            # 所以 cases_root 应该是 B/，也就是 data 目录的上一层
+            # 所以 cases_root 应该是仓库根，也就是 data 目录的上一层
             cases_root = cases_root or os.path.dirname(data_dir)
         self.manifest_csv = manifest_csv
         self.cases_root = cases_root
-        # 缓存放在 C/.cache/ 下，不污染 B 的交付包
+        # 缓存放在 .cache/ 下，不污染数据目录
         c_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         self.cache_path = cache_path or os.path.join(
             c_root, ".cache", "case_embeddings.npz")
@@ -80,10 +80,10 @@ class CaseIndex:
         cur = here
         for _ in range(5):
             cur = os.path.dirname(cur)
-            cand = os.path.join(cur, "B", "data")
+            cand = os.path.join(cur, "data")
             if os.path.isdir(cand):
                 return cand
-        raise FileNotFoundError("找不到 B/data 目录")
+        raise FileNotFoundError("找不到 data 目录")
 
     # ---------------- 建库 ----------------
 
