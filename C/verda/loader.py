@@ -133,6 +133,17 @@ def load_plants(data_dir: str = None) -> List[Plant]:
             scene_tags = [t.strip() for t in
                           (row.get("scene_tags") or "").split(";") if t.strip()]
 
+            # v1.7 起 B 直接给了 leaf_size / texture 两列，优先用。
+            # v1.6 及更早没有这两列，退回从 leaf 描述和 morphology 关键词派生。
+            # 实测两者的叶型一致率 58%、质感一致率 17%，可见派生只能当兜底。
+            leaf_size = (row.get("leaf_size") or "").strip()
+            if leaf_size not in LEAF_SIZES:
+                leaf_size = _parse_leaf_size(leaf)
+
+            texture = (row.get("texture") or "").strip()
+            if texture not in TEXTURES:
+                texture = _parse_texture(leaf, morphology)
+
             pet_safe_raw = (row.get("pet_safe") or "").strip().upper()
             water_raw = (row.get("water_days") or "").strip()
             try:
@@ -160,9 +171,9 @@ def load_plants(data_dir: str = None) -> List[Plant]:
                 price_cny=(row.get("price_cny") or "0").strip(),
                 care_min_week=care_min,
                 priority=(row.get("priority") or "P0").strip(),
-                # 派生
-                leaf_size=_parse_leaf_size(leaf),
-                texture=_parse_texture(leaf, morphology),
+                # 优先用 B 给的，没有再派生
+                leaf_size=leaf_size,
+                texture=texture,
                 dominant_hex=extra.get("dominant_hex") or "#3F6B4A",
                 has_cutout=extra.get("has_cutout", False),
             ))
