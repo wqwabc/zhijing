@@ -72,6 +72,7 @@ def load_assets(repo_root: str) -> dict:
             "height": entry["height"],
             "height_range_cm": entry["height_range_cm"],
             "dominant_hex": entry["dominant_hex"],
+            "thumb_url": "/api/assets/%s/thumb" % entry["plant_id"],
             "image_url": "/api/assets/%s/image" % entry["plant_id"],
         })
 

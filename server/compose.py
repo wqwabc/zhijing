@@ -60,15 +60,35 @@ def _resolve_height_cm(requested, height_range_cm) -> (float, bool):
     return round(actual, 1), actual != requested
 
 
-def _contact_shadow(shadow_img, draw_img, cx, base_y, w, h):
-    """在落地点画一圈柔和阴影（椭圆 + 模糊）"""
-    rx = max(12, int(w * 0.45))
-    ry = max(6, int(h * 0.055))
+def _pot_width_px(src: Image.Image) -> int:
+    """素材底部 8% 区域的最大不透明宽度，作为花盆宽度（原图尺度）。
+
+    接触阴影由「接地面」决定，和冠幅无关；按盆宽画才不会糊成一团灰。
+    素材若底部没有盆（垂吊/插画），返回 0，交由调用方兜底最小值。
+    """
+    w, h = src.size
+    top = int(h * 0.92)
+    band = src.getchannel("A").crop((0, top, w, h))
+    bbox = band.getbbox()
+    return 0 if bbox is None else int(bbox[2] - bbox[0])
+
+
+def _contact_shadow(shadow_img, draw_img, cx, base_y, pot_w):
+    """落地点画接触阴影：外圈柔和 + 内圈更深的接地暗边，只模糊一次。
+
+    参数由盆宽推导（不是冠幅、不是株高），保证阴影跟着盆走：
+        rx = 盆宽 x 0.75，ry = rx x 0.30，模糊半径 = rx x 0.45
+    """
+    rx = max(10, int(pot_w * 0.75))
+    ry = max(5, int(rx * 0.30))
     cx = int(cx)
     cy = int(base_y)
-    draw_img.ellipse([cx - rx, cy - ry, cx + rx, cy + ry],
-                     fill=(0, 0, 0, 90))
-    blur = max(3, rx // 6)
+
+    draw_img.ellipse([cx - rx, cy - ry, cx + rx, cy + ry], fill=(0, 0, 0, 120))
+    irx, iry = max(6, int(rx * 0.55)), max(4, int(ry * 0.55))
+    draw_img.ellipse([cx - irx, cy - iry, cx + irx, cy + iry], fill=(0, 0, 0, 165))
+
+    blur = max(3, int(rx * 0.45))
     left, top = max(0, cx - rx * 2), max(0, cy - ry * 4)
     right = min(shadow_img.width, cx + rx * 2)
     bottom = min(shadow_img.height, cy + ry * 4)
@@ -134,28 +154,41 @@ def compose_photo(base_img: Image.Image, items, assets_by_id: dict,
         if visible_bounds is None:
             raise ValueError("%s 的素材完全透明" % asset["plant_id"])
         src = src.crop(visible_bounds)
+        pot_px = _pot_width_px(src)
         target_h = max(2, int(round(h_cm * px_per_cm)))
         scale = target_h / src.height
         target_w = max(2, int(round(src.width * scale)))
         plant = src.resize((target_w, target_h), Image.LANCZOS)
-        resolved.append((it, asset, h_cm, int(it.get("layer") or 0), plant))
+
+        # x 是植物中轴线：夹回画布，保证整株可见（越界时记录 clipped）。
+        requested_px = int(it["x"]) - plant.width // 2
+        px = max(0, min(requested_px, max(0, canvas.width - plant.width)))
+        resolved.append({
+            "it": it,
+            "asset": asset,
+            "h_cm": h_cm,
+            "layer": int(it.get("layer") or 0),
+            "plant": plant,
+            "px": px,
+            "pot_px": pot_px * scale,
+            "clipped": px != requested_px,
+        })
 
     # 层级：数值大的靠后先画，layer 0 最前最后画
-    resolved.sort(key=lambda r: -r[3])
+    resolved.sort(key=lambda r: -r["layer"])
 
-    # 1. 所有株的接触阴影先铺一层
+    # 1. 所有株的接触阴影先铺一层（每株各自模糊一次，不再整层二次模糊）
     shadow_layer = Image.new("RGBA", canvas.size, (0, 0, 0, 0))
     sdraw = ImageDraw.Draw(shadow_layer)
-    for it, asset, h_cm, layer, plant in resolved:
-        _contact_shadow(shadow_layer, sdraw, it["x"], ground_y,
-                        plant.width, plant.height)
-    shadow_layer = shadow_layer.filter(ImageFilter.GaussianBlur(2))
+    for r in resolved:
+        _contact_shadow(shadow_layer, sdraw, r["px"] + r["plant"].width // 2,
+                        ground_y, r["pot_px"])
     canvas.paste(shadow_layer, (0, 0), shadow_layer)
 
     # 2. 植物按层级顺序贴入
     items_meta = []
-    for it, asset, h_cm, layer, plant in resolved:
-        px = int(it["x"]) - plant.width // 2
+    for r in resolved:
+        it, asset, plant, px = r["it"], r["asset"], r["plant"], r["px"]
         py = int(ground_y) - plant.height
         canvas.paste(plant, (px, py), plant)
 
@@ -166,8 +199,10 @@ def compose_photo(base_img: Image.Image, items, assets_by_id: dict,
             "kind": asset["kind"],
             "drawn_height_px": plant.height,
             "requested_height_cm": it.get("height_cm"),
-            "actual_height_cm": h_cm,
-            "layer": layer,
+            "actual_height_cm": r["h_cm"],
+            "x_actual": px + plant.width // 2,
+            "clipped": r["clipped"],
+            "layer": r["layer"],
             "bbox": bbox,
         })
 

@@ -15,13 +15,20 @@
 import os
 import time
 
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 
 from .api import api_bp
 from .store import PhotoStore
 
-BACKEND_VERSION = "1.0.0"
+BACKEND_VERSION = "1.1.0"
 PHOTO_TTL_SECONDS = 30 * 60        # 照片与合成结果 30 分钟过期（合规：不长期存储）
+MAX_BODY_BYTES = 11 * 1024 * 1024   # 10MB 照片 + multipart 余量，超出直接 413
+
+
+def _cors_origins() -> list:
+    """允许跨域的来源，默认 *（开发期）；生产用 VERDA_CORS_ORIGINS 收敛。"""
+    raw = os.environ.get("VERDA_CORS_ORIGINS", "*")
+    return [o.strip() for o in raw.split(",") if o.strip()]
 
 
 def create_app(mock: bool = False) -> Flask:
@@ -39,6 +46,8 @@ def create_app(mock: bool = False) -> Flask:
         MOCK=mock,
         REPO_ROOT=repo_root,
         MAX_PHOTO_BYTES=10 * 1024 * 1024,
+        MAX_CONTENT_LENGTH=MAX_BODY_BYTES,   # 超限在解析 multipart 前就拒掉
+        CORS_ORIGINS=_cors_origins(),
     )
 
     store = PhotoStore(ttl_seconds=PHOTO_TTL_SECONDS)
@@ -50,7 +59,32 @@ def create_app(mock: bool = False) -> Flask:
     @app.after_request
     def _headers(resp):
         resp.headers["X-Verda-API-Version"] = "1"
+
+        # CORS：E 用独立 dev server（Vite 5173）时必须带，否则浏览器整片拦截。
+        allowed = app.config["CORS_ORIGINS"]
+        origin = request.headers.get("Origin")
+        if origin and ("*" in allowed or origin in allowed):
+            resp.headers["Access-Control-Allow-Origin"] = origin
+            resp.headers.add("Vary", "Origin")
+        elif "*" in allowed:
+            resp.headers["Access-Control-Allow-Origin"] = "*"
+        resp.headers["Access-Control-Expose-Headers"] = "X-Verda-API-Version"
+
+        if request.method == "OPTIONS":      # 预检
+            resp.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+            resp.headers["Access-Control-Allow-Headers"] = \
+                request.headers.get("Access-Control-Request-Headers", "Content-Type")
+            resp.headers["Access-Control-Max-Age"] = "600"
         return resp
+
+    @app.errorhandler(413)
+    def _413(_e):
+        return jsonify(error={
+            "code": "E40002",
+            "message": "照片超过 10MB",
+            "hint": "请压缩到 10MB 以内再上传（手机原图可先用相册裁切）",
+            "field": "photo",
+        }), 413
 
     @app.errorhandler(404)
     def _404(_e):

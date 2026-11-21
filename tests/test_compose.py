@@ -124,16 +124,18 @@ class TestComposePhoto(unittest.TestCase):
         self.assertGreater(g, b)
 
     def test_shadow_added(self):
-        """落地点附近有阴影（比无植物时更暗）"""
+        """落地点下方有阴影（比无植物时更暗）"""
         clean = self.base.copy()
-        canvas, _, _ = self._compose(
+        canvas, meta, _ = self._compose(
             [{"plant_id": "PXX", "x": 200, "height_cm": 150}],
             px_per_cm=2.0, ground_y=550)
-        # 阴影在植物左右两侧的地面（避开植物本体）
-        before = clean.getpixel((230, 548))[:3]
-        after = canvas.getpixel((230, 548))[:3]
+        # 阴影按盆宽生成，落在地面线以下；避开植物本体（底边=550）
+        before = clean.getpixel((200, 553))[:3]
+        after = canvas.getpixel((200, 553))[:3]
         self.assertLess(sum(after), sum(before),
-                        "落地点两侧应比原图暗（接触阴影）")
+                        "落地点下方应比原图暗（接触阴影）")
+        self.assertEqual(canvas.getpixel((330, 553)), clean.getpixel((330, 553)),
+                         "远离落地点不应有阴影")
 
     def test_multiple_plants_layer_order(self):
         """layer 0 最前：后画的（layer 小）在更晚落笔，遮挡前面的"""
@@ -179,6 +181,44 @@ class TestComposePhoto(unittest.TestCase):
         with self.assertRaises(KeyError):
             self._compose([{"plant_id": "P99", "x": 200}],
                           px_per_cm=2.0, ground_y=550)
+
+    def test_edge_x_clipped_not_cut(self):
+        """x 是中轴线，贴边时整株平移进画布，不允许半株出画"""
+        canvas, meta, _ = self._compose(
+            [{"plant_id": "PXX", "x": 0, "height_cm": 150}],
+            px_per_cm=2.0, ground_y=550, watermark=False)
+        m = meta[0]
+        self.assertTrue(m["clipped"])
+        self.assertGreaterEqual(m["bbox"][0], 0)
+        self.assertLessEqual(m["bbox"][2], self.base.width)
+        self.assertEqual(m["x_actual"],
+                         m["bbox"][0] + (m["bbox"][2] - m["bbox"][0]) // 2)
+
+    def test_contact_shadow_visible_and_decays(self):
+        """阴影要落在地面线以下并随距离衰减，否则观感是「浮着」"""
+        pot_path = os.path.join(self.tmp.name, "POT.png")
+        img = Image.new("RGBA", (120, 360), (0, 0, 0, 0))
+        d = ImageDraw.Draw(img)
+        d.rectangle([30, 250, 90, 360], fill=(180, 180, 170, 255))   # 花盆
+        d.rectangle([58, 60, 62, 260], fill=(80, 100, 60, 255))      # 茎
+        d.ellipse([10, 0, 110, 140], fill=(60, 110, 70, 255))        # 冠
+        img.save(pot_path, "PNG")
+        assets = {"POT": {"plant_id": "POT", "name_cn": "测试", "available": True,
+                          "kind": "photo", "abs_path": pot_path,
+                          "height_range_cm": [80, 180]}}
+        gray = Image.new("RGB", (400, 600), (200, 200, 200))
+        canvas, meta, _ = compose_photo(
+            gray, [{"plant_id": "POT", "x": 200, "height_cm": 150}],
+            assets, 2.0, 550, watermark=False)
+
+        def mean_at(y):
+            x0, _, x1, _ = meta[0]["bbox"]
+            xs = list(range(x0, x1, 4))
+            return sum(canvas.getpixel((x, y))[0] for x in xs) / len(xs)
+
+        self.assertLess(mean_at(554), 190, "地面线下方应有可见阴影")
+        self.assertGreaterEqual(mean_at(596), mean_at(554), "阴影应随距离衰减")
+        self.assertEqual(canvas.getpixel((3, 554))[0], 200, "盆两侧不应有阴影")
 
 
 if __name__ == "__main__":

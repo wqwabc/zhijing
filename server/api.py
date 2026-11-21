@@ -77,8 +77,8 @@ def _make_scene(raw: dict) -> Scene:
     if not isinstance(raw, dict):
         raise ApiError(400, "E40001", "scene 应为对象")
     has_pet = raw.get("has_pet", False)
-    if isinstance(has_pet, str) and has_pet.lower() in ("true", "false"):
-        has_pet = has_pet.lower() == "true"
+    if isinstance(has_pet, str) and has_pet.strip().lower() in ("true", "false", "1", "0"):
+        has_pet = has_pet.strip().lower() in ("true", "1")
     elif type(has_pet) is int and has_pet in (0, 1):
         has_pet = bool(has_pet)
     elif not isinstance(has_pet, bool):
@@ -223,6 +223,7 @@ def anchor():
         px_per_cm=round(px_per_cm, 2),
         ref_height_cm=ref_h,
         ground_y_mid=round(ground_y_mid, 1),
+        ground_y=round(ground_y_mid, 1),      # 别名：/api/compose 直接透传用
         ground_angle_deg=round(ground_angle, 2),
         ref_length_px=round(ref_len_px, 1),
         warnings=warnings,
@@ -441,7 +442,8 @@ def plants_panel():
             "tags": tags,
             "available": available,
             "kind": asset.get("kind", ""),
-            "thumb_url": "/api/assets/%s/image" % p.plant_id,
+            "thumb_url": "/api/assets/%s/thumb" % p.plant_id,
+            "image_url": "/api/assets/%s/image" % p.plant_id,
             "style_tags": p.style_tags,
             "pet_safe": p.pet_safe,
             "toxic": p.toxic,
@@ -468,5 +470,53 @@ def asset_image(plant_id: str):
     if not asset["available"] or not asset.get("abs_path"):
         raise ApiError(404, "E40403", "素材文件缺失：%s" % plant_id)
     resp = send_file(asset["abs_path"], mimetype="image/png")
+    resp.headers["Cache-Control"] = "public, max-age=86400"
+    return resp
+
+
+THUMB_HEIGHT = 256          # 面板缩略图高度（像素）
+
+
+def _make_thumb(src_path: str):
+    """把素材缩到 256px 高，按 alpha 裁掉透明边。"""
+    from PIL import Image
+
+    with Image.open(src_path) as src:
+        im = src.convert("RGBA")
+    bbox = im.getchannel("A").getbbox()
+    if bbox:
+        im = im.crop(bbox)
+    w, h = im.size
+    scale = THUMB_HEIGHT / float(h)
+    return im.resize((max(1, int(round(w * scale))), THUMB_HEIGHT), Image.LANCZOS)
+
+
+@api_bp.get("/api/assets/<plant_id>/thumb")
+def asset_thumb(plant_id: str):
+    """缩略图（256px 高，WebP 优先），落盘缓存到 .cache/thumbs/。
+
+    原图单张 ~900KB，48 张面板首屏 40MB+；FR-07 要求点选 <200ms。
+    """
+    asset = load_assets(_repo_root())["by_id"].get(plant_id)
+    if asset is None:
+        raise ApiError(404, "E40402", "植物不存在：%s" % plant_id)
+    if not asset["available"] or not asset.get("abs_path"):
+        raise ApiError(404, "E40403", "素材文件缺失：%s" % plant_id)
+
+    cache_dir = os.path.join(_repo_root(), ".cache", "thumbs")
+    os.makedirs(cache_dir, exist_ok=True)
+    stamp = int(os.path.getmtime(asset["abs_path"]))
+    path = os.path.join(cache_dir, "%s_%dh_%d.webp"
+                        % (plant_id, THUMB_HEIGHT, stamp))
+    if not os.path.isfile(path):
+        im = _make_thumb(asset["abs_path"])
+        try:
+            im.save(path, "WEBP", quality=82, method=4)
+        except (KeyError, OSError):        # Pillow 未编 WebP 时退回 PNG
+            path = path[:-5] + ".png"
+            im.save(path, "PNG", optimize=True)
+
+    resp = send_file(path, mimetype="image/webp" if path.endswith(".webp")
+                     else "image/png")
     resp.headers["Cache-Control"] = "public, max-age=86400"
     return resp

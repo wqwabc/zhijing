@@ -368,6 +368,99 @@ class TestComposeEndpoint(ApiTestBase):
                 self.assertEqual(r.get_json()["error"]["code"], "E40001")
 
 
+class TestCorsAndLimits(ApiTestBase):
+    """E 用独立 dev server 联调时，缺 CORS 会被浏览器整片拦掉。"""
+
+    ORIGIN = "http://localhost:5173"
+
+    def test_preflight_allows_origin(self):
+        r = self.client.options("/api/score", headers={
+            "Origin": self.ORIGIN,
+            "Access-Control-Request-Method": "POST",
+            "Access-Control-Request-Headers": "content-type"})
+        self.assertEqual(r.status_code, 200)
+        self.assertEqual(r.headers.get("Access-Control-Allow-Origin"), self.ORIGIN)
+        self.assertIn("POST", r.headers.get("Access-Control-Allow-Methods", ""))
+        self.assertIn("ontent-type", r.headers.get("Access-Control-Allow-Headers", ""))
+
+    def test_simple_request_has_cors(self):
+        r = self.client.get("/healthz", headers={"Origin": self.ORIGIN})
+        self.assertEqual(r.headers.get("Access-Control-Allow-Origin"), self.ORIGIN)
+
+    def test_origin_whitelist_blocks_others(self):
+        original = self.app.config["CORS_ORIGINS"]
+        self.app.config["CORS_ORIGINS"] = ["http://ok.local"]
+        try:
+            r = self.client.get("/healthz", headers={"Origin": "http://evil.local"})
+            self.assertIsNone(r.headers.get("Access-Control-Allow-Origin"))
+            r = self.client.get("/healthz", headers={"Origin": "http://ok.local"})
+            self.assertEqual(r.headers.get("Access-Control-Allow-Origin"),
+                             "http://ok.local")
+        finally:
+            self.app.config["CORS_ORIGINS"] = original
+
+    def test_body_too_large_returns_413(self):
+        r = self.client.post("/api/upload", data=b"x" * (12 * 1024 * 1024),
+                             content_type="multipart/form-data")
+        self.assertEqual(r.status_code, 413)
+        self.assertEqual(r.get_json()["error"]["code"], "E40002")
+
+
+class TestThumbAndEdges(ApiTestBase):
+
+    def test_thumb_is_small_and_cacheable(self):
+        r = self.client.get("/api/assets/P01/thumb")
+        self.assertEqual(r.status_code, 200)
+        self.assertIn(r.mimetype, ("image/webp", "image/png"))
+        self.assertLess(len(r.data), 150 * 1024, "缩略图应远小于原图")
+        self.assertTrue(r.headers["Cache-Control"].startswith("public"))
+        with Image.open(io.BytesIO(r.data)) as im:
+            self.assertEqual(im.size[1], 256)
+
+    def test_thumb_missing(self):
+        self.assertEqual(self.client.get("/api/assets/P99/thumb").status_code, 404)
+
+    def test_panel_uses_thumb_url(self):
+        body = self.client.get("/api/plants").get_json()
+        plant = body["plants"][0]
+        self.assertTrue(plant["thumb_url"].endswith("/thumb"))
+        self.assertTrue(plant["image_url"].endswith("/image"))
+
+    def test_anchor_returns_ground_y_alias(self):
+        photo_id = self._upload().get_json()["photo_id"]
+        r = self.client.post("/api/anchor", json={
+            "photo_id": photo_id,
+            "ground": [{"x": 100, "y": 800}, {"x": 1200, "y": 810}],
+            "ref": [{"x": 1000, "y": 800}, {"x": 1002, "y": -448}],
+            "ref_type": "door"})
+        body = r.get_json()
+        self.assertIn("ground_y", body)
+        self.assertEqual(body["ground_y"], body["ground_y_mid"])
+
+    def test_has_pet_digit_strings(self):
+        r = self.client.post("/api/score", json={
+            "plant_ids": ["P01"], "scene": dict(SCENE, has_pet="0")})
+        self.assertEqual(r.status_code, 200)
+        self.assertEqual(r.get_json()["hard_flags"], [])
+        r = self.client.post("/api/score", json={
+            "plant_ids": ["P01"], "scene": dict(SCENE, has_pet="1")})
+        self.assertTrue(r.get_json()["hard_flags"])
+
+    def test_edge_plant_is_clipped_inside_canvas(self):
+        photo_id = self._upload().get_json()["photo_id"]
+        r = self.client.post("/api/compose", json={
+            "photo_id": photo_id,
+            "anchor": {"px_per_cm": 4.0, "ground_y": 850},
+            "items": [{"plant_id": "P01", "x": 0}],
+            "watermark": False})
+        self.assertEqual(r.status_code, 200)
+        meta = r.get_json()["items_meta"][0]
+        self.assertTrue(meta["clipped"], "贴左边缘应标记 clipped")
+        self.assertGreaterEqual(meta["bbox"][0], 0)
+        self.assertLessEqual(meta["bbox"][2], 1300)
+        self.assertGreater(meta["x_actual"], 0)
+
+
 class TestMockMode(unittest.TestCase):
     """--mock 模式：合成返回原图 + meta，供 E 先行联调"""
 
