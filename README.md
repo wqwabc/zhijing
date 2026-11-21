@@ -69,6 +69,28 @@ python -m unittest discover -s tests -p "test_revise.py"
 评分与推荐只依赖标准库；图像相关模块是可选依赖，
 `verda/__init__.py` 不会强制导入它们。
 
+## 后端（D 交付）
+
+Flask 服务：照片校验、尺度锚定、评分/推荐/改稿接口、照片合成。
+
+```bash
+pip install -r requirements.txt
+
+# 开发运行
+python app.py                 # http://127.0.0.1:5000
+python app.py --mock           # mock 模式：合成返回原图，供前端先行联调
+
+# 单元测试（校验 / 合成 / 接口）
+python -m unittest discover -s tests -p test_upload.py
+python -m unittest discover -s tests -p test_compose.py
+python -m unittest discover -s tests -p test_api.py
+
+# 生产部署（Linux）
+gunicorn -w 4 -b 127.0.0.1:8000 app:app
+```
+
+接口契约见 `docs/14_接口契约.md`；评分/推荐/改稿返回结构沿用 `verda/` 包原样输出。
+
 ## 文档索引
 
 | 文档 | 内容 |
