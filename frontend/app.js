@@ -1150,6 +1150,31 @@
     if (!S.photo) { toast('先上传照片或用示例房间'); return; }
     setMode('ground', '点两下：先点近处地面，再点远处地面');
   });
+  $('btnAutoGround').addEventListener('click', function () {
+    if (!S.photo) { toast('先上传照片或用示例房间'); return; }
+    function applyGround(y, conf, method) {
+      S.anchor = S.anchor || {};
+      S.anchor.g1 = { x: 0, y: y };
+      S.anchor.g2 = { x: S.photo.w, y: y };
+      S.anchor.groundY = y;
+      if (S.anchor.pxPerCm) finishAnchor(); else { setMode('idle'); renderAll(); }
+      $('anchorNote').className = 'note';
+      $('anchorNote').textContent = '自动落地线：y=' + Math.round(y) + 'px（' +
+        (method === 'fallback' ? '未找到明显地面，按 82% 默认值' :
+          '置信度 ' + Math.round((conf || 0) * 100) + '%') + '），可手动重画。';
+      toast(conf >= 0.5 ? '已自动判断落地线' : '置信度较低，请检查落地线');
+    }
+    if (!S.online || !S.photo.id) {
+      applyGround(S.photo.h * 0.82, 0.2, 'fallback');
+      return;
+    }
+    loading(true, '正在判断落地线…');
+    req('/api/groundline', { json: { photo_id: S.photo.id } }).then(function (d) {
+      applyGround(d.ground_y, d.confidence, d.method);
+    }).catch(function () {
+      applyGround(S.photo.h * 0.82, 0.2, 'fallback');
+    }).then(function () { loading(false); });
+  });
   $('btnRef').addEventListener('click', function () {
     if (!S.photo) { toast('先上传照片或用示例房间'); return; }
     setMode('ref', '点参照物的两端（门框上下沿 / 沙发两侧）');

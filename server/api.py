@@ -19,6 +19,7 @@ from .assets import load_assets
 from .chat import reply as chat_reply
 from .compose import MAX_ITEMS, PX_PER_CM_RANGE, compose_photo
 from .design import design
+from .ground import detect_groundline
 from .store import RESULT_NAME_RE
 from .validation import SUPPORTED_FORMATS, PhotoFormatError, load_photo, \
     validate_photo
@@ -393,6 +394,19 @@ def api_compose():
         elapsed_ms=elapsed,
         expires_at=expires.isoformat(timespec="seconds"),
     )
+
+
+# ---------------------------------------------------------------- 自动落地线
+
+@api_bp.post("/api/groundline")
+def api_groundline():
+    """根据地板颜色/纹理估计地面线；置信度低时前端提示手动调整。"""
+    body = _body()
+    photo_id = body.get("photo_id", "")
+    path = _store().photo_path(photo_id)
+    if not path:
+        raise ApiError(404, "E40401", "photo_id 不存在或已过期", field="photo_id")
+    return jsonify(detect_groundline(path))
 
 
 # ---------------------------------------------------------------- 大模型选株
