@@ -472,12 +472,24 @@
     var pl = e.target.closest ? e.target.closest('.plant-layer') : null;
     if (pl) {
       var uid = parseInt(pl.getAttribute('data-uid'), 10);
+      var target = findPlant(uid);
+      if (!target) return;
       S.selected = uid;
-      S.drag = { uid: uid, el: pl };
+      S.drag = {
+        uid: uid, el: pl, mode: null,
+        sx: e.clientX, sy: e.clientY,
+        startX: target.x, startH: target.heightCm
+      };
+      // 进入编辑态：把图层显形、把服务端成图收起，拖动才有即时反馈
+      $('layers').classList.remove('hide');
+      $('composedImg').classList.remove('on');
       pl.classList.add('dragging');
-      pl.setPointerCapture && pl.setPointerCapture(e.pointerId);
+      try { pl.setPointerCapture(e.pointerId); } catch (err) { }
       renderLayersPanel();
-      renderLayers();
+      if (!S.dragHintShown) {
+        S.dragHintShown = true;
+        toast('左右拖 = 沿地面移动，上下拖 = 调株高', 3200);
+      }
       return;
     }
     S.selected = null;
@@ -487,20 +499,55 @@
 
   $('stage').addEventListener('pointermove', function (e) {
     if (!S.drag || !S.photo) return;
-    var p = stagePoint(e);
-    var it = findPlant(S.drag.uid);
+    var d = S.drag, it = findPlant(d.uid);
     if (!it) return;
-    var span = groundSpan();
-    it.x = clamp(p.x, span.min, span.max);
+    var dx = e.clientX - d.sx, dy = e.clientY - d.sy;
+
+    // 首次移动超过 5px 才定轴，避免手抖把「挪位置」误判成「调高度」
+    if (!d.mode) {
+      if (Math.hypot(dx, dy) < 5) return;
+      d.mode = Math.abs(dy) > Math.abs(dx) * 1.15 ? 'height' : 'x';
+    }
+
+    if (d.mode === 'x') {
+      var span = groundSpan();
+      it.x = clamp(d.startX + dx / S.scale, span.min, span.max);
+      dragBadge('');
+    } else {
+      var p2 = byId(it.plantId);
+      if (!p2 || !anchorReady()) return;
+      var cmPerPx = 1 / (S.anchor.pxPerCm * S.scale);
+      it.heightCm = Math.round(clamp(d.startH - dy * cmPerPx, p2.hMin, p2.hMax) / 5) * 5;
+      $('hVal').textContent = it.heightCm + ' cm';
+      if (S.selected === it.uid) $('hRange').value = it.heightCm;
+      dragBadge(it.heightCm + ' cm');
+    }
+
+    // 只改这一个元素的几何，不重建 DOM（重建会丢 pointer capture）
     var g = plantGeom(it);
-    S.drag.el.style.left = (g.left * S.scale) + 'px';
+    d.el.style.left = (g.left * S.scale) + 'px';
+    d.el.style.top = (g.top * S.scale) + 'px';
+    d.el.style.width = (g.imgW * S.scale) + 'px';
+    d.el.style.height = (g.imgH * S.scale) + 'px';
   });
+
+  function dragBadge(text) {
+    var el = $('dragBadge');
+    if (!el) return;
+    if (!text) { el.classList.remove('on'); return; }
+    el.textContent = text;
+    el.classList.add('on');
+  }
 
   $('stage').addEventListener('pointerup', function () {
     if (!S.drag) return;
     S.drag.el.classList.remove('dragging');
     S.drag = null;
+    dragBadge('');
+    renderLayersPanel();
+    updateReadout();
     scheduleCompose();
+    setTimeout(doScore, 60);
   });
 
   document.addEventListener('keydown', function (e) {

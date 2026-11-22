@@ -77,6 +77,12 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--green-b); outlin
 }
 #guides{position:absolute; inset:0; width:100%; height:100%; pointer-events:none;}
 #composedImg.on ~ #watermark{opacity:0;}
+.drag-badge{
+  position:absolute; left:50%; top:10px; transform:translateX(-50%);
+  background:rgba(29,42,34,.86); color:#fff; font-size:12px; padding:4px 12px;
+  border-radius:99px; opacity:0; transition:opacity .15s; pointer-events:none; z-index:6;
+}
+.drag-badge.on{opacity:1;}
 #watermark{
   position:absolute; right:10px; bottom:10px; padding:2px 8px; border-radius:4px;
   background:rgba(29,42,34,.55); color:#fff; font-size:11px; pointer-events:none;
