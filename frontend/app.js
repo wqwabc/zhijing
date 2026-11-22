@@ -1261,11 +1261,21 @@
     }
 
     var btn = document.getElementById('btnDrawer');
-    if (btn) {
-      btn.addEventListener('click', function () {
-        drawer.hidden = !drawer.hidden;
-        btn.setAttribute('aria-expanded', String(!drawer.hidden));
-      });
+    var close = document.getElementById('btnDrawerClose');
+
+    function setDrawer(open) {
+      drawer.hidden = !open;
+      if (btn) btn.setAttribute('aria-expanded', String(open));
     }
+
+    if (btn) {
+      btn.addEventListener('click', function () { setDrawer(drawer.hidden); });
+    }
+    if (close) {
+      close.addEventListener('click', function () { setDrawer(false); });
+    }
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && !drawer.hidden) setDrawer(false);
+    });
   })();
 })();
