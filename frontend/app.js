@@ -1206,4 +1206,33 @@
     score: function () { return S.score; },
     online: function () { return S.online; }
   };
+
+  /* 布局：搭配工具收进左下抽屉，对话挂到右列 */
+  (function restructure() {
+    var side = document.querySelector('.side');
+    var drawer = document.getElementById('toolDrawer');
+    var panel = document.getElementById('chatPanel');
+    if (!side || !drawer) return;
+
+    ['.tabs', '.panes'].forEach(function (sel) {
+      var el = side.querySelector(sel);
+      if (el) drawer.appendChild(el);
+    });
+    Array.prototype.slice.call(side.querySelectorAll(':scope > .card'))
+      .forEach(function (card) { drawer.appendChild(card); });
+
+    if (panel) {
+      panel.hidden = false;
+      side.appendChild(panel);
+      side.classList.add('chat-side');
+    }
+
+    var btn = document.getElementById('btnDrawer');
+    if (btn) {
+      btn.addEventListener('click', function () {
+        drawer.hidden = !drawer.hidden;
+        btn.setAttribute('aria-expanded', String(!drawer.hidden));
+      });
+    }
+  })();
 })();

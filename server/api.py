@@ -54,6 +54,13 @@ def _body() -> dict:
     return data
 
 
+def _llm_cfg():
+    """前端设置里填的 Key/Base，仅本次请求使用，不落盘。"""
+    key = request.headers.get("X-LLM-Key", "").strip()
+    base = request.headers.get("X-LLM-Base", "").strip()
+    return {"api_key": key, "base": base} if key else None
+
+
 class ApiError(Exception):
     def __init__(self, status, code, message, hint=None, field=None):
         super().__init__(message)
@@ -435,7 +442,8 @@ def api_design():
                            field="anchor.ground_y")
 
     assets = load_assets(_repo_root())
-    plan = design(photo_path, scene, _get_plants()[0], assets, count)
+    plan = design(photo_path, scene, _get_plants()[0], assets, count,
+                  llm_cfg=_llm_cfg())
 
     items, plants_out = [], []
     for it in plan["items"]:
@@ -524,7 +532,7 @@ def api_chat():
                 pass
 
     t0 = time.time()
-    result = chat_reply(message, history, context)
+    result = chat_reply(message, history, context, llm_cfg=_llm_cfg())
     result["elapsed_ms"] = round((time.time() - t0) * 1000, 1)
     return jsonify(result)
 

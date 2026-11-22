@@ -38,6 +38,16 @@ class TestChat(unittest.TestCase):
         self.assertEqual(data["source"], "llm")
         self.assertIn("琴叶榕", data["reply"])
 
+    def test_headers_override_key(self):
+        with mock.patch.object(chat_mod.llm, "complete", return_value="好的") as m:
+            r = self.client.post("/api/chat", json=self.body,
+                                 headers={"X-LLM-Key": "sk-test",
+                                          "X-LLM-Base": "https://example.com"})
+        self.assertEqual(r.status_code, 200, r.get_data(as_text=True))
+        kwargs = m.call_args.kwargs
+        self.assertEqual(kwargs["overrides"]["api_key"], "sk-test")
+        self.assertEqual(kwargs["overrides"]["base"], "https://example.com")
+
     def test_empty_message(self):
         r = self.client.post("/api/chat", json={"message": "  "})
         self.assertEqual(r.status_code, 400)

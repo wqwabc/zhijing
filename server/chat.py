@@ -55,8 +55,9 @@ def fallback(message: str, context: dict) -> str:
     return "先加几株植物，或者让我按场景推荐一套，我再解释为什么这样搭。"
 
 
-def reply(message: str, history: list, context: dict) -> dict:
-    if llm.available():
+def reply(message: str, history: list, context: dict,
+          llm_cfg: dict = None) -> dict:
+    if llm.available(llm_cfg):
         ctx_text = (
             "场景：%s / %s / 光照 %s / 预算 %s 元 / 宠物 %s\n"
             "当前植物：%s\n评分：%s"
@@ -78,9 +79,10 @@ def reply(message: str, history: list, context: dict) -> dict:
                 msgs.append({"role": item["role"], "content": str(item["content"])[:500]})
         msgs.append({"role": "user", "content": message})
 
-        text = llm.complete(msgs, temperature=0.6, max_tokens=400)
+        text = llm.complete(msgs, temperature=0.6, max_tokens=400,
+                            overrides=llm_cfg)
         if text:
             return {"reply": text.strip()[:300], "source": "llm",
-                    "model": llm._config()["model"]}
+                    "model": llm._config(llm_cfg)["model"]}
     return {"reply": fallback(message, context), "source": "template",
-            "model": llm._config()["model"]}
+            "model": llm._config(llm_cfg)["model"]}

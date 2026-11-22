@@ -106,6 +106,12 @@
         <div class="dims" id="dimsWrap"></div>
         <div class="flag" id="flagWrap" hidden></div>
       </div>
+
+      <div class="drawer-bar">
+        <button class="ghost" id="btnDrawer" aria-expanded="false">🧰 搭配工具</button>
+        <span class="note" id="drawerHint">AI 推荐 / 植物面板 / 装饰案例</span>
+      </div>
+      <div class="tool-drawer" id="toolDrawer" hidden></div>
     </div>
 
     <div class="side">
@@ -236,12 +242,23 @@
 
 <div id="toast"></div>
 
-<button class="chat-fab" id="chatFab" type="button" aria-label="和大模型聊两句">问一句</button>
-<div class="chat-panel" id="chatPanel" hidden>
+<div class="chat-panel" id="chatPanel">
   <header>
     <span>植境助手</span>
-    <button id="chatClose" type="button" aria-label="关闭">×</button>
+    <button id="chatSettingsBtn" type="button" aria-label="模型设置" title="模型设置">⚙</button>
   </header>
+  <div class="chat-settings" id="chatSettings" hidden>
+    <label>API Key
+      <input id="llmKey" type="password" placeholder="sk-..." autocomplete="off">
+    </label>
+    <label>Base URL
+      <input id="llmBase" type="url" placeholder="https://api.deepseek.com" autocomplete="off">
+    </label>
+    <div class="row">
+      <button id="llmSave" class="primary mini" type="button">保存到本会话</button>
+      <span class="note" id="llmSaved">只存 sessionStorage，不写服务端</span>
+    </div>
+  </div>
   <div class="chat-log" id="chatLog"></div>
   <form class="chat-form" id="chatForm">
     <input id="chatInput" type="text" placeholder="这套为什么这样搭？" autocomplete="off" maxlength="200">

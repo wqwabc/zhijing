@@ -127,15 +127,16 @@ def _fallback(scene: Scene, plants, assets: dict, count: int) -> list:
 
 
 def design(photo_path: str, scene: Scene, plants, assets: dict,
-           count: int = 3) -> dict:
+           count: int = 3, llm_cfg: dict = None) -> dict:
     t0 = time.time()
     features = analyze(photo_path)
     catalog = build_catalog(plants)
     by_id = {p.plant_id: p for p in plants}
 
     proposal = None
-    if llm.available():
-        proposal = llm.plan_plants(features, asdict(scene), catalog, count)
+    if llm.available(llm_cfg):
+        proposal = llm.plan_plants(features, asdict(scene), catalog, count,
+                                   overrides=llm_cfg)
 
     items = _validate(proposal, by_id, assets, scene, count) if proposal else []
     source = "llm" if items else "rules"
@@ -150,8 +151,8 @@ def design(photo_path: str, scene: Scene, plants, assets: dict,
     return {
         "items": items,
         "source": source,
-        "model": (proposal or {}).get("_model", llm._config()["model"]),
-        "llm_available": llm.available(),
+        "model": (proposal or {}).get("_model", llm._config(llm_cfg)["model"]),
+        "llm_available": llm.available(llm_cfg),
         "summary": summary,
         "features": features,
         "score": score,

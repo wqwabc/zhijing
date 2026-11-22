@@ -24,21 +24,27 @@ DEFAULTS = {
 }
 
 
-def _config() -> dict:
-    return {
+def _config(overrides: dict = None) -> dict:
+    cfg = {
         "api_key": os.environ.get("DEEPSEEK_API_KEY", "").strip(),
         "base": (os.environ.get("DEEPSEEK_BASE") or DEFAULTS["base"]).rstrip("/"),
         "model": os.environ.get("DEEPSEEK_MODEL") or DEFAULTS["model"],
         "timeout": float(os.environ.get("DEEPSEEK_TIMEOUT") or DEFAULTS["timeout"]),
     }
+    if overrides:
+        if overrides.get("api_key"):
+            cfg["api_key"] = str(overrides["api_key"]).strip()
+        if overrides.get("base"):
+            cfg["base"] = str(overrides["base"]).rstrip("/")
+    return cfg
 
 
-def available() -> bool:
-    return bool(_config()["api_key"])
+def available(overrides: dict = None) -> bool:
+    return bool(_config(overrides)["api_key"])
 
 
-def _post(payload: dict) -> dict | None:
-    cfg = _config()
+def _post(payload: dict, cfg: dict = None) -> dict | None:
+    cfg = cfg or _config()
     if not cfg["api_key"]:
         return None
     req = urllib.request.Request(
@@ -58,9 +64,9 @@ def _post(payload: dict) -> dict | None:
 
 
 def complete(messages: list, temperature: float = 0.3,
-             max_tokens: int = 900) -> str | None:
-    """返回模型文本；失败返回 None。"""
-    cfg = _config()
+             max_tokens: int = 900, overrides: dict = None) -> str | None:
+    """返回模型文本；失败返回 None。overrides 可带 api_key/base（仅本次请求）。"""
+    cfg = _config(overrides)
     if not cfg["api_key"]:
         return None
     data = _post({
@@ -69,7 +75,7 @@ def complete(messages: list, temperature: float = 0.3,
         "temperature": temperature,
         "max_tokens": max_tokens,
         "stream": False,
-    })
+    }, cfg)
     if not data:
         return None
     try:
@@ -104,9 +110,9 @@ def _catalog_lines(catalog: list) -> str:
 
 
 def plan_plants(features: dict, scene: dict, catalog: list,
-                count: int = 3) -> dict | None:
+                count: int = 3, overrides: dict = None) -> dict | None:
     """让模型从目录里选 count 株，返回 {plants:[...], summary} 或 None。"""
-    if not available() or not catalog:
+    if not available(overrides) or not catalog:
         return None
 
     palette = ", ".join("%s(%.0f%%)" % (c["hex"], c["share"] * 100)
@@ -141,12 +147,12 @@ def plan_plants(features: dict, scene: dict, catalog: list,
     t0 = time.time()
     text = complete([{"role": "system", "content": system},
                      {"role": "user", "content": prompt}],
-                    temperature=0.3, max_tokens=900)
+                    temperature=0.3, max_tokens=900, overrides=overrides)
     if not text:
         return None
     data = extract_json(text)
     if not data or not isinstance(data.get("plants"), list):
         return None
     data["_elapsed_ms"] = round((time.time() - t0) * 1000, 1)
-    data["_model"] = _config()["model"]
+    data["_model"] = _config(overrides)["model"]
     return data
