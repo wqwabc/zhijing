@@ -288,6 +288,13 @@
     svg.innerHTML = parts.join('');
   }
 
+  function baseYOf(it) {
+    return (it.baseY == null) ? S.anchor.groundY : it.baseY;
+  }
+  function hasFloating() {
+    return S.plants.some(function (it) { return it.baseY != null; });
+  }
+
   function plantGeom(it) {
     var p = byId(it.plantId);
     var pxH = it.heightCm * S.anchor.pxPerCm;
@@ -300,7 +307,8 @@
     return {
       imgH: imgH, imgW: imgW, bb: bb,
       left: it.x - (bb.l * imgW + fw * imgW / 2),
-      top: S.anchor.groundY - bb.b * imgH,
+      top: baseYOf(it) - bb.b * imgH,
+      baseY: baseYOf(it),
       contentW: fw * imgW
     };
   }
@@ -317,7 +325,13 @@
       var rec = IMGCACHE[p.id];
       if (!rec || !rec.ready) { getImg(p, function () { renderLayers(); }); }
       var src = p.image;
-      html += '<div class="plant-layer' + (S.selected === it.uid ? ' sel' : '') + '" data-uid="' + it.uid + '"' +
+      var lift = S.anchor.groundY - g.baseY;
+      var shW = g.contentW * 1.15 * S.scale;
+      var shA = Math.max(0.10, 0.30 - lift / Math.max(1, S.photo.h) * 1.4);
+      var shY = (g.baseY + 2) * S.scale;
+      html += '<div class="plant-shadow" style="left:' + (it.x * S.scale - shW / 2) + 'px;top:' + shY +
+        'px;width:' + shW + 'px;opacity:' + shA.toFixed(2) + '"></div>' +
+        '<div class="plant-layer' + (S.selected === it.uid ? ' sel' : '') + '" data-uid="' + it.uid + '"' +
         ' style="left:' + (g.left * S.scale) + 'px;top:' + (g.top * S.scale) + 'px;' +
         'width:' + (g.imgW * S.scale) + 'px;height:' + (g.imgH * S.scale) + 'px">' +
         '<img src="' + esc(src) + '" alt="' + esc(p.name) + '" style="width:100%;height:100%"></div>';
@@ -485,9 +499,9 @@
       if (!target) return;
       S.selected = uid;
       S.drag = {
-        uid: uid, el: pl, mode: null,
+        uid: uid, el: pl,
         sx: e.clientX, sy: e.clientY,
-        startX: target.x, startH: target.heightCm
+        startX: target.x, startBase: baseYOf(target)
       };
       // 进入编辑态：把图层显形、把服务端成图收起，拖动才有即时反馈
       $('layers').classList.remove('hide');
@@ -497,7 +511,7 @@
       renderLayersPanel();
       if (!S.dragHintShown) {
         S.dragHintShown = true;
-        toast('左右拖 = 沿地面移动，上下拖 = 调株高', 3200);
+        toast('拖动可上下左右摆放；靠近地面会自动吸附回地面', 3200);
       }
       return;
     }
@@ -511,33 +525,31 @@
     var d = S.drag, it = findPlant(d.uid);
     if (!it) return;
     var dx = e.clientX - d.sx, dy = e.clientY - d.sy;
+    if (Math.abs(dx) < 1 && Math.abs(dy) < 1) return;
 
-    // 首次移动超过 5px 才定轴，避免手抖把「挪位置」误判成「调高度」
-    if (!d.mode) {
-      if (Math.hypot(dx, dy) < 5) return;
-      d.mode = Math.abs(dy) > Math.abs(dx) * 1.15 ? 'height' : 'x';
-    }
+    var span = groundSpan();
+    it.x = clamp(d.startX + dx / S.scale, span.min, span.max);
 
-    if (d.mode === 'x') {
-      var span = groundSpan();
-      it.x = clamp(d.startX + dx / S.scale, span.min, span.max);
-      dragBadge('');
-    } else {
-      var p2 = byId(it.plantId);
-      if (!p2 || !anchorReady()) return;
-      var cmPerPx = 1 / (S.anchor.pxPerCm * S.scale);
-      it.heightCm = Math.round(clamp(d.startH - dy * cmPerPx, p2.hMin, p2.hMax) / 5) * 5;
-      $('hVal').textContent = it.heightCm + ' cm';
-      if (S.selected === it.uid) $('hRange').value = it.heightCm;
-      dragBadge(it.heightCm + ' cm');
-    }
+    var wantBase = d.startBase + dy / S.scale;
+    var gy = S.anchor.groundY;
+    // 靠近地面 8px 以内吸附，避免"差一点点没贴地"
+    if (Math.abs(wantBase - gy) <= 8) it.baseY = null;
+    else it.baseY = clamp(wantBase, S.photo.h * 0.02, S.photo.h * 0.995);
 
-    // 只改这一个元素的几何，不重建 DOM（重建会丢 pointer capture）
+    var liftCm = (gy - baseYOf(it)) / S.anchor.pxPerCm;
+    dragBadge(it.baseY == null ? '贴地' : ('离地 ' + Math.round(liftCm) + ' cm'));
+
     var g = plantGeom(it);
     d.el.style.left = (g.left * S.scale) + 'px';
     d.el.style.top = (g.top * S.scale) + 'px';
-    d.el.style.width = (g.imgW * S.scale) + 'px';
-    d.el.style.height = (g.imgH * S.scale) + 'px';
+    var sh = d.el.previousElementSibling;
+    if (sh && sh.className === 'plant-shadow') {
+      var shW = g.contentW * 1.15 * S.scale;
+      sh.style.left = (it.x * S.scale - shW / 2) + 'px';
+      sh.style.top = ((g.baseY + 2) * S.scale) + 'px';
+      sh.style.width = shW + 'px';
+      sh.style.opacity = Math.max(0.10, 0.30 - (gy - g.baseY) / Math.max(1, S.photo.h) * 1.4).toFixed(2);
+    }
   });
 
   function dragBadge(text) {
@@ -555,6 +567,7 @@
     dragBadge('');
     renderLayersPanel();
     updateReadout();
+    renderLayers();
     scheduleCompose();
     setTimeout(doScore, 60);
   });
@@ -652,7 +665,9 @@
       html += '<li data-uid="' + it.uid + '">' +
         '<span class="nm" style="' + (S.selected === it.uid ? 'color:#0F6E56' : '') + '">' +
         esc(p ? p.name : it.plantId) + ' · ' + it.heightCm + 'cm' +
-        (p && p.kind === 'illustration' ? ' <em class="tagillu">插画</em>' : '') + '</span>' +
+        (p && p.kind === 'illustration' ? ' <em class="tagillu">插画</em>' : '') +
+        (it.baseY != null ? ' <em class="tagillu" style="background:#E6F1FB;color:#185FA5">离地 ' +
+          Math.round((S.anchor.groundY - it.baseY) / S.anchor.pxPerCm) + 'cm</em>' : '') + '</span>' +
         '<button class="mini" data-act="front" title="置前">↑</button>' +
         '<button class="mini" data-act="back" title="置后">↓</button>' +
         '<button class="mini" data-act="del" title="移除">×</button></li>';
@@ -715,6 +730,12 @@
       $('composedImg').classList.remove('on');
       $('layers').classList.remove('hide');
       $('rCompose').textContent = '本地预览';
+      return;
+    }
+    if (hasFloating()) {
+      $('composedImg').classList.remove('on');
+      $('layers').classList.remove('hide');
+      $('rCompose').textContent = '本地合成（含离地）';
       return;
     }
     if (!S.online || !S.photo.id) { $('rCompose').textContent = '本地预览'; return; }
@@ -958,6 +979,7 @@
   /* ---------------------------------------------------------- 导出 */
   $('btnExportPng').addEventListener('click', function () {
     if (!S.photo || !S.plants.length) { toast('先放植物'); return; }
+    if (hasFloating()) { exportLocal(); return; }
     if (S.online && S.photo.id) {
       loading(true, '生成效果图…');
       req('/api/compose', {
@@ -995,6 +1017,17 @@
         var p = byId(it.plantId), rec = IMGCACHE[p.id];
         if (!rec || !rec.ready) return;
         var g = plantGeom(it);
+        var lift = S.anchor.groundY - g.baseY;
+        var shW = g.contentW * 1.15 * scale;
+        var alpha = Math.max(0.10, 0.30 - lift / Math.max(1, H) * 1.4);
+        x.save();
+        x.globalAlpha = alpha;
+        x.fillStyle = '#000';
+        x.beginPath();
+        x.ellipse(it.x * scale, (g.baseY + 2) * scale, shW / 2, Math.max(2, shW * 0.055), 0, 0, Math.PI * 2);
+        x.filter = 'blur(6px)';
+        x.fill();
+        x.restore();
         x.drawImage(rec.img, g.left * scale, g.top * scale, g.imgW * scale, g.imgH * scale);
       });
       x.fillStyle = 'rgba(29,42,34,.55)';
@@ -1003,7 +1036,7 @@
       x.font = '14px "PingFang SC",sans-serif';
       x.textAlign = 'right';
       x.fillText('效果示意', c.width - 18, c.height - 16);
-      c.toBlob(function (b) { saveBlob(b, 'verda-' + Date.now() + '.png'); toast('已导出（前端合成）'); });
+      c.toBlob(function (b) { saveBlob(b, 'verda-' + Date.now() + '.png'); toast(hasFloating() ? '已导出（前端合成，含离地摆放）' : '已导出（前端合成）'); });
     };
     base.src = S.photo.url;
   }
