@@ -235,6 +235,22 @@
 </div>
 
 <div id="toast"></div>
+
+<button class="chat-fab" id="chatFab" type="button" aria-label="和大模型聊两句">问一句</button>
+<div class="chat-panel" id="chatPanel" hidden>
+  <header>
+    <span>植境助手</span>
+    <button id="chatClose" type="button" aria-label="关闭">×</button>
+  </header>
+  <div class="chat-log" id="chatLog"></div>
+  <form class="chat-form" id="chatForm">
+    <input id="chatInput" type="text" placeholder="这套为什么这样搭？" autocomplete="off" maxlength="200">
+    <button type="submit">发送</button>
+  </form>
+  <div class="chat-hint" id="chatHint">没有 Key 时为模板回答</div>
+</div>
+
 <script src="app.js"></script>
+<script src="chat.js"></script>
 </body>
 </html>

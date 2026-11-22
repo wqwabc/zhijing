@@ -16,6 +16,7 @@ from verda import Combo, Scene, recommend, revise, score_combo
 from verda.loader import load_plants
 
 from .assets import load_assets
+from .chat import reply as chat_reply
 from .compose import MAX_ITEMS, PX_PER_CM_RANGE, compose_photo
 from .design import design
 from .store import RESULT_NAME_RE
@@ -487,6 +488,45 @@ def api_design():
         warnings=warnings,
         expires_at=expires.isoformat(timespec="seconds"),
     )
+
+
+# ---------------------------------------------------------------- 对话
+
+@api_bp.post("/api/chat")
+def api_chat():
+    """基于当前方案上下文的对话；无 Key 时走模板兜底。"""
+    body = _body()
+    message = str(body.get("message", "")).strip()
+    if not message:
+        raise ApiError(400, "E40001", "message 不能为空", field="message")
+    if len(message) > 500:
+        raise ApiError(400, "E40001", "message 过长（上限 500 字）", field="message")
+
+    history = body.get("history") or []
+    if not isinstance(history, list):
+        raise ApiError(400, "E40001", "history 应为数组", field="history")
+    history = [h for h in history if isinstance(h, dict)][-6:]
+
+    plant_ids = body.get("plant_ids") or []
+    context = {"scene": body.get("scene") if isinstance(body.get("scene"), dict) else {},
+               "plants": [], "score": None}
+
+    _, by_id = _get_plants()
+    if isinstance(plant_ids, list):
+        context["plants"] = [{"plant_id": pid, "name_cn": by_id[pid].name_cn}
+                             for pid in plant_ids if pid in by_id][:6]
+        if plant_ids:
+            try:
+                scene = _make_scene(body.get("scene") or {})
+                combo = _make_combo(plant_ids)
+                context["score"] = score_combo(combo, scene).as_dict()
+            except (ApiError, ValueError, TypeError):
+                pass
+
+    t0 = time.time()
+    result = chat_reply(message, history, context)
+    result["elapsed_ms"] = round((time.time() - t0) * 1000, 1)
+    return jsonify(result)
 
 
 @api_bp.get("/api/compose/<name>")

@@ -128,7 +128,8 @@ $env:DEEPSEEK_API_KEY="sk-..."
 python app.py
 ```
 
-- 新接口：`POST /api/design`，请求 `photo_id + scene + count + anchor?`
+- 新接口：`POST /api/design`（选株合成）、`POST /api/chat`（对话）
+- 前端右下角「问一句」已接 `/api/chat`，上下文带当前场景、植物与评分
 - 无 Key / 超时 / JSON 不合法 → 退回 `verda.recommend`，接口结构不变
 - 宠物安全、光照、株高、素材可用都会在本地再校验一遍
 - 详细说明见 `docs/18_大模型接入.md`
@@ -148,6 +149,7 @@ python app.py
 - 拖动结束 420ms 后自动请求 `/api/compose`，服务端成图淡入覆盖；拖动中只动 DOM 图层，不卡
 - 植物可左右沿落地线移动、也可上下抬升（显示「离地 X cm」，靠地 8px 自动吸附）；抬升时不改变尺寸
 - 七个接口全部接通：`/api/plants`、`/api/upload`、`/api/anchor`、`/api/compose`、`/api/score`、`/api/recommend`、`/api/revise`
+- 右下角「问一句」接 `/api/chat`：带当前场景与植物，无 Key 时模板回答；`?chat=1` 自动展开
 - 不带 `?api=` 时自动退化为离线演示模式
 
 已知缺口（详见 `docs/16`）：`GET /api/cases` 未实现，案例页暂读 `data/cases_manifest.csv`；

@@ -1197,4 +1197,13 @@
       }, 120);
     }
   });
+
+  /* 给对话窗口用的只读上下文 */
+  window.VERDA = {
+    api: function () { return CFG.api; },
+    scene: scenePayload,
+    plantIds: ids,
+    score: function () { return S.score; },
+    online: function () { return S.online; }
+  };
 })();
