@@ -11,6 +11,14 @@ _test.txt
 # 特征缓存（可重建，不进仓库）
 .cache/
 
+# 实验用的模型权重与依赖（体积大，不进仓库）
+.models/
+.venv-pkgs/
+.tmp_wheels/
+.tmp_ab/
+.tmp_test/
+experiments/*/out/
+
 # 编辑器
 .vscode/
 .idea/

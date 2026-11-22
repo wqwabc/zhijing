@@ -17,6 +17,7 @@ from verda.loader import load_plants
 
 from .assets import load_assets
 from .compose import MAX_ITEMS, PX_PER_CM_RANGE, compose_photo
+from .design import design
 from .store import RESULT_NAME_RE
 from .validation import SUPPORTED_FORMATS, PhotoFormatError, load_photo, \
     validate_photo
@@ -135,8 +136,11 @@ def _finite_number(value, field: str) -> float:
 def healthz():
     from server import BACKEND_VERSION
     from verda import __version__ as verda_version
+    from . import llm
     return jsonify(status="ok", verda=verda_version, backend=BACKEND_VERSION,
-                   uptime_s=round(time.time() - _START, 1))
+                   uptime_s=round(time.time() - _START, 1),
+                   llm={"available": llm.available(),
+                        "model": llm._config()["model"]})
 
 
 _START = time.time()
@@ -379,6 +383,108 @@ def api_compose():
         items_meta=items_meta,
         warnings=warnings,
         elapsed_ms=elapsed,
+        expires_at=expires.isoformat(timespec="seconds"),
+    )
+
+
+# ---------------------------------------------------------------- 大模型选株
+
+@api_bp.post("/api/design")
+def api_design():
+    """大模型看图选株（只看统计特征）→ 本地约束校验 → 确定性评分 → 合成。"""
+    body = _body()
+    photo_id = body.get("photo_id", "")
+    photo_path = _store().photo_path(photo_id)
+    if not photo_path:
+        raise ApiError(404, "E40401", "photo_id 不存在或已过期", field="photo_id")
+
+    meta = _store().get_meta(photo_id)
+    if meta is None or "usable" not in meta:
+        raise ApiError(404, "E40401", "照片校验记录不存在或已过期，请重新上传",
+                       field="photo_id")
+    if meta["usable"] is False:
+        raise ApiError(422, "E40003", "该照片未通过可用性校验，不能用于合成",
+                       hint="请重新上传，或改用立面模式", field="photo_id")
+
+    scene = _make_scene(body.get("scene"))
+    count = body.get("count", 3)
+    if type(count) is not int or not 1 <= count <= 5:
+        raise ApiError(400, "E40001", "count 应为 1~5 的整数", field="count")
+
+    from PIL import Image
+    with Image.open(photo_path) as im:
+        photo_w, photo_h = im.size
+
+    anchor = body.get("anchor")
+    warnings = []
+    if anchor is None:
+        px_per_cm = round(photo_h * 0.5 / 150.0, 2)
+        ground_y = round(photo_h * 0.92, 1)
+        warnings.append("未提供 anchor，按默认比例合成（%.2f px/cm）" % px_per_cm)
+    else:
+        if not isinstance(anchor, dict):
+            raise ApiError(400, "E40001", "anchor 应为对象", field="anchor")
+        px_per_cm = _finite_number(anchor.get("px_per_cm"), "anchor.px_per_cm")
+        ground_y = _finite_number(anchor.get("ground_y"), "anchor.ground_y")
+        if not PX_PER_CM_RANGE[0] <= px_per_cm <= PX_PER_CM_RANGE[1]:
+            raise ApiError(409, "E40901",
+                           "px_per_cm=%.2f 超出合理范围" % px_per_cm, field="anchor")
+        if not 0 < ground_y <= photo_h:
+            raise ApiError(400, "E40001", "anchor.ground_y 超出照片范围",
+                           field="anchor.ground_y")
+
+    assets = load_assets(_repo_root())
+    plan = design(photo_path, scene, _get_plants()[0], assets, count)
+
+    items, plants_out = [], []
+    for it in plan["items"]:
+        x = int(round(it["x_frac"] * photo_w))
+        items.append({"plant_id": it["plant_id"], "x": x,
+                      "height_cm": it["height_cm"], "layer": it["layer"]})
+        asset = assets["by_id"].get(it["plant_id"], {})
+        plants_out.append({
+            "plant_id": it["plant_id"],
+            "name_cn": asset.get("name_cn", ""),
+            "kind": asset.get("kind", ""),
+            "height_cm": it["height_cm"],
+            "x": x,
+            "layer": it["layer"],
+            "why": it.get("why", ""),
+        })
+    if not items:
+        raise ApiError(409, "E40902", "没有可用的植物组合",
+                       hint="请放宽光照 / 宠物 / 预算约束后重试")
+
+    import io
+    with Image.open(photo_path) as base:
+        try:
+            canvas, items_meta, compose_warnings = compose_photo(
+                base, items, assets["by_id"], px_per_cm, ground_y,
+                bool(body.get("watermark", True)))
+        except ValueError as e:
+            raise ApiError(400, "E40001", str(e))
+        except KeyError as e:
+            raise ApiError(404, "E40403", "素材缺失：%s" % e.args[0])
+
+    warnings.extend(compose_warnings)
+    buf = io.BytesIO()
+    canvas.save(buf, "PNG")
+    name = _store().put_result(buf.getvalue())
+    path = _store().result_path(name)
+    expires = datetime.datetime.fromtimestamp(_store().expires_at(path))
+
+    return jsonify(
+        design={"source": plan["source"], "model": plan["model"],
+                "llm_available": plan["llm_available"],
+                "summary": plan["summary"], "elapsed_ms": plan["elapsed_ms"]},
+        features=plan["features"],
+        plants=plants_out,
+        score=plan["score"],
+        image_url="/api/compose/%s" % name,
+        width=canvas.size[0],
+        height=canvas.size[1],
+        items_meta=items_meta,
+        warnings=warnings,
         expires_at=expires.isoformat(timespec="seconds"),
     )
 
