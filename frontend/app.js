@@ -1000,8 +1000,10 @@
     loading(true, 'AI 正在融合，约 10–20 秒…');
     req('/api/generate', { json: { photo_id: S.photo.id, items: items, anchor: anchor } })
       .then(function (d) {
-        $('composedImg').src = d.image_url;
+        S.lastComposeUrl = apiUrl(d.image_url);
+        $('composedImg').src = S.lastComposeUrl;
         $('composedImg').classList.add('on');
+        $('layers').classList.add('hide');
         $('rCompose').textContent = d.source === 'wanx' ? 'AI 生成（万相）' : '本地合成';
         toast(d.source === 'wanx'
           ? 'AI 效果图已生成，耗时 ' + Math.round(d.elapsed_ms / 1000) + ' 秒'
