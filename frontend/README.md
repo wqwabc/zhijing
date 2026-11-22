@@ -1,57 +1,49 @@
-# frontend · 照片模式与自选面板（E）
+# frontend · 照片模式 + 双入口（E）
 
-单文件前端，无构建、无依赖、无框架。目标是在 D 的 Flask 就位之前，把「照片模式 + 自选面板」这条链路的交互与几何逻辑先跑通，并与 B 已交付的真实素材/主数据对齐。
+纯静态前端，无构建、无依赖、无框架。**既能独立演示，也能直接调 D 的 Flask 后端。**
 
-## 运行
+## 运行（两种形态）
 
 ```bash
-# 在仓库根目录（必须用 http，不能用 file:// —— 页面要 fetch data/）
+# ① 只跑前端：离线演示模式（植物/案例读 data/ 与 assets/，锚定与合成在前端算）
+cd <仓库根目录>
 python -m http.server 8123
-# 打开
-http://127.0.0.1:8123/frontend/index.html
-# 演示态（自动铺好地面线并放三株，用于联调与录屏）
-http://127.0.0.1:8123/frontend/index.html?demo=1
+# 打开 http://127.0.0.1:8123/frontend/index.html
+
+# ② 前端 + 后端（推荐，答辩用这个）
+python app.py --port 5055                      # D 的后端
+python -m http.server 8123                     # 仓库根目录，前端静态
+# 打开 http://127.0.0.1:8123/frontend/index.html?api=http://127.0.0.1:5055
 ```
 
-原因：`assets_index.json` 与 `plants_master.csv` 通过 `fetch` 读取，`file://` 协议会被浏览器拦截；页面在 fetch 失败时会退回到 9 条内置记录（只在没起服务时兜底，不要依赖它）。
+`?api=` 是可选的：带上就调真接口（照片校验、锚定校验、合成、七维评分、推荐、改稿全部走服务端）；
+不带就退化为本地模式，植物列表、锚定几何、拖拽、导出全部照常可用，只有评分/推荐/改稿提示需要后端。
 
-## 数据来源（全部是仓库里已有的真数据）
+`?demo=1` 会载入示例房间、自动锚定并放三株植物，用于联调、截图和答辩彩排。
 
-| 用途 | 来源 | 字段 |
+> 为什么必须是 http：`fetch('../data/*.json|csv')` 在 `file://` 下会被浏览器拦截。直接双击 index.html 只能看到空壳。
+
+## 接的是哪些接口（与 `docs/14_接口契约.md` 一致）
+
+| 用途 | 接口 | 前端落点 |
 |---|---|---|
-| 素材可用性 / 株高区间 / 主色 / 光照 / 毒性 | `data/assets_index.json` | `has_cutout` `file` `height_range_cm` `dominant_hex` `light_level` `pet_safe` `toxic` `style_tags` |
-| 株型 / 冠幅 / 每周工时 / 参考价 | `data/plants_master.csv` | `form` `leaf` `care_min_week` `price_cny` `difficulty` |
-| 合成用图 | `assets/cutout/{Pxx}/{Pxx}_front_*.png` | 真实去底 PNG，30 张未到位时按 `has_cutout=false` 灰显 |
+| 植物面板（48 种，含 webp 缩略图） | `GET /api/plants` | `loadCatalog()` |
+| 照片上传 + 5 项可用性校验 | `POST /api/upload`（multipart `photo`） | `uploadFile()` |
+| 尺度锚定校验（px/cm 合理区间、参照线太短/接近水平） | `POST /api/anchor` | `finishAnchor()` |
+| 照片合成（等比缩放 + 贴地 + 阴影 + 水印） | `POST /api/compose` | `doCompose()` |
+| 七维评分（与推荐同源，保证 AC-11） | `POST /api/score` | `doScore()` |
+| 三套方案 | `POST /api/recommend` | `btnRecommend` |
+| 一句话改稿 | `POST /api/revise` | `revise()` |
 
-两个读数口径：
+## 交互口径（几处需要留意的决定）
 
-1. **`has_cutout=false` → 面板灰显「仅参考」，不可点选**（FR-07 素材可用性，避免点了没反应）。
-2. **素材代表株高取 `height_range_cm` 的中位数**。这是 `docs/06_数据字典.md` 6.3 节约定的「合成缩放用中位数」；因为素材没有逐张标注真实株高，像素与厘米的换算是近似的，详见 `docs/12_前端与部署.md` 的待确认项。
+1. **坐标**：一律用**照片像素**坐标与后端对齐（不是屏幕坐标），缩放只影响显示；`px_per_cm` 由前端按「参照物两点距离 ÷ 参照物真实高度」算出，再交后端校验。
+2. **拖动是本地即时、合成是服务端异步**：拖动时直接改 DOM 图层位置（不卡）；松手 420ms 后自动请求合成，成功后把服务端成图淡入覆盖，图层自动隐藏。所以「看着像实时合成」，但真正的像素合成在服务端。
+3. **落地线只取平均高度**：`/api/compose` 只收一个 `ground_y`，所以落地线若倾斜，按平均高度落；倾斜超过 3° 会在锚定提示里写明。
+4. **层级**：`layer` 越小越靠前（0 最前），与 `docs/14` 第 8 节一致；「已放植物」里的 ↑↓ 就是改这个值。
+5. **株高**：默认取品种区间中位数，可在区间内改（市售规格），不允许自由缩放 —— 这一条口径需 A 确认（见 `docs/12` 第 3 节）。
 
-## 已实现的 FR 对照
+## 已知缺口
 
-| FR | 实现位置 | 说明 |
-|---|---|---|
-| FR-01 照片校验 | `checkPhoto()` | 本地预校验：长边 / 平均亮度 / 对比度；模糊与地面检测留 `/api/photo/check` |
-| FR-02 尺度锚定 | `btnGround` / `btnRef` + `pxPerM()` | 两点画地面线、参照物标定像素每米，3 步内完成，实时 1m 比例尺 |
-| FR-04 合成展示 | `plantBox()` / `drawScene()` | 按真实株高缩放、透明边距自动检测后按**视觉底部**贴地、接触阴影；最终合成待 D 的服务端结果替换 |
-| FR-05 素材回退 | `placeholderPlant()` | 素材未就绪时画占位，不开天窗 |
-| FR-07 自选面板 | 植物面板 + 图层 + 株高滑块 | 搜索、只看有素材、点选加入、拖动吸附地面线、层级置前/置后、6 株上限、仅参考灰显、株高在品种区间内选规格 |
-| FR-10 导出 | `btnExport` / `btnExportList` | PNG（长边 ≥1600，右下角「效果示意」）+ 采购清单 .md（株高/冠幅/光照/毒性/工时/价格） |
-| AC-10 降级 | `btnFlat` + `?demo=1` | 立面模式，无照片、无后端也能完整演示 |
-
-## 与后端的接线点
-
-所有路径集中在文件顶部 `CONFIG`：
-
-```js
-var CONFIG = { dataRoot: '../data/', assetRoot: '../', maxPlants: 6 };
-```
-
-支持 `?data=` 与 `?assets=` 覆盖，方便 Flask 把静态资源挂到别的路径。D 的接口就位后，把 `loadData()` 换成 `fetch('/api/plants')`、把 `drawScene()` 里的本地绘制换成 `/api/compose` 返回图即可，交互层不用动。
-
-## 已知限制
-
-- 缩略图直接用了原图 PNG（9 张共约 10MB），首屏会慢；等 B 按 `docs/06` 出 `.thumb.webp`（宽 480）后替换 `assetUrl()` 的缩略图分支即可。
-- 合成是浏览器的 `drawImage`，不是服务端渲染：色温匹配、多图层遮挡、P95 <3s 这些指标必须由 D 的服务端合成来达标，这里只保证交互与比例正确。
-- 评分区未接，等 C 的 `/api/score`（结构见 `docs/12_前端与部署.md`）。
+- **`/api/cases` 还没有**：案例库页目前直接读 `data/cases_manifest.csv` + `assets/cases/*.jpg`（静态态可用），后端出接口后换成 `GET /api/cases` 即可，前端只改 `loadCases()` 一处。
+- 缩略图用后端现算的 256px webp（首次请求会落盘缓存到 `.cache/thumbs/`），首次进面板会有几十毫秒延迟。

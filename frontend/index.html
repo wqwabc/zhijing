@@ -3,1016 +3,236 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>植境 Verda · 照片模式与自选面板（E · W1–W2）</title>
-<style>
-  :root{
-    --ink:#1D2A22; --ink2:#5F665C; --ink3:#8C9387;
-    --line:#E2E4DC; --bg:#F7F8F4; --card:#FFFFFF;
-    --green:#1D9E75; --green-d:#0F6E56; --green-l:#E8F4EE;
-    --warn:#BA7517; --warn-l:#FBF0DC; --bad:#A32D2D; --bad-l:#FBECEC;
-    --radius:12px;
-  }
-  *{box-sizing:border-box;}
-  body{margin:0;background:var(--bg);color:var(--ink);
-    font-family:"PingFang SC","Microsoft YaHei",system-ui,-apple-system,sans-serif;
-    font-size:13px;line-height:1.6;}
-  header{padding:14px 24px 12px;border-bottom:1px solid var(--line);background:var(--card);
-    display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;}
-  header h1{margin:0;font-size:15px;font-weight:500;}
-  header p{margin:2px 0 0;font-size:12px;color:var(--ink3);}
-  .badge{display:inline-block;margin-left:8px;padding:1px 8px;border-radius:99px;
-    background:var(--green-l);color:var(--green-d);font-size:11px;vertical-align:2px;}
-  .badge.warn{background:var(--warn-l);color:var(--warn);}
-  main{display:flex;gap:20px;padding:18px 24px 40px;align-items:flex-start;}
-  #stage{flex:1 1 auto;min-width:0;}
-  #wrap{position:relative;background:var(--card);border:1px solid var(--line);
-    border-radius:var(--radius);overflow:hidden;margin:0 auto;}
-  canvas{display:block;margin:0 auto;touch-action:none;}
-  #hint{position:absolute;left:12px;top:12px;padding:6px 10px;border-radius:8px;
-    background:rgba(29,42,34,.84);color:#fff;font-size:12px;pointer-events:none;
-    opacity:0;transition:opacity .2s;max-width:76%;}
-  #hint.on{opacity:1;}
-  #toast{position:fixed;left:50%;bottom:36px;transform:translate(-50%,10px);
-    background:var(--ink);color:#fff;padding:8px 16px;border-radius:99px;font-size:12px;
-    opacity:0;pointer-events:none;transition:.25s;z-index:9;}
-  #toast.on{opacity:1;transform:translate(-50%,0);}
-  .readout{margin-top:10px;display:flex;flex-wrap:wrap;gap:8px;font-size:12px;color:var(--ink2);}
-  .readout span{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:4px 10px;}
-  .readout b{font-weight:500;color:var(--green-d);}
-  aside{flex:0 0 320px;display:flex;flex-direction:column;gap:14px;}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px;}
-  .card h2{margin:0 0 10px;font-size:13px;font-weight:500;display:flex;justify-content:space-between;align-items:center;}
-  .card h2 em{font-style:normal;font-size:11px;color:var(--ink3);font-weight:400;}
-  .steps{display:flex;gap:6px;margin-bottom:12px;}
-  .steps div{flex:1;text-align:center;font-size:11px;color:var(--ink3);padding:5px 0;border-radius:7px;
-    background:var(--bg);border:1px solid var(--line);}
-  .steps div.done{background:var(--green-l);color:var(--green-d);border-color:#CBE7DA;}
-  .steps div.now{background:var(--green);color:#fff;border-color:var(--green);}
-  button{font-family:inherit;font-size:12px;border-radius:8px;border:1px solid var(--line);
-    background:var(--card);color:var(--ink);padding:7px 12px;cursor:pointer;transition:.15s;}
-  button:hover{border-color:var(--ink3);}
-  button:disabled{opacity:.45;cursor:not-allowed;}
-  button.primary{background:var(--green);border-color:var(--green);color:#fff;}
-  button.primary:hover{background:var(--green-d);border-color:var(--green-d);}
-  button.ghost{color:var(--ink2);}
-  .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
-  .row + .row{margin-top:8px;}
-  select,input[type=text],input[type=number]{font-family:inherit;font-size:12px;padding:6px 8px;
-    border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);}
-  input[type=text]{width:100%;}
-  input[type=range]{width:100%;accent-color:var(--green);}
-  .checks{list-style:none;margin:8px 0 0;padding:0;font-size:12px;}
-  .checks li{display:flex;gap:8px;align-items:flex-start;padding:3px 0;color:var(--ink2);}
-  .dot{flex:0 0 auto;width:6px;height:6px;border-radius:50%;margin-top:7px;background:var(--ink3);}
-  .dot.ok{background:var(--green);}
-  .dot.warn{background:var(--warn);}
-  .dot.bad{background:var(--bad);}
-  .plants{max-height:252px;overflow:auto;margin:0 -4px;padding:0 4px;}
-  .plant{display:flex;gap:10px;align-items:center;padding:6px 8px;border-radius:9px;cursor:pointer;}
-  .plant:hover{background:var(--bg);}
-  .plant.off{opacity:.4;cursor:not-allowed;}
-  .thumb{flex:0 0 auto;width:30px;height:34px;border-radius:6px;background:var(--bg);
-    border:1px solid var(--line);object-fit:contain;padding:1px;}
-  .swatch{flex:0 0 auto;width:30px;height:34px;border-radius:6px;position:relative;overflow:hidden;}
-  .plant .meta{flex:1;min-width:0;}
-  .plant .meta b{display:block;font-weight:400;font-size:12.5px;color:var(--ink);
-    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .plant .meta i{font-style:normal;font-size:11px;color:var(--ink3);}
-  .plant .add{flex:0 0 auto;width:22px;height:22px;border-radius:6px;border:1px solid var(--line);
-    display:grid;place-items:center;font-size:14px;color:var(--green-d);}
-  .plant:hover .add{background:var(--green-l);border-color:#CBE7DA;}
-  .layers{list-style:none;margin:0;padding:0;font-size:12px;}
-  .layers li{display:flex;align-items:center;gap:6px;padding:6px 4px;border-bottom:1px solid var(--line);}
-  .layers li:last-child{border-bottom:0;}
-  .layers .nm{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .layers .mini{width:22px;height:22px;padding:0;display:grid;place-items:center;font-size:11px;color:var(--ink2);}
-  .empty{color:var(--ink3);font-size:12px;padding:6px 0;}
-  .note{font-size:11px;color:var(--ink3);margin-top:8px;line-height:1.55;}
-  .kv{display:flex;justify-content:space-between;font-size:12px;color:var(--ink2);padding:2px 0;gap:10px;}
-  .kv b{font-weight:500;color:var(--ink);text-align:right;}
-  .heightBox{margin-top:8px;padding:8px 10px;background:var(--bg);border-radius:9px;display:none;}
-  .heightBox.on{display:block;}
-  .heightBox .lab{display:flex;justify-content:space-between;font-size:11.5px;color:var(--ink2);margin-bottom:4px;}
-  .bill{font-size:12px;color:var(--ink2);}
-  .bill .li{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px dashed var(--line);gap:8px;}
-  .bill .li:last-child{border-bottom:0;}
-  @media (max-width:1080px){
-    main{flex-direction:column;}
-    aside{flex:1 1 auto;width:100%;flex-direction:row;flex-wrap:wrap;}
-    aside .card{flex:1 1 260px;}
-  }
-</style>
+<title>植境 Verda · 绿植审美搭配 Agent</title>
+<link rel="stylesheet" href="app.css">
 </head>
 <body>
-<header>
-  <div>
-    <h1>植境 Verda · 照片模式 + 自选面板<span class="badge" id="hBadge">数据加载中</span></h1>
-    <p>E 交付物（W1–W2）：尺度锚定 / 真实素材合成展示 / 点选放置 / 层级 / 清单与图导出。合成与评分为本地占位，接口到位后替换。</p>
-  </div>
-  <div style="font-size:11.5px;color:var(--ink3);text-align:right">
-    数据源 data/assets_index.json + data/plants_master.csv<br>
-    素材 assets/cutout/（真实去底 PNG）
-  </div>
-</header>
+<h1 class="sr-only">植境 Verda：上传房间照片，按真实株高把植物合成进你家，并给出可解释的搭配评分与采购清单</h1>
 
-<main>
-  <section id="stage">
-    <div id="wrap">
-      <canvas id="cv"></canvas>
-      <div id="hint"></div>
+<div class="app">
+  <div class="topbar">
+    <div class="brand">
+      <b>植境 Verda</b>
+      <span>绿植审美搭配 Agent</span>
+      <span class="badge" id="apiState">初始化</span>
     </div>
-    <div class="readout">
-      <span>比例 <b id="rScale">未标定</b></span>
-      <span>地面线 <b id="rGround">—</b></span>
-      <span>参考 <b id="rRef">—</b></span>
-      <span>植物 <b id="rCount">0 / 6</b></span>
-      <span>清单 <b id="rBill">—</b></span>
-    </div>
-  </section>
-
-  <aside>
-    <div class="card">
-      <div class="steps" id="steps"></div>
-      <div class="row">
-        <input type="file" id="file" accept="image/*" style="display:none">
-        <button class="primary" id="btnUpload">上传房间照片</button>
-        <button class="ghost" id="btnFlat">用立面模式</button>
-      </div>
-      <ul class="checks" id="checks"></ul>
-    </div>
-
-    <div class="card">
-      <h2>尺度锚定 <em>FR-02 · 像素每米</em></h2>
-      <div class="row"><button id="btnGround">① 点两下画地面线</button></div>
-      <div class="row">
-        <select id="selRef">
-          <option value="2.0">门 2.0 m</option>
-          <option value="0.5">床 0.5 m</option>
-          <option value="0.8" selected>沙发 0.8 m</option>
-          <option value="1.0">桌高 1.0 m</option>
-          <option value="custom">自定义…</option>
+    <div class="scene-bar">
+      <label>场景
+        <select id="selRoom">
+          <option value="living" selected>客厅</option>
+          <option value="bedroom">卧室</option>
+          <option value="study">书房</option>
+          <option value="balcony">阳台</option>
+          <option value="desk">办公桌</option>
         </select>
-        <input type="number" id="inRef" value="0.8" step="0.05" min="0.1" max="3" style="width:72px;display:none">
-        <button id="btnRef">② 标定参照物</button>
+      </label>
+      <label>风格
+        <select id="selStyle">
+          <option value="nordic">北欧自然</option>
+          <option value="wabi">日式侘寂</option>
+          <option value="midcentury">中古复古</option>
+          <option value="minimal" selected>现代极简</option>
+          <option value="tropical">热带雨林</option>
+          <option value="industrial">工业冷调</option>
+        </select>
+      </label>
+      <label>光照
+        <select id="selLight">
+          <option value="1">L1 耐阴</option>
+          <option value="2" selected>L2 散射</option>
+          <option value="3">L3 明亮散射</option>
+          <option value="4">L4 直射</option>
+        </select>
+      </label>
+      <label>每周养护
+        <select id="selWeekly">
+          <option value="10">10 分钟</option>
+          <option value="30" selected>30 分钟</option>
+          <option value="60">60 分钟</option>
+          <option value="120">2 小时</option>
+        </select>
+      </label>
+      <label>预算
+        <select id="selBudget">
+          <option value="300">300 元</option>
+          <option value="600" selected>600 元</option>
+          <option value="1200">1200 元</option>
+          <option value="3000">3000 元</option>
+        </select>
+      </label>
+      <label class="pet-check"><input type="checkbox" id="chkPet"> 有宠物</label>
+    </div>
+  </div>
+
+  <div class="workspace">
+    <div class="stage-wrap">
+      <div class="stage" id="stage">
+        <div class="stage-inner" id="stageInner" hidden>
+          <img class="base" id="baseImg" alt="你的房间照片">
+          <img id="composedImg" alt="合成效果">
+          <div id="layers"></div>
+          <svg id="guides" xmlns="http://www.w3.org/2000/svg"></svg>
+          <div id="watermark">效果示意</div>
+        </div>
+
+        <div class="stage-empty" id="stageEmpty">
+          <b>拍一张你家的照片</b>
+          <div class="hintline">按真实株高把植物放进你的房间，并告诉你为什么这样搭。<br>
+            照片只在服务端临时处理、30 分钟删除，不长期存储。</div>
+          <div class="row" style="justify-content:center">
+            <button class="primary" id="btnUpload">上传房间照片</button>
+            <button class="ghost" id="btnDemo">用示例房间</button>
+            <button class="ghost" id="btnFlat">立面模式</button>
+          </div>
+          <div class="note" id="emptyNote">支持 JPG / PNG，≤10MB，长边 ≥1200px</div>
+        </div>
+
+        <div id="loading"><span class="spin"></span><span id="loadingText">处理中…</span></div>
       </div>
-      <div class="note" id="anchorNote">先画地面线，再点参照物上下两端。标定后所有植物按真实株高缩放。</div>
+
+      <div class="readout">
+        <span>比例 <b id="rScale">未锚定</b></span>
+        <span>落地线 <b id="rGround">—</b></span>
+        <span>植物 <b id="rPlants">0 / 6</b></span>
+        <span>合成 <b id="rCompose">本地预览</b></span>
+      </div>
+
+      <div class="scorebar">
+        <div class="score-main">
+          <b id="sTotal">—</b><i>综合</i>
+          <i style="margin-left:8px">审美 <span id="sAesthetic">—</span> · 适配 <span id="sFit">—</span></i>
+        </div>
+        <div class="dims" id="dimsWrap"></div>
+        <div class="flag" id="flagWrap" hidden></div>
+      </div>
     </div>
 
-    <div class="card">
-      <h2>植物面板 <em>FR-07 · 点选加入</em></h2>
-      <input type="text" id="search" placeholder="搜索：龟背竹 / tropical / 宠物友好">
-      <div class="row" style="margin-top:8px">
-        <button class="ghost" id="btnOnlyReady" style="font-size:11.5px;padding:4px 10px">只看有素材</button>
-        <span style="font-size:11px;color:var(--ink3)" id="paletteStat"></span>
+    <div class="side">
+      <div class="tabs">
+        <button class="on" data-tab="rec">AI 推荐</button>
+        <button data-tab="self">自己搭配</button>
+        <button data-tab="case">装饰案例</button>
       </div>
-      <div class="plants" id="plants" style="margin-top:8px"></div>
-      <div class="note">灰色为「仅参考」：<code>has_cutout=false</code>，无去底素材，不可放入照片。</div>
-    </div>
 
-    <div class="card">
-      <h2>图层 <em>拖动吸附地面线</em></h2>
-      <ul class="layers" id="layers"></ul>
-      <div class="heightBox" id="heightBox">
-        <div class="lab"><span id="hName">—</span><span id="hVal">—</span></div>
-        <input type="range" id="hRange" min="20" max="200" step="5">
-        <div class="note" style="margin-top:4px">株高按品种区间选规格（非自由缩放），冠幅随素材比例自动变化。</div>
-      </div>
-    </div>
+      <div class="panes">
+        <div class="pane on" id="pane-rec">
+          <div class="card">
+            <h3>三套方案 <em>FR-03</em></h3>
+            <button class="primary full" id="btnRecommend">生成 3 套方案</button>
+            <div class="note" id="recNote">按顶栏的场景 / 风格 / 光照 / 预算生成三套性格不同的方案。</div>
+            <div id="plansWrap" style="margin-top:10px"></div>
+          </div>
+        </div>
 
-    <div class="card">
-      <h2>方案清单 <em>FR-03 第 2 项</em></h2>
-      <div class="bill" id="bill"><div class="empty">放入植物后自动汇总</div></div>
-      <div class="row" style="margin-top:10px">
-        <button class="primary" id="btnExport">导出 PNG</button>
-        <button id="btnExportList">导出清单 .md</button>
-        <button class="ghost" id="btnReset">重置</button>
+        <div class="pane" id="pane-self">
+          <div class="card">
+            <h3>植物面板 <em>FR-07</em></h3>
+            <input type="text" class="full" id="search" placeholder="搜索：龟背竹 / Monstera / 耐阴">
+            <div class="chips" id="chipWrap">
+              <span class="chip on" data-chip="available">只看有素材</span>
+              <span class="chip" data-chip="宠物友好">宠物友好</span>
+              <span class="chip" data-chip="耐阴">耐阴</span>
+              <span class="chip" data-chip="大叶">大叶</span>
+              <span class="chip" data-chip="垂吊">垂吊</span>
+            </div>
+            <div class="plants" id="plants" style="margin-top:8px"></div>
+            <div class="note">灰显为「仅参考」：该品种暂无去底素材，不能放进照片。</div>
+          </div>
+
+          <div class="card">
+            <h3>已放植物 <em>拖动改位置</em></h3>
+            <ul class="layers" id="layerList"></ul>
+            <div class="heightBox" id="heightBox" hidden>
+              <div class="lab"><span id="hName">—</span><span id="hVal">—</span></div>
+              <input type="range" id="hRange" min="20" max="200" step="5">
+              <div class="note" style="margin-top:2px">株高按品种区间选规格，不是自由缩放。</div>
+            </div>
+          </div>
+
+          <div class="card" id="reasonsWrap" hidden></div>
+
+          <div class="card">
+            <h3>一句话改稿 <em>FR-08</em></h3>
+            <div class="chips" id="reviseChips">
+              <span class="chip" data-act="更好养">更好养</span>
+              <span class="chip" data-act="对猫狗安全">对猫狗安全</span>
+              <span class="chip" data-act="更有张力">更有张力</span>
+              <span class="chip" data-act="加一点垂坠">加一点垂坠</span>
+              <span class="chip" data-act="预算降一档">预算降一档</span>
+              <span class="chip" data-act="再矮一点">再矮一点</span>
+            </div>
+            <div class="row" style="margin-top:8px">
+              <input type="text" id="inRevise" placeholder="或者自己说：不要有毒的" style="flex:1 1 auto">
+              <button id="btnRevise">改</button>
+            </div>
+            <div class="revise-out" id="reviseOut"></div>
+          </div>
+        </div>
+
+        <div class="pane" id="pane-case">
+          <div class="card">
+            <h3>装饰案例库 <em>FR-09</em></h3>
+            <div class="row">
+              <select id="caseRoom">
+                <option value="">全部房间</option>
+                <option value="living">客厅</option>
+                <option value="bedroom">卧室</option>
+                <option value="study">书房</option>
+                <option value="balcony">阳台</option>
+                <option value="desk">办公桌</option>
+              </select>
+              <select id="caseStyle">
+                <option value="">全部风格</option>
+                <option value="nordic">北欧自然</option>
+                <option value="wabi">日式侘寂</option>
+                <option value="midcentury">中古复古</option>
+                <option value="minimal">现代极简</option>
+                <option value="tropical">热带雨林</option>
+                <option value="industrial">工业冷调</option>
+              </select>
+              <span class="note" id="caseCount" style="margin:0"></span>
+            </div>
+            <div class="cases" id="caseGrid" style="margin-top:8px"></div>
+            <div class="note" id="caseNote">案例来自 Unsplash / Pexels，逐张可回源。</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>照片与尺度锚定 <em>FR-01 / FR-02</em></h3>
+          <div class="row">
+            <input type="file" id="file" accept="image/*" hidden>
+            <button id="btnUpload2">换一张照片</button>
+            <button class="ghost" id="btnFlat2">立面模式</button>
+          </div>
+          <ul class="checks" id="checks"></ul>
+          <div class="row" style="margin-top:8px">
+            <button id="btnGround">① 画落地线</button>
+            <select id="selRef">
+              <option value="door" selected>门 2.0m</option>
+              <option value="bed">床 0.5m</option>
+              <option value="sofa">沙发 0.8m</option>
+              <option value="custom">自定义</option>
+            </select>
+            <input type="number" id="inRef" value="1.0" step="0.1" min="0.2" max="4" hidden style="width:66px">
+            <button id="btnRef">② 标定高度</button>
+          </div>
+          <div class="note" id="anchorNote">先画落地线，再点参照物（门框上下沿）两端。锚定后植物按真实株高缩放。</div>
+        </div>
+
+        <div class="card">
+          <h3>导出 <em>FR-10</em></h3>
+          <div class="row">
+            <button class="primary" id="btnExportPng">导出效果图 PNG</button>
+            <button id="btnExportList">导出采购清单</button>
+          </div>
+          <div class="note" id="exportNote">效果图长边 ≥1600，右下角标注「效果示意」。</div>
+        </div>
       </div>
-      <div class="note">导出图右下角固定标注「效果示意」；清单含株高/冠幅/光照/毒性/工时/参考价。</div>
     </div>
-  </aside>
-</main>
+  </div>
+</div>
 
 <div id="toast"></div>
-
-<script>
-(function(){
-  'use strict';
-
-  var CONFIG = {
-    dataRoot: '../data/',
-    assetRoot: '../',
-    maxPlants: 6
-  };
-  var qs = new URLSearchParams(location.search);
-  if(qs.get('data')) CONFIG.dataRoot = qs.get('data');
-  if(qs.get('assets')) CONFIG.assetRoot = qs.get('assets');
-
-  var cv = document.getElementById('cv');
-  var ctx = cv.getContext('2d');
-  var wrap = document.getElementById('wrap');
-  var hintEl = document.getElementById('hint');
-
-  var LIGHT_CN = {L1:'L1 耐阴', L2:'L2 散射', L3:'L3 明亮散射', L4:'L4 直射'};
-  var TOXIC_CN = {safe:'无毒', toxic:'有毒', unknown:'未知（按有毒处理）'};
-
-  var DATA = {plants: [], ready: 0, total: 0, source:'—'};
-  var state = {
-    mode:'idle', photo:null, flat:false,
-    ground:null, ref:null, pxPerM:0,
-    plants:[], selected:null, temp:[], drag:null, uid:0,
-    onlyReady:false
-  };
-  var IMG = {};
-
-  function byId(id){ return document.getElementById(id); }
-  function clamp(v,a,b){ return v<a?a:(v>b?b:v); }
-  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g, function(c){
-    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
-
-  function toast(msg){
-    var t = byId('toast');
-    t.textContent = msg; t.classList.add('on');
-    clearTimeout(toast._t);
-    toast._t = setTimeout(function(){ t.classList.remove('on'); }, 2300);
-  }
-  function hint(msg){
-    if(!msg){ hintEl.classList.remove('on'); return; }
-    hintEl.textContent = msg; hintEl.classList.add('on');
-  }
-
-  /* ---------------- 数据 ---------------- */
-  function parseCSV(text){
-    var rows=[], row=[], cur='', q=false, i=0;
-    if(text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
-    for(; i<text.length; i++){
-      var ch = text[i];
-      if(q){
-        if(ch === '"'){ if(text[i+1] === '"'){ cur += '"'; i++; } else { q = false; } }
-        else cur += ch;
-      } else {
-        if(ch === '"') q = true;
-        else if(ch === ','){ row.push(cur); cur=''; }
-        else if(ch === '\n'){ row.push(cur); rows.push(row); row=[]; cur=''; }
-        else if(ch !== '\r') cur += ch;
-      }
-    }
-    if(cur.length || row.length){ row.push(cur); rows.push(row); }
-    return rows;
-  }
-
-  function mid(range){
-    var a = range[0], b = range[1];
-    return Math.round((a+b)/2);
-  }
-
-  function mapIndexItem(it, master){
-    var m = master[it.plant_id] || {};
-    return {
-      id: it.plant_id,
-      name: it.name_cn,
-      latin: it.name_latin || '',
-      has: !!it.has_cutout,
-      file: it.file,
-      hex: it.dominant_hex || m.dominant_hex || '#4F7A52',
-      hMin: it.height_range_cm[0],
-      hMax: it.height_range_cm[1],
-      spread: it.spread_cm || m.spread_cm || 0,
-      light: it.light_level || m.light_level || 'L2',
-      petSafe: !!it.pet_safe,
-      toxic: it.toxic || 'unknown',
-      styles: it.style_tags || [],
-      form: m.form || '',
-      leaf: m.leaf || '',
-      care: parseInt(m.care_min_week, 10) || 10,
-      price: m.price_cny || '',
-      scenes: m.scene_tags || '',
-      difficulty: m.difficulty || '',
-      water: m.water_days || ''
-    };
-  }
-
-  var FALLBACK = [
-    {plant_id:'P01', name_cn:'龟背竹', name_latin:'Monstera deliciosa', has_cutout:true, file:'assets/cutout/P01/P01_front_pexels.png', width:1177, height:1600, height_range_cm:[80,180], spread_cm:80, dominant_hex:'#2A2E26', light_level:'L2', pet_safe:false, toxic:'toxic', style_tags:['tropical','minimal']},
-    {plant_id:'P02', name_cn:'琴叶榕', name_latin:'Ficus lyrata', has_cutout:true, file:'assets/cutout/P02/P02_front_pexels.png', width:536, height:1600, height_range_cm:[100,200], spread_cm:60, dominant_hex:'#56704A', light_level:'L3', pet_safe:false, toxic:'toxic', style_tags:['nordic','minimal']},
-    {plant_id:'P03', name_cn:'橡皮树', name_latin:'Ficus elastica', has_cutout:true, file:'assets/cutout/P03/P03_front_pexels.png', width:911, height:1600, height_range_cm:[80,180], spread_cm:50, dominant_hex:'#6A5434', light_level:'L2', pet_safe:false, toxic:'toxic', style_tags:['midcentury','industrial']},
-    {plant_id:'P04', name_cn:'虎尾兰', name_latin:'Dracaena trifasciata', has_cutout:true, file:'assets/cutout/P04/P04_front_pexels.png', width:1267, height:1600, height_range_cm:[40,90], spread_cm:25, dominant_hex:'#057404', light_level:'L1', pet_safe:false, toxic:'toxic', style_tags:['minimal','industrial']},
-    {plant_id:'P05', name_cn:'绿萝', name_latin:'Epipremnum aureum', has_cutout:true, file:'assets/cutout/P05/P05_front_pexels.png', width:1200, height:1120, height_range_cm:[20,150], spread_cm:40, dominant_hex:'#51CC55', light_level:'L1', pet_safe:false, toxic:'toxic', style_tags:['nordic','wabi']},
-    {plant_id:'P15', name_cn:'芦荟', name_latin:'Aloe vera', has_cutout:true, file:'assets/cutout/P15/P15_front_pexels.png', width:989, height:1361, height_range_cm:[30,60], spread_cm:40, dominant_hex:'#2A302E', light_level:'L4', pet_safe:false, toxic:'toxic', style_tags:['minimal','industrial']},
-    {plant_id:'P16', name_cn:'金钱树', name_latin:'Zamioculcas zamiifolia', has_cutout:true, file:'assets/cutout/P16/P16_front_pexels.png', width:1576, height:1600, height_range_cm:[60,100], spread_cm:50, dominant_hex:'#0D3317', light_level:'L1', pet_safe:false, toxic:'toxic', style_tags:['minimal','industrial']},
-    {plant_id:'P17', name_cn:'发财树', name_latin:'Pachira aquatica', has_cutout:true, file:'assets/cutout/P17/P17_front_pexels.png', width:838, height:1600, height_range_cm:[80,150], spread_cm:60, dominant_hex:'#4B3831', light_level:'L2', pet_safe:true, toxic:'safe', style_tags:['midcentury','nordic']},
-    {plant_id:'P23', name_cn:'一叶兰', name_latin:'Aspidistra elatior', has_cutout:true, file:'assets/cutout/P23/P23_front_pexels.png', width:1123, height:1395, height_range_cm:[50,80], spread_cm:50, dominant_hex:'#D5D3D2', light_level:'L1', pet_safe:true, toxic:'safe', style_tags:['wabi','industrial']}
-  ];
-
-  function loadData(){
-    var master = {};
-    var pMaster = fetch(CONFIG.dataRoot + 'plants_master.csv')
-      .then(function(r){ return r.text(); })
-      .then(function(txt){
-        var rows = parseCSV(txt);
-        var head = rows.shift() || [];
-        rows.forEach(function(r){
-          if(!r.length || !r[0]) return;
-          var o = {};
-          head.forEach(function(h, i){ o[h] = r[i]; });
-          master[o.plant_id] = o;
-        });
-      }).catch(function(){});
-
-    var pIndex = fetch(CONFIG.dataRoot + 'assets_index.json')
-      .then(function(r){ if(!r.ok) throw 0; return r.json(); });
-
-    return Promise.all([pIndex, pMaster]).then(function(res){
-      var idx = res[0];
-      DATA.plants = idx.items.map(function(it){ return mapIndexItem(it, master); });
-      DATA.ready = DATA.plants.filter(function(p){ return p.has; }).length;
-      DATA.total = DATA.plants.length;
-      DATA.source = 'assets_index + plants_master';
-    }).catch(function(){
-      DATA.plants = FALLBACK.map(function(it){ return mapIndexItem(it, master); });
-      DATA.ready = DATA.plants.length;
-      DATA.total = 9;
-      DATA.source = 'fallback（fetch 失败，建议用 http 起服务）';
-    });
-  }
-
-  function plantById(id){
-    for(var i=0;i<DATA.plants.length;i++){ if(DATA.plants[i].id === id) return DATA.plants[i]; }
-    return null;
-  }
-
-  function assetUrl(p){
-    if(!p || !p.file) return null;
-    return CONFIG.assetRoot + p.file;
-  }
-
-  function getImg(id){
-    var p = plantById(id);
-    var url = assetUrl(p);
-    if(!url) return null;
-    if(IMG[id] === undefined){
-      IMG[id] = null;
-      var im = new Image();
-      im.onload = function(){ IMG[id] = im; render(); };
-      im.onerror = function(){ IMG[id] = false; };
-      im.src = url;
-    }
-    return IMG[id] || null;
-  }
-
-  function preloadReady(){
-    var list = DATA.plants.filter(function(p){ return p.has; });
-    list.forEach(function(p, i){
-      setTimeout(function(){ getImg(p.id); }, 60 + i*60);
-    });
-  }
-
-  /* ---------------- 布局 ---------------- */
-  var lastCssW = 0;
-  function layout(force){
-    var stageEl = document.getElementById('stage');
-    var avail = (stageEl ? stageEl.clientWidth : 0) || 720;
-    if(!force && Math.abs(avail - lastCssW) < 2 && cv.width) return;
-    lastCssW = avail;
-    var dpr = Math.min(window.devicePixelRatio || 1, 2);
-    var ar = state.photo ? (state.photo.w / state.photo.h) : (16/10);
-    var cssW = avail;
-    var cssH = Math.round(cssW / ar);
-    var maxH = Math.min(600, Math.max(360, window.innerHeight - 300));
-    if(cssH > maxH){ cssH = maxH; cssW = Math.round(maxH * ar); }
-    wrap.style.width = cssW + 'px';
-    cv.style.width = cssW + 'px';
-    cv.style.height = cssH + 'px';
-    cv.width = Math.round(cssW * dpr);
-    cv.height = Math.round(cssH * dpr);
-    render(); updateReadout();
-  }
-
-  /* ---------------- 几何 ---------------- */
-  function groundYAt(nx){
-    var g = state.ground;
-    if(!g) return 0.85;
-    var t = Math.abs(g.b.x - g.a.x) < 1e-6 ? 0 : (nx - g.a.x) / (g.b.x - g.a.x);
-    return g.a.y + t * (g.b.y - g.a.y);
-  }
-  function groundSpan(){
-    var g = state.ground;
-    if(!g) return {min:0.05, max:0.95};
-    return {min:Math.min(g.a.x,g.b.x), max:Math.max(g.a.x,g.b.x)};
-  }
-  function pxPerM(W,H){
-    if(!state.ref) return 0;
-    var d = Math.hypot((state.ref.a.x-state.ref.b.x)*W, (state.ref.a.y-state.ref.b.y)*H);
-    return d / state.ref.meters;
-  }
-  var BB = {};
-  function bboxOf(id, im){
-    if(BB[id]) return BB[id];
-    var w = 200, h = Math.max(1, Math.round(200 * im.naturalHeight / im.naturalWidth));
-    var c = document.createElement('canvas');
-    c.width = w; c.height = h;
-    var x = c.getContext('2d');
-    x.drawImage(im, 0, 0, w, h);
-    var d, minY = h, maxY = -1, minX = w, maxX = -1;
-    try { d = x.getImageData(0,0,w,h).data; } catch(err){ BB[id] = {l:0.02,t:0.02,r:0.98,b:0.98}; return BB[id]; }
-    for(var y=0;y<h;y++){
-      for(var X=0;X<w;X++){
-        if(d[(y*w+X)*4+3] > 16){
-          if(y < minY) minY = y;
-          if(y > maxY) maxY = y;
-          if(X < minX) minX = X;
-          if(X > maxX) maxX = X;
-        }
-      }
-    }
-    if(maxY <= minY){ BB[id] = {l:0.02,t:0.02,r:0.98,b:0.98}; return BB[id]; }
-    BB[id] = {l:minX/w, t:minY/h, r:(maxX+1)/w, b:(maxY+1)/h};
-    return BB[id];
-  }
-
-  function plantBox(it, W, H, ppm){
-    var p = plantById(it.plantId);
-    var hPx = (it.cm/100) * ppm;
-    var im = getImg(it.plantId);
-    var gx = it.nx*W, gy = groundYAt(it.nx)*H;
-    if(!im) return {h:hPx, w:hPx*0.7, x:gx, y:gy, def:p, img:null};
-    var bb = bboxOf(it.plantId, im);
-    var fh = Math.max(0.25, bb.b - bb.t);
-    var fw = Math.max(0.10, bb.r - bb.l);
-    var drawH = hPx / fh;
-    var drawW = drawH * (im.naturalWidth / im.naturalHeight);
-    return {
-      h: hPx, w: fw*drawW, x: gx, y: gy, def: p, img: im,
-      drawX: gx - (bb.l + fw/2) * drawW,
-      drawY: gy - bb.b * drawH,
-      drawW: drawW, drawH: drawH
-    };
-  }
-
-  /* ---------------- 渲染 ---------------- */
-  function render(){
-    drawScene(ctx, cv.width, cv.height, cv.width / (cv.clientWidth || cv.width));
-  }
-
-  function drawScene(c, W, H, s){
-    s = s || 1;
-    c.clearRect(0,0,W,H);
-    var lw = Math.max(1, W/680);
-
-    if(state.photo){
-      c.drawImage(state.photo.img, 0, 0, W, H);
-    } else {
-      c.fillStyle = '#EDEEE8'; c.fillRect(0,0,W,H);
-      c.fillStyle = '#DDD8C9'; c.fillRect(0, H*0.78, W, H*0.22);
-      c.fillStyle = '#CFC9B7'; c.fillRect(0, H*0.78 - 2*s, W, 2*s);
-      c.fillStyle = 'rgba(95,102,92,.6)';
-      c.font = (12.5*s) + 'px "PingFang SC",system-ui,sans-serif';
-      c.textAlign = 'center';
-      if(!state.plants.length){
-        c.fillText(state.flat ? '立面模式（降级）· 无照片也能完整演示'
-          : '上传房间照片，或点「用立面模式」', W/2, H*0.42);
-      }
-    }
-
-    var ppm = pxPerM(W,H);
-
-    if(state.ground){
-      c.save();
-      c.strokeStyle = 'rgba(29,158,117,.9)'; c.lineWidth = 2*lw;
-      c.setLineDash([9*lw, 6*lw]);
-      c.beginPath();
-      c.moveTo(state.ground.a.x*W, state.ground.a.y*H);
-      c.lineTo(state.ground.b.x*W, state.ground.b.y*H);
-      c.stroke();
-      c.setLineDash([]);
-      [state.ground.a, state.ground.b].forEach(function(p){
-        c.beginPath(); c.arc(p.x*W, p.y*H, 4.5*lw, 0, Math.PI*2);
-        c.fillStyle = '#fff'; c.fill();
-        c.strokeStyle = '#0F6E56'; c.lineWidth = 2*lw; c.stroke();
-      });
-      c.restore();
-    }
-
-    var ordered = state.plants.slice().sort(function(a,b){ return a.z - b.z; });
-    for(var i=0;i<ordered.length;i++){
-      var it = ordered[i];
-      var box = plantBox(it, W, H, ppm > 0 ? ppm : H*0.28);
-
-      c.save();
-      c.beginPath();
-      c.ellipse(box.x, box.y + 1*lw, box.w*0.36, Math.max(2, box.h*0.022), 0, 0, Math.PI*2);
-      c.fillStyle = 'rgba(18,24,18,.22)'; c.fill();
-      c.beginPath();
-      c.ellipse(box.x, box.y + 1*lw, box.w*0.22, Math.max(1.5, box.h*0.014), 0, 0, Math.PI*2);
-      c.fillStyle = 'rgba(18,24,18,.28)'; c.fill();
-      c.restore();
-
-      if(box.img){
-        c.drawImage(box.img, box.drawX, box.drawY, box.drawW, box.drawH);
-      } else {
-        placeholderPlant(c, box, lw);
-      }
-
-      if(state.selected === it.uid){
-        c.save();
-        c.strokeStyle = '#1D9E75'; c.setLineDash([5*lw,4*lw]); c.lineWidth = 1.3*lw;
-        c.strokeRect(box.x - box.w/2 - 5*lw, box.y - box.h - 6*lw, box.w + 10*lw, box.h + 10*lw);
-        c.setLineDash([]);
-        var label = (box.def ? box.def.name : it.plantId) + ' · ' + it.cm + 'cm';
-        c.font = (11.5*lw) + 'px "PingFang SC",system-ui,sans-serif';
-        var tw = c.measureText(label).width;
-        c.fillStyle = 'rgba(29,42,34,.88)';
-        c.fillRect(box.x - tw/2 - 6*lw, box.y - box.h - 27*lw, tw + 12*lw, 17*lw);
-        c.fillStyle = '#fff'; c.textAlign = 'center'; c.textBaseline = 'middle';
-        c.fillText(label, box.x, box.y - box.h - 18.5*lw);
-        c.restore();
-      }
-    }
-
-    if(ppm > 0){
-      var bx0 = 18*lw, by0 = H - 26*lw, bar = ppm;
-      c.save();
-      c.strokeStyle = 'rgba(29,42,34,.75)'; c.lineWidth = 2*lw;
-      c.beginPath();
-      c.moveTo(bx0, by0); c.lineTo(bx0 + bar, by0);
-      c.moveTo(bx0, by0 - 5*lw); c.lineTo(bx0, by0 + 5*lw);
-      c.moveTo(bx0 + bar, by0 - 5*lw); c.lineTo(bx0 + bar, by0 + 5*lw);
-      c.stroke();
-      c.font = (11*lw) + 'px "PingFang SC",system-ui,sans-serif';
-      c.fillStyle = 'rgba(29,42,34,.82)'; c.textAlign = 'left'; c.textBaseline = 'top';
-      c.fillText('1 m', bx0 + bar + 6*lw, by0 - 7*lw);
-      c.restore();
-    }
-
-    var wm = '效果示意';
-    c.save();
-    c.font = (12*lw) + 'px "PingFang SC",system-ui,sans-serif';
-    c.textAlign = 'right'; c.textBaseline = 'bottom';
-    var mw = c.measureText(wm).width;
-    c.fillStyle = 'rgba(29,42,34,.55)';
-    c.fillRect(W - mw - 22*lw, H - 30*lw, mw + 16*lw, 20*lw);
-    c.fillStyle = '#fff';
-    c.fillText(wm, W - 14*lw, H - 13*lw);
-    c.restore();
-  }
-
-  function placeholderPlant(c, box, lw){
-    var h = box.h, w = box.w, x = box.x, y = box.y;
-    c.save();
-    c.fillStyle = 'rgba(79,122,82,.85)';
-    for(var i=0;i<5;i++){
-      var t = i/4 - 0.5;
-      c.beginPath();
-      c.ellipse(x + t*w*0.22, y - h*0.55 - Math.abs(t)*h*0.05,
-        Math.max(2, w*0.09), Math.max(3, h*0.30), t*0.5, 0, Math.PI*2);
-      c.fill();
-    }
-    c.fillStyle = 'rgba(120,120,120,.5)';
-    c.font = (11*lw) + 'px "PingFang SC",system-ui,sans-serif';
-    c.textAlign = 'center';
-    c.fillText('素材加载中', x, y - h*0.5);
-    c.restore();
-  }
-
-  /* ---------------- 面板 ---------------- */
-  function updateReadout(){
-    var ppm = pxPerM(cv.width, cv.height);
-    byId('rScale').textContent = ppm > 0 ? (Math.round(ppm) + ' px/m') : '未标定';
-    if(state.ground && ppm > 0){
-      var m = Math.hypot((state.ground.a.x-state.ground.b.x)*cv.width,
-                         (state.ground.a.y-state.ground.b.y)*cv.height) / ppm;
-      byId('rGround').textContent = m.toFixed(1) + ' m';
-    } else {
-      byId('rGround').textContent = state.ground ? '已画' : '—';
-    }
-    byId('rRef').textContent = state.ref ? (state.ref.label + ' ' + state.ref.meters.toFixed(2) + ' m') : '—';
-    byId('rCount').textContent = state.plants.length + ' / ' + CONFIG.maxPlants;
-
-    var t = bill();
-    byId('rBill').textContent = t.count
-      ? (t.count + ' 株 · ¥' + t.priceMin + (t.priceMax !== t.priceMin ? '–' + t.priceMax : '') + ' · ' + t.minutes + ' 分/周')
-      : '—';
-
-    byId('hBadge').textContent = '素材 ' + DATA.ready + ' / ' + DATA.total + ' ready';
-    byId('hBadge').className = 'badge' + (DATA.ready < 10 ? ' warn' : '');
-    renderSteps();
-    renderBill();
-  }
-
-  function renderSteps(){
-    var steps = ['照片','地面线','高度参照','放植物'];
-    var done = [!!(state.photo || state.flat), !!state.ground, !!state.ref, state.plants.length > 0];
-    var html = '';
-    for(var i=0;i<steps.length;i++){
-      var cls = done[i] ? 'done' : '';
-      if(!done[i] && (i === 0 || done[i-1])) cls = 'now';
-      html += '<div class="' + cls + '">' + (i+1) + ' ' + steps[i] + '</div>';
-    }
-    byId('steps').innerHTML = html;
-  }
-
-  function renderPalette(){
-    var q = byId('search').value.trim().toLowerCase();
-    var html = '', shown = 0;
-    for(var i=0;i<DATA.plants.length;i++){
-      var p = DATA.plants[i];
-      if(state.onlyReady && !p.has) continue;
-      var hay = (p.name + ' ' + p.latin + ' ' + p.styles.join(' ') + ' ' + p.form + ' ' +
-        (p.petSafe ? '宠物友好' : '') + ' ' + LIGHT_CN[p.light]).toLowerCase();
-      if(q && hay.indexOf(q) < 0) continue;
-      shown++;
-      var url = assetUrl(p);
-      var visual = url
-        ? '<img class="thumb" loading="lazy" src="' + esc(url) + '" alt="">'
-        : '<div class="swatch" style="background:' + esc(p.hex) + '2e">'
-          + '<div style="position:absolute;left:50%;bottom:5px;width:7px;height:7px;margin-left:-3.5px;background:#B98A6A;border-radius:1px"></div>'
-          + '<div style="position:absolute;left:50%;bottom:12px;width:14px;height:9px;margin-left:-7px;border-radius:50% 50% 40% 40%;background:' + esc(p.hex) + '"></div>'
-          + '</div>';
-      html += '<div class="plant' + (p.has ? '' : ' off') + '" data-id="' + p.id + '">'
-        + visual
-        + '<div class="meta"><b>' + esc(p.name) + '</b><i>' + p.hMin + '–' + p.hMax + 'cm · '
-        + esc(p.styles.slice(0,2).join(' / ')) + (p.has ? '' : ' · 仅参考') + '</i></div>'
-        + '<div class="add">' + (p.has ? '+' : '—') + '</div></div>';
-    }
-    byId('plants').innerHTML = html || '<div class="empty">没有匹配的植物</div>';
-    byId('paletteStat').textContent = '显示 ' + shown + ' / ' + DATA.total;
-  }
-
-  function renderLayers(){
-    if(!state.plants.length){
-      byId('layers').innerHTML = '<div class="empty">还没有植物。上面面板点「+」加入。</div>';
-      byId('heightBox').classList.remove('on');
-      return;
-    }
-    var ordered = state.plants.slice().sort(function(a,b){ return b.z - a.z; });
-    var html = '';
-    for(var i=0;i<ordered.length;i++){
-      var it = ordered[i], p = plantById(it.plantId);
-      html += '<li data-uid="' + it.uid + '">'
-        + '<span class="nm" style="' + (state.selected === it.uid ? 'color:#0F6E56' : '') + '">'
-        + esc(p ? p.name : it.plantId) + ' · ' + it.cm + 'cm</span>'
-        + '<button class="mini" data-act="front" title="置前">↑</button>'
-        + '<button class="mini" data-act="back" title="置后">↓</button>'
-        + '<button class="mini" data-act="del" title="删除">×</button></li>';
-    }
-    byId('layers').innerHTML = html;
-    syncHeightBox();
-  }
-
-  function syncHeightBox(){
-    var box = byId('heightBox');
-    var it = null;
-    for(var i=0;i<state.plants.length;i++){ if(state.plants[i].uid === state.selected) it = state.plants[i]; }
-    if(!it){ box.classList.remove('on'); return; }
-    var p = plantById(it.plantId);
-    if(!p){ box.classList.remove('on'); return; }
-    box.classList.add('on');
-    byId('hName').textContent = p.name + '（' + p.hMin + '–' + p.hMax + ' cm）';
-    byId('hVal').textContent = it.cm + ' cm';
-    var r = byId('hRange');
-    r.min = p.hMin; r.max = p.hMax; r.step = 5; r.value = it.cm;
-  }
-
-  function bill(){
-    var priceMin = 0, priceMax = 0, minutes = 0, count = 0;
-    var rows = [];
-    var seen = {};
-    state.plants.forEach(function(it){
-      var p = plantById(it.plantId);
-      if(!p) return;
-      count++;
-      minutes += p.care || 10;
-      var pr = String(p.price || '').split('-');
-      var a = parseInt(pr[0], 10) || 0;
-      var b = pr.length > 1 ? (parseInt(pr[1], 10) || a) : a;
-      priceMin += a; priceMax += b;
-      if(seen[p.id]){ seen[p.id].n++; return; }
-      var row = {p:p, n:1, cm:it.cm};
-      seen[p.id] = row;
-      rows.push(row);
-    });
-    return {count:count, priceMin:priceMin, priceMax:priceMax, minutes:minutes, rows:rows};
-  }
-
-  function renderBill(){
-    var b = bill();
-    if(!b.count){ byId('bill').innerHTML = '<div class="empty">放入植物后自动汇总</div>'; return; }
-    var html = '';
-    b.rows.forEach(function(r){
-      html += '<div class="li"><span>' + esc(r.p.name) + (r.n > 1 ? ' ×' + r.n : '')
-        + ' · ' + r.cm + 'cm</span><span>¥' + esc(r.p.price || '—') + '</span></div>';
-    });
-    html += '<div class="li" style="border-top:1px solid var(--line);margin-top:4px;padding-top:6px">'
-      + '<span>合计 ' + b.count + ' 株 · 每周 ' + b.minutes + ' 分钟</span>'
-      + '<span>¥' + b.priceMin + (b.priceMax !== b.priceMin ? '–' + b.priceMax : '') + '</span></div>';
-    byId('bill').innerHTML = html;
-  }
-
-  /* ---------------- 照片校验 ---------------- */
-  function checkPhoto(img){
-    var items = [];
-    var long = Math.max(img.width, img.height);
-    items.push(long >= 1200
-      ? {s:'ok', t:'分辨率 ' + img.width + '×' + img.height + '，长边 ≥1200'}
-      : {s:'warn', t:'长边 ' + long + 'px 低于 1200（FR-01）'});
-
-    var c = document.createElement('canvas');
-    c.width = 64; c.height = 64;
-    var x = c.getContext('2d');
-    x.drawImage(img, 0, 0, 64, 64);
-    var d = x.getImageData(0,0,64,64).data;
-    var sum = 0, sum2 = 0, n = 0;
-    for(var i=0;i<d.length;i+=4){
-      var l = 0.299*d[i] + 0.587*d[i+1] + 0.114*d[i+2];
-      sum += l; sum2 += l*l; n++;
-    }
-    var mean = sum/n, sd = Math.sqrt(Math.max(0, sum2/n - mean*mean));
-    items.push(mean < 55 ? {s:'bad', t:'亮度 ' + mean.toFixed(0) + '，偏暗，建议重拍'}
-      : (mean > 205 ? {s:'bad', t:'亮度 ' + mean.toFixed(0) + '，过曝'}
-      : {s:'ok', t:'亮度 ' + mean.toFixed(0) + '，正常'}));
-    items.push(sd < 16 ? {s:'warn', t:'对比度偏低（' + sd.toFixed(0) + '），可能模糊'}
-      : {s:'ok', t:'对比度 ' + sd.toFixed(0) + '，正常'});
-    items.push({s:'warn', t:'地面可见性需人工确认（正式版走 /api/photo/check）'});
-
-    byId('checks').innerHTML = items.map(function(it){
-      return '<li><span class="dot ' + it.s + '"></span><span>' + esc(it.t) + '</span></li>';
-    }).join('');
-  }
-
-  /* ---------------- 交互 ---------------- */
-  function setMode(m, msg){
-    state.mode = m; state.temp = [];
-    cv.style.cursor = m === 'idle' ? 'default' : 'crosshair';
-    hint(msg || '');
-  }
-  function toNorm(e){
-    var r = cv.getBoundingClientRect();
-    return {
-      x: clamp((e.clientX - r.left) / r.width, 0, 1),
-      y: clamp((e.clientY - r.top) / r.height, 0, 1)
-    };
-  }
-  function hitTest(p){
-    var W = cv.width, H = cv.height, ppm = pxPerM(W,H) || H*0.28;
-    var ordered = state.plants.slice().sort(function(a,b){ return b.z - a.z; });
-    for(var i=0;i<ordered.length;i++){
-      var b = plantBox(ordered[i], W, H, ppm);
-      if(p.x*W > b.x - b.w/2 && p.x*W < b.x + b.w/2 && p.y*H > b.y - b.h && p.y*H < b.y + 4) return ordered[i];
-    }
-    return null;
-  }
-
-  cv.addEventListener('pointerdown', function(e){
-    if(state.mode === 'ground' || state.mode === 'ref'){
-      var p = toNorm(e);
-      state.temp.push(p);
-      if(state.temp.length === 1){
-        hint(state.mode === 'ground' ? '再点一下另一端，画出地面线' : '再点一下参照物的另一端');
-        return;
-      }
-      var a = state.temp[0], b = state.temp[1];
-      if(Math.hypot((a.x-b.x)*cv.width, (a.y-b.y)*cv.height) < 14){
-        toast('两点太近，请重新点'); state.temp = []; return;
-      }
-      if(state.mode === 'ground'){
-        state.ground = {a:a, b:b}; setMode('idle'); toast('地面线已设定');
-      } else {
-        var m = parseFloat(byId('inRef').value) || 0.8;
-        var sel = byId('selRef');
-        var label = sel.value === 'custom' ? '自定义' : sel.selectedOptions[0].textContent.split(' ')[0];
-        state.ref = {a:a, b:b, meters:m, label:label};
-        setMode('idle');
-        toast('已标定：1 m ≈ ' + Math.round(pxPerM(cv.width, cv.height)) + ' px');
-      }
-      layout(true); return;
-    }
-
-    var pt = toNorm(e);
-    var hit = hitTest(pt);
-    if(hit){
-      state.selected = hit.uid;
-      state.drag = hit.uid;
-      try{ cv.setPointerCapture(e.pointerId); }catch(err){}
-      renderLayers(); render();
-    } else {
-      state.selected = null;
-      renderLayers(); render();
-    }
-  });
-
-  cv.addEventListener('pointermove', function(e){
-    if(state.drag == null) return;
-    var p = toNorm(e), span = groundSpan(), it = null;
-    for(var i=0;i<state.plants.length;i++){ if(state.plants[i].uid === state.drag) it = state.plants[i]; }
-    if(!it) return;
-    it.nx = clamp(p.x, span.min + 0.02, span.max - 0.02);
-    render();
-  });
-  cv.addEventListener('pointerup', function(){ state.drag = null; });
-  document.addEventListener('keydown', function(e){
-    if(e.key === 'Escape' && state.mode !== 'idle'){ setMode('idle'); toast('已取消'); }
-  });
-
-  byId('btnUpload').addEventListener('click', function(){ byId('file').click(); });
-  byId('file').addEventListener('change', function(e){
-    var f = e.target.files && e.target.files[0];
-    if(!f) return;
-    var img = new Image();
-    img.onload = function(){
-      state.photo = {img:img, w:img.width, h:img.height};
-      state.flat = false;
-      state.ground = null; state.ref = null; state.plants = []; state.selected = null;
-      checkPhoto(img); layout(true); setMode('idle');
-      toast('照片已载入，下一步：画地面线');
-    };
-    img.onerror = function(){ toast('这张图打不开，换一张试试'); };
-    img.src = URL.createObjectURL(f);
-  });
-
-  byId('btnFlat').addEventListener('click', function(){
-    state.photo = null; state.flat = true;
-    state.ground = {a:{x:0.10,y:0.78}, b:{x:0.90,y:0.78}};
-    state.ref = {a:{x:0.50,y:0.78}, b:{x:0.50,y:0.44}, meters:1.0, label:'立面标尺'};
-    state.plants = []; state.selected = null;
-    byId('checks').innerHTML = '<li><span class="dot warn"></span><span>立面模式：不使用照片，按固定比例演示（AC-10 降级路径）</span></li>';
-    layout(true); setMode('idle'); toast('已切到立面模式');
-  });
-
-  byId('btnGround').addEventListener('click', function(){
-    if(!state.photo && !state.flat){ toast('先上传照片，或用立面模式'); return; }
-    setMode('ground', '点两下：先点地面近处一端，再点远处一端');
-  });
-  byId('selRef').addEventListener('change', function(){
-    var inp = byId('inRef');
-    if(this.value === 'custom'){ inp.style.display = 'inline-block'; inp.focus(); }
-    else { inp.style.display = 'none'; inp.value = this.value; }
-  });
-  byId('btnRef').addEventListener('click', function(){
-    if(!state.ground){ toast('先画地面线'); return; }
-    setMode('ref', '点参照物的上下两端（如门框上下沿）');
-  });
-
-  function addPlant(p, nx, cm){
-    if(!p || !p.has) return null;
-    if(state.plants.length >= CONFIG.maxPlants){ toast('最多 ' + CONFIG.maxPlants + ' 株（FR-07）'); return null; }
-    var span = groundSpan();
-    nx = clamp(nx, span.min + 0.03, span.max - 0.03);
-    var it = {
-      uid: ++state.uid, plantId: p.id, nx: nx,
-      cm: cm || mid([p.hMin, p.hMax]),
-      z: groundYAt(nx) * 100 + state.plants.length * 0.01
-    };
-    state.plants.push(it);
-    state.selected = it.uid;
-    getImg(p.id);
-    return it;
-  }
-
-  function demo(){
-    state.photo = null; state.flat = true;
-    state.ground = {a:{x:0.08,y:0.80}, b:{x:0.92,y:0.76}};
-    state.ref = {a:{x:0.50,y:0.80}, b:{x:0.50,y:0.46}, meters:1.0, label:'立面标尺'};
-    state.plants = []; state.uid = 0;
-    var want = [['P01', 0.30, 130], ['P04', 0.62, 70], ['P05', 0.80, 45]];
-    want.forEach(function(w){
-      var p = plantById(w[0]);
-      if(p) addPlant(p, w[1], w[2]);
-    });
-    byId('checks').innerHTML = '<li><span class="dot warn"></span><span>演示模式：立面标尺 + 真实去底素材，用于联调与录屏</span></li>';
-    render(); renderLayers(); layout(true);
-  }
-
-  byId('plants').addEventListener('click', function(e){
-    var row = e.target.closest('.plant');
-    if(!row) return;
-    var p = plantById(row.getAttribute('data-id'));
-    if(!p) return;
-    if(!p.has){ toast('「' + p.name + '」暂无去底素材，仅参考'); return; }
-    if(!state.ground){ toast('先画地面线并标定比例'); return; }
-    var span = groundSpan();
-    addPlant(p, 0.5 + (state.plants.length % 5 - 2) * 0.13);
-    render(); renderLayers(); updateReadout();
-  });
-
-  byId('search').addEventListener('input', renderPalette);
-  byId('btnOnlyReady').addEventListener('click', function(){
-    state.onlyReady = !state.onlyReady;
-    this.style.background = state.onlyReady ? '#E8F4EE' : '';
-    this.style.borderColor = state.onlyReady ? '#CBE7DA' : '';
-    this.style.color = state.onlyReady ? '#0F6E56' : '';
-    renderPalette();
-  });
-
-  byId('layers').addEventListener('click', function(e){
-    var li = e.target.closest('li');
-    if(!li) return;
-    var uid = parseInt(li.getAttribute('data-uid'), 10);
-    var idx = -1;
-    for(var i=0;i<state.plants.length;i++){ if(state.plants[i].uid === uid) idx = i; }
-    if(idx < 0) return;
-    var btn = e.target.closest('button');
-    if(!btn){ state.selected = uid; render(); renderLayers(); return; }
-    var act = btn.getAttribute('data-act');
-    if(act === 'del'){
-      state.plants.splice(idx, 1);
-      if(state.selected === uid) state.selected = null;
-    } else {
-      var zs = state.plants.map(function(p){ return p.z; });
-      if(act === 'front') state.plants[idx].z = Math.max.apply(null, zs) + 1;
-      if(act === 'back') state.plants[idx].z = Math.min.apply(null, zs) - 1;
-    }
-    render(); renderLayers(); updateReadout();
-  });
-
-  byId('hRange').addEventListener('input', function(){
-    var it = null;
-    for(var i=0;i<state.plants.length;i++){ if(state.plants[i].uid === state.selected) it = state.plants[i]; }
-    if(!it) return;
-    it.cm = parseInt(this.value, 10);
-    byId('hVal').textContent = it.cm + ' cm';
-    render(); renderLayers(); updateReadout();
-  });
-
-  function exportScale(){
-    var long = Math.max(cv.width, cv.height);
-    return long >= 1600 ? 1 : (1600 / long);
-  }
-
-  byId('btnExport').addEventListener('click', function(){
-    if(!state.photo && !state.flat){ toast('先上传照片，或用立面模式'); return; }
-    if(!state.plants.length){ toast('至少放一株植物'); return; }
-    var s = exportScale();
-    var W = Math.round(cv.width*s), H = Math.round(cv.height*s);
-    var out = document.createElement('canvas');
-    out.width = W; out.height = H;
-    drawScene(out.getContext('2d'), W, H, W/(cv.clientWidth || W));
-    out.toBlob(function(blob){
-      var a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = 'verda-preview-' + Date.now() + '.png';
-      a.click();
-      setTimeout(function(){ URL.revokeObjectURL(a.href); }, 5000);
-      toast('已导出 ' + W + '×' + H + ' PNG');
-    }, 'image/png');
-  });
-
-  byId('btnExportList').addEventListener('click', function(){
-    if(!state.plants.length){ toast('先放植物'); return; }
-    var b = bill();
-    var lines = ['# 植境 Verda · 采购清单', '',
-      '> 生成时间 ' + new Date().toLocaleString('zh-CN') + '　|　合成图为效果示意，非实景拍摄', '',
-      '| 植物 | 学名 | 规格 | 冠幅 | 光照 | 毒性 | 宠物 | 每周工时 | 参考价 |',
-      '|---|---|---|---|---|---|---|---|---|'];
-    var seen = {};
-    state.plants.forEach(function(it){
-      var p = plantById(it.plantId);
-      if(!p || seen[p.id]) return;
-      seen[p.id] = 1;
-      lines.push('| ' + p.name + ' | ' + p.latin + ' | ' + it.cm + ' cm | ' + p.spread + ' cm | '
-        + (LIGHT_CN[p.light] || p.light) + ' | ' + (TOXIC_CN[p.toxic] || p.toxic) + ' | '
-        + (p.petSafe ? '友好' : '注意') + ' | ' + p.care + ' 分钟 | ¥' + (p.price || '—') + ' |');
-    });
-    lines.push('');
-    lines.push('合计：' + b.count + ' 株，参考价 ¥' + b.priceMin + (b.priceMax !== b.priceMin ? '–' + b.priceMax : '')
-      + '，每周养护约 ' + b.minutes + ' 分钟。');
-    if(state.plants.some(function(it){ var p = plantById(it.plantId); return p && !p.petSafe; })){
-      lines.push('');
-      lines.push('> 注意：清单中含对猫狗有毒的品种，有宠物家庭请替换。');
-    }
-    var blob = new Blob([lines.join('\n')], {type:'text/markdown;charset=utf-8'});
-    var a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'verda-list-' + Date.now() + '.md';
-    a.click();
-    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 5000);
-    toast('已导出清单 .md');
-  });
-
-  byId('btnReset').addEventListener('click', function(){
-    state.photo = null; state.flat = false;
-    state.ground = null; state.ref = null;
-    state.plants = []; state.selected = null; state.uid = 0;
-    byId('checks').innerHTML = ''; byId('file').value = '';
-    layout(true); renderLayers(); setMode('idle'); toast('已重置');
-  });
-
-  window.addEventListener('resize', function(){ layout(true); });
-  if(window.ResizeObserver){
-    try{ new ResizeObserver(function(){ layout(false); }).observe(wrap); }catch(err){}
-  }
-
-  loadData().then(function(){
-    byId('hBadge').textContent = '素材 ' + DATA.ready + ' / ' + DATA.total + ' ready';
-    if(DATA.source.indexOf('fallback') === 0){
-      byId('hBadge').className = 'badge warn';
-      byId('hBadge').title = '直接双击打开时 fetch 会被拦截，请在本目录上级运行 python -m http.server';
-    }
-    renderPalette();
-    renderLayers();
-    layout(true);
-    preloadReady();
-    if(qs.get('demo')) setTimeout(demo, 350);
-  });
-})();
-</script>
+<script src="app.js"></script>
 </body>
 </html>
