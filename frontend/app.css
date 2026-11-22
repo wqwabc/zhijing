@@ -168,6 +168,11 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--green-b); outlin
 .chip{border:1px solid var(--line); background:#fff; border-radius:99px; padding:3px 10px; font-size:11px; cursor:pointer; color:var(--ink2);}
 .chip.on{background:var(--green-l); border-color:var(--green-b); color:var(--green-d);}
 
+.tagillu{
+  font-style:normal; font-size:10px; padding:0 4px; border-radius:3px;
+  background:var(--warn-l); color:#854F0B; margin-left:4px; vertical-align:1px;
+}
+
 /* 图层 */
 .layers{list-style:none; margin:0; padding:0; font-size:12px;}
 .layers li{display:flex; align-items:center; gap:6px; padding:5px 2px; border-bottom:1px solid var(--line2);}

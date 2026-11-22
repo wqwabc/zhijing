@@ -113,6 +113,7 @@
       tags: p.tags || [], available: !!p.available,
       thumb: p.thumb_url ? apiUrl(p.thumb_url) : null,
       image: p.image_url ? apiUrl(p.image_url) : null,
+      kind: p.kind || 'photo',
       styles: p.style_tags || [], petSafe: !!p.pet_safe, toxic: p.toxic
     };
   }
@@ -132,6 +133,7 @@
       tags: tags, available: !!it.has_cutout,
       thumb: file ? CFG.assetRoot + file : null,
       image: file ? CFG.assetRoot + file : null,
+      kind: (file && file.indexOf('/illustrations/') >= 0) ? 'illustration' : 'photo',
       styles: it.style_tags || [], petSafe: !!it.pet_safe, toxic: it.toxic
     };
   }
@@ -175,6 +177,13 @@
       renderPalette();
       renderRecNote();
     });
+  }
+
+  function illuCount(list) {
+    return (list || []).filter(function (id) {
+      var p = byId(id);
+      return p && p.kind === 'illustration';
+    }).length;
   }
 
   function byId(id) {
@@ -583,12 +592,14 @@
     var active = Array.prototype.map.call(document.querySelectorAll('#chipWrap .chip.on'), function (c) {
       return c.getAttribute('data-chip');
     });
+    var onlyPhoto = active.indexOf('photo') >= 0;
     var html = '', shown = 0;
     S.catalog.forEach(function (p) {
       if (active.indexOf('available') >= 0 && !p.available) return;
+      if (onlyPhoto && p.kind === 'illustration') return;
       var hitTag = true;
       active.forEach(function (t) {
-        if (t === 'available') return;
+        if (t === 'available' || t === 'photo') return;
         if ((p.tags || []).indexOf(t) < 0) hitTag = false;
       });
       if (!hitTag) return;
@@ -602,7 +613,8 @@
         : '<div style="width:30px;height:36px;border-radius:5px;background:var(--line2)"></div>';
       html += '<div class="plant' + (p.available ? '' : ' off') + '" data-id="' + p.id + '">' + img +
         '<div class="m"><b>' + esc(p.name) + '</b><i>' + p.hMin + '–' + p.hMax + 'cm · ' +
-        esc((p.tags || []).slice(0, 2).join(' / ')) + (p.available ? '' : ' · 仅参考') + '</i></div>' +
+        esc((p.tags || []).slice(0, 2).join(' / ')) + (p.available ? '' : ' · 仅参考') +
+        (p.kind === 'illustration' ? '<em class="tagillu">插画</em>' : '') + '</i></div>' +
         '<div class="plus">' + (p.available ? '+' : '—') + '</div></div>';
     });
     $('plants').innerHTML = html || '<div class="note">没有匹配的植物</div>';
@@ -639,7 +651,8 @@
       var p = byId(it.plantId);
       html += '<li data-uid="' + it.uid + '">' +
         '<span class="nm" style="' + (S.selected === it.uid ? 'color:#0F6E56' : '') + '">' +
-        esc(p ? p.name : it.plantId) + ' · ' + it.heightCm + 'cm</span>' +
+        esc(p ? p.name : it.plantId) + ' · ' + it.heightCm + 'cm' +
+        (p && p.kind === 'illustration' ? ' <em class="tagillu">插画</em>' : '') + '</span>' +
         '<button class="mini" data-act="front" title="置前">↑</button>' +
         '<button class="mini" data-act="back" title="置后">↓</button>' +
         '<button class="mini" data-act="del" title="移除">×</button></li>';
@@ -832,7 +845,8 @@
         '<div class="ds">' + esc(p.desc || '') + '</div>' +
         '<div class="nm">' + esc(p.names || (p.plant_ids || []).join('、')) + '</div>' +
         '<div class="meta"><span>¥' + fmt(p.total_price, 0) + '</span><span>每周 ' + (p.care_min_week || 0) + ' 分钟</span>' +
-        '<span>' + (p.plant_ids || []).length + ' 株</span></div>' +
+        '<span>' + (p.plant_ids || []).length + ' 株</span>' +
+        (illuCount(p.plant_ids) ? '<span style="color:#854F0B">含 ' + illuCount(p.plant_ids) + ' 插画</span>' : '') + '</div>' +
         '<div class="acts"><button class="primary mini" data-apply="' + i + '">放到照片里</button>' +
         '<button class="mini" data-self="' + i + '">在自选里调</button></div></div>';
     }).join('');
@@ -1010,7 +1024,8 @@
       var b = pr.length > 1 ? (parseInt(pr[1], 10) || a) : a;
       priceMin += a; priceMax += b;
       lines.push('| ' + p.name + ' | ' + p.latin + ' | ' + it.heightCm + ' cm | ' + p.spread + ' cm | ¥' +
-        (p.price || '—') + ' | ' + (p.tags || []).join(' / ') + ' |');
+        (p.price || '—') + ' | ' + (p.tags || []).join(' / ') +
+        (p.kind === 'illustration' ? '（插画示意）' : '') + ' |');
     });
     lines.push('', '合计：' + S.plants.length + ' 株，参考价 ¥' + priceMin + (priceMax !== priceMin ? '–' + priceMax : '') + '。');
     if (S.score) {
