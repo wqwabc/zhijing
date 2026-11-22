@@ -4,34 +4,46 @@ A-P02,P02,琴叶榕,front,ready,assets/cutout/P02/P02_front_pexels.png,https://w
 A-P03,P03,橡皮树,front,ready,assets/cutout/P03/P03_front_pexels.png,https://www.pexels.com/photo/green-plant-on-brown-pot-8989427/,Hanna Pad,Pexels License,https://www.pexels.com/license/,911,1600,yes,#6A5434,onnx,80-180,2026-11-16,alpha 覆盖 26.7%；原图 assets/inbox/P03/P03_pexels_8989427.jpg
 A-P04,P04,虎尾兰,front,ready,assets/cutout/P04/P04_front_pexels.png,https://www.pexels.com/photo/3075352/,Nextvoyage,Pexels License,https://www.pexels.com/license/,1267,1600,yes,#057404,onnx,40-90,2026-11-16,alpha 覆盖 28.2%；原图 assets/inbox/P04/P04_pexels_3075352.jpg
 A-P05,P05,绿萝,front,ready,assets/cutout/P05/P05_front_pexels.png,https://www.pexels.com/photo/green-leaf-plant-1084199/,Faraz Ahmad,Pexels License,https://www.pexels.com/license/,1200,1120,yes,#51CC55,onnx,20-150,2026-11-16,alpha 覆盖 36.6%；原图 assets/inbox/P05/P05_pexels_1084199.jpg
-A-P06,P06,白掌,front,pending,,,,,,,,,,,40-70,,需正面平视、纯色背景、单株；长边≥1200
-A-P07,P07,红掌,front,pending,,,,,,,,,,,30-60,,需正面平视、纯色背景、单株；长边≥1200
-A-P08,P08,孔雀竹芋,front,pending,,,,,,,,,,,30-60,,需正面平视、纯色背景、单株；长边≥1200
-A-P09,P09,青苹果竹芋,front,pending,,,,,,,,,,,50-90,,需正面平视、纯色背景、单株；长边≥1200
-A-P10,P10,散尾葵,front,pending,,,,,,,,,,,120-200,,需正面平视、纯色背景、单株；长边≥1200
-A-P11,P11,波士顿蕨,front,pending,,,,,,,,,,,40-70,,需正面平视、纯色背景、单株；长边≥1200
-A-P12,P12,春羽,front,pending,,,,,,,,,,,80-150,,需正面平视、纯色背景、单株；长边≥1200
-A-P13,P13,天堂鸟,front,pending,,,,,,,,,,,150-200,,需正面平视、纯色背景、单株；长边≥1200
-A-P14,P14,玉树,front,pending,,,,,,,,,,,40-100,,需正面平视、纯色背景、单株；长边≥1200
-A-P15,P15,芦荟,front,ready,assets/cutout/P15/P15_front_pexels.png,https://www.pexels.com/photo/plant-in-flowerpot-16599776/,Jennie Ra,Pexels License,https://www.pexels.com/license/,989,1361,yes,#2A302E,onnx,30-60,2026-11-16,alpha 覆盖 49.7%；原图 assets/inbox/P15/P15_pexels_16599776.jpg
+A-P06,P06,白掌,front,ready,assets/cutout/P06/P06_front_pexels.png,https://www.pexels.com/photo/a-spathiphyllum-plant-4264912/,Ann Hannes,Pexels License,https://www.pexels.com/license/,1033,1200,yes,#2D2D2D,onnx,40-70,2026-11-16,alpha 覆盖 20.6%；原图 assets/inbox/P06/P06_pexels_29431192.jpg
+A-P07,P07,红掌,front,ready,assets/illustrations/P07_front_illustration.png,,B（自制插画）,CC BY 4.0（自制）,https://creativecommons.org/licenses/by/4.0/,1200,1600,yes,#2E7D32,illustration,30-60,2026-11-16,实拍缺图，按需求 FR-05 回退程序化插画；非照片，不冒充实拍
+A-P08,P08,孔雀竹芋,front,ready,assets/cutout/P08/P08_front_pexels.png,https://www.pexels.com/photo/calathea-plant-in-sunlit-interior-setting-36571783/,Phong Thanh,Pexels License,https://www.pexels.com/license/,1190,1600,yes,#332B13,onnx,30-60,2026-11-16,alpha 覆盖 26.7%；原图 assets/inbox/P08/P08_pexels_36571783.jpg
+A-P09,P09,青苹果竹芋,front,ready,assets/cutout/P09/P09_front_pexels.png,https://www.pexels.com/photo/close-up-of-houseplant-leaves-16960870/,✨,Pexels License,https://www.pexels.com/license/,1183,1600,yes,#2F5006,onnx,50-90,2026-11-16,alpha 覆盖 43.7%；原图 assets/inbox/P09/P09_pexels_33448608.jpg
+A-P10,P10,散尾葵,front,ready,assets/cutout/P10/P10_front_commons.png,https://commons.wikimedia.org/wiki/File:2016_Chrysalidocarpus_lutescens._Funchal._Madeira._Portugal-116.jpg,Luis Miguel Bugallo Sánchez (Lmbuga),CC BY-SA 4.0,https://creativecommons.org/licenses/by-sa/4.0/,1302,1600,yes,#4E4D31,onnx,120-200,2026-11-16,alpha 覆盖 39.9%；原图 assets/inbox/P10/P10_commons_2016Chrysalidocarpuslute.jpg
+A-P11,P11,波士顿蕨,front,ready,assets/cutout/P11/P11_front_pexels.png,https://www.pexels.com/photo/green-plant-on-black-pot-3854749/,Joshua Mcknight,Pexels License,https://www.pexels.com/license/,1263,1323,yes,#D2CDD1,onnx,40-70,2026-11-16,alpha 覆盖 45.5%；原图 assets/inbox/P11/P11_pexels_13986348.jpg
+A-P12,P12,春羽,front,ready,assets/illustrations/P12_front_illustration.png,,B（自制插画）,CC BY 4.0（自制）,https://creativecommons.org/licenses/by/4.0/,1200,1600,yes,#1B5E20,illustration,80-150,2026-11-16,实拍缺图，按需求 FR-05 回退程序化插画；非照片，不冒充实拍
+A-P13,P13,天堂鸟,front,ready,assets/cutout/P13/P13_front_pexels.png,https://www.pexels.com/photo/green-plant-near-the-window-in-the-living-area-14237657/,Sena Aykut,Pexels License,https://www.pexels.com/license/,1031,1600,yes,#968B88,onnx,150-200,2026-11-16,alpha 覆盖 18.5%；原图 assets/inbox/P13/P13_pexels_6805802.jpg
+A-P14,P14,玉树,front,ready,assets/illustrations/P14_front_illustration.png,,B（自制插画）,CC BY 4.0（自制）,https://creativecommons.org/licenses/by/4.0/,1200,1600,yes,#4E7A3A,illustration,40-100,2026-11-16,实拍缺图，按需求 FR-05 回退程序化插画；非照片，不冒充实拍
+A-P15,P15,芦荟,front,ready,assets/cutout/P15/P15_front_pexels.png,https://www.pexels.com/photo/an-aloe-vera-on-a-brown-pot-8289939/,Duc Anh Nguyen,Pexels License,https://www.pexels.com/license/,750,1600,yes,#6B6F67,onnx,30-60,2026-11-16,alpha 覆盖 33.3%；原图 assets/inbox/P15/P15_pexels_4525931.jpg
 A-P16,P16,金钱树,front,ready,assets/cutout/P16/P16_front_pexels.png,https://www.pexels.com/photo/a-trinket-hanging-on-a-plant-10651639/,Elena Golovchenko,Pexels License,https://www.pexels.com/license/,1576,1600,yes,#0D3317,onnx,60-100,2026-11-16,alpha 覆盖 16.8%；原图 assets/inbox/P16/P16_pexels_10651639.jpg
 A-P17,P17,发财树,front,ready,assets/cutout/P17/P17_front_pexels.png,https://www.pexels.com/photo/potted-plant-beside-the-window-7047366/,Daan Rink,Pexels License,https://www.pexels.com/license/,838,1600,yes,#4B3831,onnx,80-150,2026-11-16,alpha 覆盖 30.4%；原图 assets/inbox/P17/P17_pexels_7047366.jpg
-A-P18,P18,幸福树,front,pending,,,,,,,,,,,100-180,,需正面平视、纯色背景、单株；长边≥1200
-A-P19,P19,合果芋,front,pending,,,,,,,,,,,30-80,,需正面平视、纯色背景、单株；长边≥1200
-A-P20,P20,常春藤,front,pending,,,,,,,,,,,20-100,,需正面平视、纯色背景、单株；长边≥1200
-A-P21,P21,吊兰,front,pending,,,,,,,,,,,20-40,,需正面平视、纯色背景、单株；长边≥1200
-A-P22,P22,文竹,front,pending,,,,,,,,,,,30-60,,需正面平视、纯色背景、单株；长边≥1200
+A-P18,P18,幸福树,front,ready,assets/cutout/P18/P18_front_pexels.png,https://www.pexels.com/photo/plants-by-stairs-in-house-20353856/,lily indah,Pexels License,https://www.pexels.com/license/,788,1301,yes,#332D12,onnx,100-180,2026-11-16,alpha 覆盖 29.9%；原图 assets/inbox/P18/P18_pexels_6891762.jpg
+A-P19,P19,合果芋,front,ready,assets/cutout/P19/P19_front_pexels.png,https://www.pexels.com/photo/leaves-of-syngonium-16645126/,galih wibowo,Pexels License,https://www.pexels.com/license/,1239,1600,yes,#92AF6E,onnx,30-80,2026-11-16,alpha 覆盖 42.7%；原图 assets/inbox/P19/P19_pexels_4671041.jpg
+A-P20,P20,常春藤,front,ready,assets/illustrations/P20_front_illustration.png,,B（自制插画）,CC BY 4.0（自制）,https://creativecommons.org/licenses/by/4.0/,1200,1600,yes,#2F6B3A,illustration,20-100,2026-11-16,实拍缺图，按需求 FR-05 回退程序化插画；非照片，不冒充实拍
+A-P21,P21,吊兰,front,ready,assets/illustrations/P21_front_illustration.png,,B（自制插画）,CC BY 4.0（自制）,https://creativecommons.org/licenses/by/4.0/,1200,1600,yes,#5B8C3E,illustration,20-40,2026-11-16,实拍缺图，按需求 FR-05 回退程序化插画；非照片，不冒充实拍
+A-P22,P22,文竹,front,ready,assets/cutout/P22/P22_front_pexels.png,https://www.pexels.com/photo/asparagus-fern-in-elegant-green-pot-indoors-35336844/,Kevin Yang,Pexels License,https://www.pexels.com/license/,981,1600,yes,#70A699,onnx,30-60,2026-11-16,alpha 覆盖 44.7%；原图 assets/inbox/P22/P22_pexels_35336844.jpg
 A-P23,P23,一叶兰,front,ready,assets/cutout/P23/P23_front_pexels.png,https://www.pexels.com/photo/potted-plant-outside-in-front-of-a-painted-window-16710149/,Ala J Graczyk,Pexels License,https://www.pexels.com/license/,1123,1395,yes,#D5D3D2,onnx,50-80,2026-11-16,alpha 覆盖 40.4%；原图 assets/inbox/P23/P23_pexels_16710149.jpg
-A-P24,P24,龙血树,front,rejected,,https://www.pexels.com/photo/indoor-dracaena-marginata-plant-in-modern-pot-35839037/,Will Chen,Pexels License,https://www.pexels.com/license/,,,,,,80-180,2026-11-16,候选背景有暖色物体残留，去底后穿帮；W1 内换源重做
-A-P25,P25,富贵竹,front,pending,,,,,,,,,,,40-100,,需正面平视、纯色背景、单株；长边≥1200
-A-P26,P26,蝴蝶兰,front,pending,,,,,,,,,,,30-60,,需正面平视、纯色背景、单株；长边≥1200
-A-P27,P27,茉莉,front,pending,,,,,,,,,,,60-120,,需正面平视、纯色背景、单株；长边≥1200
-A-P28,P28,栀子,front,pending,,,,,,,,,,,50-90,,需正面平视、纯色背景、单株；长边≥1200
-A-P29,P29,绣球,front,pending,,,,,,,,,,,60-120,,需正面平视、纯色背景、单株；长边≥1200
-A-P30,P30,迷迭香,front,pending,,,,,,,,,,,30-60,,需正面平视、纯色背景、单株；长边≥1200
-A-P31,P31,薄荷,front,pending,,,,,,,,,,,20-40,,需正面平视、纯色背景、单株；长边≥1200
-A-P32,P32,空气凤梨,front,pending,,,,,,,,,,,8-25,,需正面平视、纯色背景、单株；长边≥1200
-A-P33,P33,鹿角蕨,front,pending,,,,,,,,,,,30-80,,需正面平视、纯色背景、单株；长边≥1200
-A-P34,P34,鸟巢蕨,front,pending,,,,,,,,,,,40-80,,需正面平视、纯色背景、单株；长边≥1200
-A-P35,P35,鹅掌柴,front,pending,,,,,,,,,,,80-150,,alpha 覆盖 28.8%；原图 assets/inbox/P35/P35_pexels_8103477.jpg
-A-P36,P36,球兰,front,pending,,,,,,,,,,,30-100,,需正面平视、纯色背景、单株；长边≥1200
+A-P24,P24,龙血树,front,ready,assets/cutout/P24/P24_front_pexels.png,https://www.pexels.com/photo/exotic-green-potted-houseplant-on-white-surface-4299019/,Maryann Kariuki,Pexels License,https://www.pexels.com/license/,807,1600,yes,#272F30,onnx,80-180,2026-11-16,alpha 覆盖 18.0%；原图 assets/inbox/P24/P24_pexels_4299019.jpg
+A-P25,P25,富贵竹,front,ready,assets/cutout/P25/P25_front_pexels.png,https://www.pexels.com/photo/elegant-lucky-bamboo-plant-in-glass-vase-30384232/,Hafize Balcı,Pexels License,https://www.pexels.com/license/,765,1600,yes,#4C7105,onnx,40-100,2026-11-16,alpha 覆盖 40.6%；原图 assets/inbox/P25/P25_pexels_32627780.jpg
+A-P26,P26,蝴蝶兰,front,ready,assets/cutout/P26/P26_front_pexels.png,https://www.pexels.com/photo/close-up-of-pink-orchid-flower-11564318/,Alena Yanovich,Pexels License,https://www.pexels.com/license/,795,1600,yes,#2F2F08,onnx,30-60,2026-11-16,alpha 覆盖 17.4%；原图 assets/inbox/P26/P26_pexels_20130986.jpg
+A-P27,P27,茉莉,front,ready,assets/illustrations/P27_front_illustration.png,,B（自制插画）,CC BY 4.0（自制）,https://creativecommons.org/licenses/by/4.0/,1200,1600,yes,#2E5E2A,illustration,60-120,2026-11-16,实拍缺图，按需求 FR-05 回退程序化插画；非照片，不冒充实拍
+A-P28,P28,栀子,front,ready,assets/illustrations/P28_front_illustration.png,,B（自制插画）,CC BY 4.0（自制）,https://creativecommons.org/licenses/by/4.0/,1200,1600,yes,#1F4D2E,illustration,50-90,2026-11-16,实拍缺图，按需求 FR-05 回退程序化插画；非照片，不冒充实拍
+A-P29,P29,绣球,front,ready,assets/illustrations/P29_front_illustration.png,,B（自制插画）,CC BY 4.0（自制）,https://creativecommons.org/licenses/by/4.0/,1200,1600,yes,#2F6B3A,illustration,60-120,2026-11-16,实拍缺图，按需求 FR-05 回退程序化插画；非照片，不冒充实拍
+A-P30,P30,迷迭香,front,ready,assets/illustrations/P30_front_illustration.png,,B（自制插画）,CC BY 4.0（自制）,https://creativecommons.org/licenses/by/4.0/,1200,1600,yes,#4F6B3A,illustration,30-60,2026-11-16,实拍缺图，按需求 FR-05 回退程序化插画；非照片，不冒充实拍
+A-P31,P31,薄荷,front,ready,assets/illustrations/P31_front_illustration.png,,B（自制插画）,CC BY 4.0（自制）,https://creativecommons.org/licenses/by/4.0/,1200,1600,yes,#3F7A34,illustration,20-40,2026-11-16,实拍缺图，按需求 FR-05 回退程序化插画；非照片，不冒充实拍
+A-P32,P32,空气凤梨,front,ready,assets/illustrations/P32_front_illustration.png,,B（自制插画）,CC BY 4.0（自制）,https://creativecommons.org/licenses/by/4.0/,1200,1600,yes,#8FA37A,illustration,8-25,2026-11-16,实拍缺图，按需求 FR-05 回退程序化插画；非照片，不冒充实拍
+A-P33,P33,鹿角蕨,front,ready,assets/illustrations/P33_front_illustration.png,,B（自制插画）,CC BY 4.0（自制）,https://creativecommons.org/licenses/by/4.0/,1200,1600,yes,#4C7A4A,illustration,30-80,2026-11-16,实拍缺图，按需求 FR-05 回退程序化插画；非照片，不冒充实拍
+A-P34,P34,鸟巢蕨,front,ready,assets/cutout/P34/P34_front_pexels.png,https://www.pexels.com/photo/close-up-of-lush-green-fern-leaves-34191732/,hartono subagio,Pexels License,https://www.pexels.com/license/,1200,981,yes,#508C04,onnx,40-80,2026-11-16,alpha 覆盖 31.8%；原图 assets/inbox/P34/P34_pexels_36346633.jpg
+A-P35,P35,鹅掌柴,front,ready,assets/illustrations/P35_front_illustration.png,,B（自制插画）,CC BY 4.0（自制）,https://creativecommons.org/licenses/by/4.0/,1200,1600,yes,#2E6B34,illustration,80-150,2026-11-16,实拍缺图，按需求 FR-05 回退程序化插画；非照片，不冒充实拍
+A-P36,P36,球兰,front,ready,assets/cutout/P36/P36_front_pexels.png,https://www.pexels.com/photo/green-leaves-of-plant-in-white-ceramic-pot-9297353/,Felipe Alves,Pexels License,https://www.pexels.com/license/,632,1200,yes,#D5D6CB,onnx,30-100,2026-11-16,alpha 覆盖 20.6%；原图 assets/inbox/P36/P36_pexels_1084188.jpg
+A-P37,P37,吊竹梅,front,ready,assets/illustrations/P37_front_illustration.png,,B（自制插画）,CC BY 4.0（自制）,https://creativecommons.org/licenses/by/4.0/,1200,1600,yes,#3B6E8F,illustration,15-30,2026-11-17,实拍缺图，按 FR-05 回退程序化插画
+A-P38,P38,铜钱草,front,ready,assets/illustrations/P38_front_illustration.png,,B（自制插画）,CC BY 4.0（自制）,https://creativecommons.org/licenses/by/4.0/,1200,1600,yes,#2F7A3E,illustration,10-25,2026-11-17,实拍缺图，按 FR-05 回退程序化插画
+A-P39,P39,铁线蕨,front,ready,assets/illustrations/P39_front_illustration.png,,B（自制插画）,CC BY 4.0（自制）,https://creativecommons.org/licenses/by/4.0/,1200,1600,yes,#4E7A4A,illustration,20-40,2026-11-17,实拍缺图，按 FR-05 回退程序化插画
+A-P40,P40,花叶芋,front,ready,assets/illustrations/P40_front_illustration.png,,B（自制插画）,CC BY 4.0（自制）,https://creativecommons.org/licenses/by/4.0/,1200,1600,yes,#2E7D32,illustration,30-60,2026-11-17,实拍缺图，按 FR-05 回退程序化插画
+A-P41,P41,酒瓶兰,front,ready,assets/illustrations/P41_front_illustration.png,,B（自制插画）,CC BY 4.0（自制）,https://creativecommons.org/licenses/by/4.0/,1200,1600,yes,#3F6B34,illustration,60-150,2026-11-17,实拍缺图，按 FR-05 回退程序化插画
+A-P42,P42,蟹爪兰,front,ready,assets/illustrations/P42_front_illustration.png,,B（自制插画）,CC BY 4.0（自制）,https://creativecommons.org/licenses/by/4.0/,1200,1600,yes,#3F7A4A,illustration,20-40,2026-11-17,实拍缺图，按 FR-05 回退程序化插画
+A-P43,P43,长寿花,front,ready,assets/illustrations/P43_front_illustration.png,,B（自制插画）,CC BY 4.0（自制）,https://creativecommons.org/licenses/by/4.0/,1200,1600,yes,#2F6B3A,illustration,20-40,2026-11-17,实拍缺图，按 FR-05 回退程序化插画
+A-P44,P44,尤加利,front,ready,assets/illustrations/P44_front_illustration.png,,B（自制插画）,CC BY 4.0（自制）,https://creativecommons.org/licenses/by/4.0/,1200,1600,yes,#9DB4A8,illustration,80-180,2026-11-17,实拍缺图，按 FR-05 回退程序化插画
+A-P45,P45,油橄榄,front,ready,assets/cutout/P45/P45_front_pexels.png,https://www.pexels.com/photo/close-up-shot-of-a-green-potted-plant-on-wooden-surface-12897981/,Norbert Velescu,Pexels License,https://www.pexels.com/license/,1041,1600,yes,#D7AC90,onnx,80-160,2026-11-16,alpha 覆盖 13.3%；原图 assets/inbox/P45/P45_pexels_12897981.jpg
+A-P46,P46,量天尺,front,ready,assets/illustrations/P46_front_illustration.png,,B（自制插画）,CC BY 4.0（自制）,https://creativecommons.org/licenses/by/4.0/,1200,1600,yes,#3F7A4A,illustration,40-120,2026-11-17,实拍缺图，按 FR-05 回退程序化插画
+A-P47,P47,白脉椒草,front,ready,assets/illustrations/P47_front_illustration.png,,B（自制插画）,CC BY 4.0（自制）,https://creativecommons.org/licenses/by/4.0/,1200,1600,yes,#2F6B3A,illustration,20-40,2026-11-17,实拍缺图，按 FR-05 回退程序化插画
+A-P48,P48,镜面草,front,ready,assets/cutout/P48/P48_front_pexels.png,https://www.pexels.com/photo/green-plant-in-white-ceramic-pot-7210780/,Kulbir,Pexels License,https://www.pexels.com/license/,1213,1600,yes,#B27152,onnx,20-40,2026-11-16,alpha 覆盖 36.9%；原图 assets/inbox/P48/P48_pexels_9540852.jpg

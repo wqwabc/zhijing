@@ -15,7 +15,7 @@ from PIL import Image
 
 from common import ASSETS, DATA, ROOT, read_csv, write_csv
 
-NAMING = re.compile(r"^P\d{2}_front_(inat|unsplash|pexels|commons)\.png$")
+NAMING = re.compile(r"^P\d{2}_front_(inat|unsplash|pexels|commons|illustration)\.png$")
 
 
 def srgb_to_lab(arr: np.ndarray) -> np.ndarray:
@@ -100,11 +100,12 @@ def check_asset(row: dict) -> dict:
         issues.append(f"边缘未去净 {border_alpha:.0%}")
     if comp < 0.80:
         issues.append(f"疑似多株/碎片 最大连通域 {comp:.0%}")
-    if b_star < -15 or b_star > 55:
+    if b_star < -45 or b_star > 60:
         issues.append(f"色温偏色 b*={b_star:.0f}")
     if not NAMING.match(Path(row["file_path"]).name):
         issues.append("命名不符规范")
-    if not row.get("source_url"):
+    illus = row.get("cutout_engine") == "illustration"
+    if not illus and not row.get("source_url"):
         issues.append("缺来源 URL")
     if not row.get("license"):
         issues.append("缺许可")

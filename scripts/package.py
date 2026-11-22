@@ -12,7 +12,7 @@ from common import ROOT, DATA, TODAY, read_csv
 SKIP_DIRS = {".venv-verda", "__pycache__", "dist", ".git"}
 SKIP_PREFIX = ("assets/inbox",)
 SKIP_SUFFIX = {".zip", ".pyc"}
-SKIP_NAMES = {"MANIFEST.json", "sha256sums.txt", "植境Verda-B数据与素材交付说明-v1.0.docx"}
+SKIP_NAMES = {"MANIFEST.json", "sha256sums.txt", "植境Verda-B数据与素材交付说明-v1.0.docx", "植境Verda-B数据与素材交付说明-v1.1.docx", "植境Verda-B数据与素材交付说明-v1.2.docx", "植境Verda-B数据与素材交付说明-v1.3.docx", "植境Verda-B数据与素材交付说明-v1.4.docx", "植境Verda-B数据与素材交付说明-v1.5.docx"}
 
 
 def sha256(path: Path) -> str:
@@ -36,14 +36,14 @@ def main() -> None:
     lic = read_csv("license_table.csv")
     licensed = {r["file_name"] for r in lic}
     asset_files = [e["path"] for e in entries
-                   if e["path"].startswith(("assets/cutout/", "assets/cases/"))
+                   if e["path"].startswith(("assets/cutout/", "assets/cases/", "assets/illustrations/"))
                    and not e["path"].endswith("_preview.jpg")]
     missing = [f for f in asset_files if f not in licensed]
     coverage = (len(asset_files) - len(missing)) / len(asset_files) if asset_files else 1.0
 
     manifest = {
         "package": "植境Verda-B交付包",
-        "version": "v1.1",
+        "version": "v1.6",
         "built_at": TODAY,
         "file_count": len(entries),
         "total_bytes": sum(e["size"] for e in entries),
@@ -58,7 +58,7 @@ def main() -> None:
 
     dist = ROOT / "dist"
     dist.mkdir(exist_ok=True)
-    out = dist / f"植境Verda-B交付包_v1.1_{TODAY}.zip"
+    out = dist / f"植境Verda-B交付包_v1.6_{TODAY}.zip"
     with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED) as z:
         for e in entries:
             z.write(ROOT / e["path"], e["path"])

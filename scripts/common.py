@@ -10,8 +10,9 @@ ASSETS = ROOT / "assets"
 INBOX = ASSETS / "inbox"
 CUTOUT = ASSETS / "cutout"
 CASES = ASSETS / "cases"
+ILLUS = ASSETS / "illustrations"
 LOGS = ROOT / "logs"
-for d in (DATA, ASSETS, INBOX, CUTOUT, CASES, LOGS):
+for d in (DATA, ASSETS, INBOX, CUTOUT, CASES, ILLUS, LOGS):
     d.mkdir(parents=True, exist_ok=True)
 
 TODAY = time.strftime("%Y-%m-%d")

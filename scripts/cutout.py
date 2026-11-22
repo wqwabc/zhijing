@@ -139,7 +139,7 @@ def checker_preview(im: Image.Image, width: int = 900) -> Image.Image:
 
 # ---------------------------------------------------------------- 主流程
 def process(path: Path, engine: str, harden: bool = False) -> dict | None:
-    m = re.match(r"(P\d{2})_(inat|unsplash|pexels|commons)_([0-9a-f]{5,12})", path.stem, re.I)
+    m = re.match(r"(P\d{2})_(inat|unsplash|pexels|commons)_(.+)", path.stem, re.I)
     if not m:
         print(f"  skip（命名不符）：{path.name}")
         return None

@@ -1,0 +1,8 @@
+# 植境 Verda 后端运行依赖（D 角色交付）
+# 评分 / 推荐 / 改稿核心是纯标准库（verda/ 包），不需要额外依赖。
+
+Flask>=3.1,<4
+Pillow>=10.0
+
+# 生产部署用（Linux / 华为云 ECS），Windows 开发机不会装
+gunicorn>=21.2 ; sys_platform != "win32"

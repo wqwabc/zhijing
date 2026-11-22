@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# 测试与临时
+_test.txt
+.pytest_cache/
+.coverage
+
+# 特征缓存（可重建，不进仓库）
+.cache/
+
+# 编辑器
+.vscode/
+.idea/
+.DS_Store
