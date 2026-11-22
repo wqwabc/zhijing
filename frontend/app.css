@@ -314,3 +314,70 @@ input[type=range]{width:100%; accent-color:var(--green);}
   .side.chat-side{flex:1 1 auto; width:auto; border-left:0; border-top:1px solid var(--line); min-height:360px;}
   .tool-drawer{left:8px; right:8px;}
 }
+
+/* ---------------- 绿色主题 + 图片完整显示 ---------------- */
+:root{
+  --ink:#15241B; --ink2:#4B5C51; --ink3:#7B897F;
+  --line:#D9E5DB; --line2:#EAF2EB;
+  --bg:#F1F7F2; --card:#FFFFFF; --card2:#F7FBF7;
+  --green:#17845C; --green-d:#0E5A40; --green-l:#E4F3EA; --green-b:#C6E5D5;
+}
+body{background:
+  radial-gradient(1200px 500px at 15% -10%, #E3F1E7 0%, rgba(227,241,231,0) 60%),
+  var(--bg);
+}
+
+/* 顶栏改成墨绿渐变 */
+.topbar{
+  background:linear-gradient(90deg,#0D563E 0%,#17845C 60%,#1E9A6B 100%);
+  border-bottom:0; padding:12px 18px;
+}
+.brand b{color:#fff; font-size:16px; letter-spacing:.4px;}
+.brand span{color:rgba(255,255,255,.72);}
+.scene-bar label{color:rgba(255,255,255,.84);}
+.scene-bar select{
+  background:#fff; color:var(--ink); border-color:rgba(255,255,255,.4);
+  border-radius:8px; padding:5px 8px;
+}
+.pet-check{color:rgba(255,255,255,.92);}
+.topbar .badge{background:rgba(255,255,255,.16); color:#fff;}
+
+/* 舞台与图片：contain + 居中，照片完整可见 */
+.stage{
+  background:linear-gradient(180deg,#F9FCF9 0%,#EDF5EF 100%);
+  border-color:var(--line);
+  box-shadow:0 2px 10px rgba(14,90,64,.04) inset;
+}
+.stage-inner{max-width:none; max-height:none; line-height:0;}
+.stage-inner img.base{width:100%; height:100%; object-fit:contain; display:block;}
+
+/* 按钮与强调色 */
+button.primary{
+  background:linear-gradient(180deg,#1B9468 0%,#0F6B4B 100%);
+  border-color:#0F6B4B; box-shadow:0 2px 6px rgba(15,107,75,.18);
+}
+button.primary:hover:not(:disabled){background:linear-gradient(180deg,#17845C,#0B553C);}
+.chip.on{background:var(--green-l); color:var(--green-d); border-color:var(--green-b);}
+.score-main b{color:var(--green-d);}
+.dim .bar i{background:linear-gradient(90deg,#1B9468,#59B98D);}
+
+/* 对话列 */
+.side.chat-side .chat-panel header{
+  background:linear-gradient(90deg,#0D563E,#17845C); color:#fff;
+}
+.side.chat-side .chat-panel header button{
+  color:#fff; border-color:rgba(255,255,255,.4); background:rgba(255,255,255,.08);
+}
+.chat-msg.user{background:linear-gradient(180deg,#1B9468,#0F6B4B);}
+.chat-msg.bot{border-color:var(--line);}
+.chat-hint{background:var(--card2);}
+.chat-form{background:var(--card2);}
+
+/* 工具抽屉 */
+.tool-drawer{border-top:3px solid var(--green); border-color:var(--line);}
+.drawer-bar #btnDrawer{border-color:var(--green-b); color:var(--green-d); background:var(--green-l);}
+
+/* 案例图完整显示（不裁切） */
+.case{aspect-ratio:4/3; background:#fff;}
+.case img{object-fit:contain; padding:2px;}
+

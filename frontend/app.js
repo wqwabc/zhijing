@@ -244,7 +244,15 @@
   function layout() {
     if (!S.photo) return;
     var inner = $('stageInner');
-    S.scale = inner.clientWidth / S.photo.w;
+    var stage = $('stage');
+    var availW = Math.max(0, stage.clientWidth - 20);
+    var availH = Math.max(0, stage.clientHeight - 20);
+    var r = (availW && availH)
+      ? Math.min(availW / S.photo.w, availH / S.photo.h)
+      : (inner.clientWidth / S.photo.w);
+    inner.style.width = Math.round(S.photo.w * r) + 'px';
+    inner.style.height = Math.round(S.photo.h * r) + 'px';
+    S.scale = r;
     renderAll();
   }
 
