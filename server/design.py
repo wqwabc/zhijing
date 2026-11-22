@@ -94,7 +94,7 @@ def _validate(proposal: dict, by_id: dict, assets: dict, scene: Scene,
     return items
 
 
-def _fallback(scene: Scene, plants, assets: dict) -> list:
+def _fallback(scene: Scene, plants, assets: dict, count: int) -> list:
     try:
         result = recommend(scene, plants)
         plans = result.get("plans") or []
@@ -107,9 +107,10 @@ def _fallback(scene: Scene, plants, assets: dict) -> list:
         pool = [p for p in plants
                 if assets["by_id"].get(p.plant_id, {}).get("available")
                 and (not scene.has_pet or p.pet_safe)]
-        ids = [p.plant_id for p in pool[:3]]
+        ids = [p.plant_id for p in pool[:count]]
 
     items = []
+    ids = ids[:max(1, count)]
     n = max(1, len(ids))
     for i, pid in enumerate(ids):
         p = by_id.get(pid)
@@ -141,7 +142,7 @@ def design(photo_path: str, scene: Scene, plants, assets: dict,
     summary = (proposal or {}).get("summary", "") if source == "llm" else ""
 
     if not items:
-        items = _fallback(scene, plants, assets)
+        items = _fallback(scene, plants, assets, count)
 
     combo = Combo([by_id[it["plant_id"]] for it in items])
     score = score_combo(combo, scene).as_dict()

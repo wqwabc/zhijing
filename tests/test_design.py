@@ -71,6 +71,7 @@ class TestDesign(unittest.TestCase):
         data = r.get_json()
         self.assertEqual(data["design"]["source"], "rules")
         self.assertTrue(data["plants"])
+        self.assertLessEqual(len(data["plants"]), self.body["count"])
 
     def test_invalid_ids_fall_back(self):
         proposal = self._proposal("X99", "P999")

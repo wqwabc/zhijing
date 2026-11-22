@@ -17,6 +17,7 @@ _test.txt
 .tmp_wheels/
 .tmp_ab/
 .tmp_test/
+.runtime/
 experiments/*/out/
 
 # 编辑器
