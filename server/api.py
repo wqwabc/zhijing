@@ -19,6 +19,7 @@ from .assets import load_assets
 from .chat import reply as chat_reply
 from .compose import MAX_ITEMS, PX_PER_CM_RANGE, compose_photo
 from .design import design
+from .generate import generate as generate_image
 from .ground import detect_groundline
 from .store import RESULT_NAME_RE
 from .validation import SUPPORTED_FORMATS, PhotoFormatError, load_photo, \
@@ -60,6 +61,12 @@ def _llm_cfg():
     key = request.headers.get("X-LLM-Key", "").strip()
     base = request.headers.get("X-LLM-Base", "").strip()
     return {"api_key": key, "base": base} if key else None
+
+
+def _image_cfg():
+    """前端填的通义万相 Key（X-Wanx-Key），仅本次请求使用。"""
+    key = request.headers.get("X-Wanx-Key", "").strip()
+    return {"api_key": key} if key else None
 
 
 class ApiError(Exception):
@@ -508,6 +515,102 @@ def api_design():
         height=canvas.size[1],
         items_meta=items_meta,
         warnings=warnings,
+        expires_at=expires.isoformat(timespec="seconds"),
+    )
+
+
+# ---------------------------------------------------------------- AI 效果图
+
+@api_bp.post("/api/generate")
+def api_generate():
+    """先合成初稿 + 植物 mask，再调通义万相做局部重绘；无 Key 退回初稿。"""
+    body = _body()
+    photo_id = body.get("photo_id", "")
+    photo_path = _store().photo_path(photo_id)
+    if not photo_path:
+        raise ApiError(404, "E40401", "photo_id 不存在或已过期", field="photo_id")
+
+    meta = _store().get_meta(photo_id)
+    if meta is None or "usable" not in meta:
+        raise ApiError(404, "E40401", "照片校验记录不存在或已过期，请重新上传",
+                       field="photo_id")
+    if meta["usable"] is False:
+        raise ApiError(422, "E40003", "该照片未通过可用性校验，不能用于生成",
+                       field="photo_id")
+
+    from PIL import Image
+    with Image.open(photo_path) as im:
+        photo_w, photo_h = im.size
+
+    warnings = []
+    anchor = body.get("anchor")
+    if anchor is None:
+        px_per_cm = min(40.0, max(0.5, photo_h * 0.5 / 150.0))
+        ground_y = round(photo_h * 0.85, 1)
+        warnings.append("未提供 anchor，按默认比例生成（%.2f px/cm）" % px_per_cm)
+    else:
+        if not isinstance(anchor, dict):
+            raise ApiError(400, "E40001", "anchor 应为对象", field="anchor")
+        px_per_cm = _finite_number(anchor.get("px_per_cm"), "anchor.px_per_cm")
+        ground_y = _finite_number(anchor.get("ground_y"), "anchor.ground_y")
+        if not PX_PER_CM_RANGE[0] <= px_per_cm <= PX_PER_CM_RANGE[1]:
+            raise ApiError(409, "E40901", "px_per_cm 超出合理范围", field="anchor")
+        if not 0 < ground_y <= photo_h:
+            raise ApiError(400, "E40001", "anchor.ground_y 超出照片范围",
+                           field="anchor.ground_y")
+
+    items = body.get("items")
+    if not isinstance(items, list) or not 1 <= len(items) <= MAX_ITEMS:
+        raise ApiError(400, "E40001", "items 应为 1~%d 株的数组" % MAX_ITEMS,
+                       field="items")
+
+    assets = load_assets(_repo_root())
+    normalized = []
+    for it in items:
+        if not isinstance(it, dict):
+            raise ApiError(400, "E40001", "items 中每项都应为对象", field="items")
+        pid = it.get("plant_id")
+        if not isinstance(pid, str):
+            raise ApiError(400, "E40001", "plant_id 应为字符串", field="items")
+        asset = assets["by_id"].get(pid)
+        if asset is None:
+            raise ApiError(404, "E40402", "植物不存在：%s" % pid, field="items")
+        if not asset["available"]:
+            raise ApiError(404, "E40403", "%s 的素材文件缺失或不可用" % pid, field="items")
+        x = _finite_number(it.get("x"), "items[].x")
+        if not 0 <= x <= photo_w:
+            raise ApiError(400, "E40001", "items[].x 超出照片范围", field="items[].x")
+        height_cm = it.get("height_cm")
+        if height_cm is not None:
+            height_cm = _finite_number(height_cm, "items[].height_cm")
+            if height_cm <= 0:
+                raise ApiError(400, "E40001", "height_cm 应大于 0", field="items[].height_cm")
+        layer = it.get("layer", 0)
+        if type(layer) is not int or layer < 0:
+            raise ApiError(400, "E40001", "items[].layer 应为非负整数", field="items")
+        normalized.append({"plant_id": pid, "x": x, "height_cm": height_cm, "layer": layer})
+
+    with Image.open(photo_path) as base:
+        png, source, items_meta, gen_warnings, elapsed = generate_image(
+            base, normalized, assets["by_id"], px_per_cm, ground_y,
+            overrides=_image_cfg())
+    warnings.extend(gen_warnings)
+
+    import io
+    with Image.open(io.BytesIO(png)) as out:
+        out_w, out_h = out.size
+    name = _store().put_result(png)
+    path = _store().result_path(name)
+    expires = datetime.datetime.fromtimestamp(_store().expires_at(path))
+
+    return jsonify(
+        image_url="/api/compose/%s" % name,
+        source=source,
+        width=out_w,
+        height=out_h,
+        items_meta=items_meta,
+        warnings=warnings,
+        elapsed_ms=elapsed,
         expires_at=expires.isoformat(timespec="seconds"),
     )
 

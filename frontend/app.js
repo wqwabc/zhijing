@@ -984,6 +984,33 @@
   $('caseRoom').addEventListener('change', renderCases);
   $('caseStyle').addEventListener('change', renderCases);
 
+  /* ---------------------------------------------------------- AI 效果图 */
+  $('btnGenerate').addEventListener('click', function () {
+    if (!S.photo) { toast('先上传照片或用示例房间'); return; }
+    if (!S.plants.length) { toast('先从植物面板拖一株进画面'); return; }
+    if (!S.online || !S.photo.id) { toast('生成需要后端：启动 python app.py 并加 ?api='); return; }
+
+    var items = S.plants.slice(0, 6).map(function (it) {
+      return { plant_id: it.plantId, x: Math.round(it.x), height_cm: it.heightCm, layer: it.layer };
+    });
+    var anchor = (S.anchor && S.anchor.pxPerCm)
+      ? { px_per_cm: S.anchor.pxPerCm, ground_y: S.anchor.groundY }
+      : null;
+
+    loading(true, 'AI 正在融合，约 10–20 秒…');
+    req('/api/generate', { json: { photo_id: S.photo.id, items: items, anchor: anchor } })
+      .then(function (d) {
+        $('composedImg').src = d.image_url;
+        $('composedImg').classList.add('on');
+        $('rCompose').textContent = d.source === 'wanx' ? 'AI 生成（万相）' : '本地合成';
+        toast(d.source === 'wanx'
+          ? 'AI 效果图已生成，耗时 ' + Math.round(d.elapsed_ms / 1000) + ' 秒'
+          : '未配置图像 Key，已用本地合成', 3200);
+      })
+      .catch(function (e) { toast('生成失败：' + e.message, 3600); })
+      .then(function () { loading(false); });
+  });
+
   /* ---------------------------------------------------------- 导出 */
   $('btnExportPng').addEventListener('click', function () {
     if (!S.photo || !S.plants.length) { toast('先放植物'); return; }
