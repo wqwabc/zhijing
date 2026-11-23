@@ -1021,8 +1021,8 @@
         $('rCompose').textContent = d.source === 'seedream' ? 'AI 生成（Seedream）'
           : (d.source === 'wanx' ? 'AI 生成（万相）' : '本地合成');
         toast(d.source === 'local'
-          ? '未配置图像 Key，已用本地合成'
-          : 'AI 效果图已生成，耗时 ' + Math.round(d.elapsed_ms / 1000) + ' 秒', 3200);
+          ? '未调用图像 API：' + (d.fallback_reason || '未配置图像 Key')
+          : 'AI 效果图已生成，耗时 ' + Math.round(d.elapsed_ms / 1000) + ' 秒', 4200);
       })
       .catch(function (e) { toast('生成失败：' + e.message, 3600); })
       .then(function () { loading(false); });

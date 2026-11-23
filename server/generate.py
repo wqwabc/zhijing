@@ -63,7 +63,7 @@ def _provider(overrides: dict = None) -> str:
 
 def generate(base: Image.Image, items, assets_by_id: dict, px_per_cm: float,
              ground_y: float, overrides: dict = None):
-    """返回 (PNG bytes, source, items_meta, warnings, elapsed_ms)。"""
+    """返回 (PNG bytes, source, items_meta, warnings, elapsed_ms, reason)。"""
     import time
     t0 = time.time()
 
@@ -73,28 +73,38 @@ def generate(base: Image.Image, items, assets_by_id: dict, px_per_cm: float,
     buf = BytesIO()
     init.save(buf, "PNG")
     provider = _provider(overrides)
+    reason = ""
 
-    if provider == "wanx":
-        mask_buf = BytesIO()
-        build_mask(init.size, meta, assets_by_id).save(mask_buf, "PNG")
-        out = wanx.edit_image(buf.getvalue(), mask_buf.getvalue(),
-                              WANX_PROMPT, overrides)
-        source = "wanx"
-    else:
-        out = seedream.edit_image(buf.getvalue(), SEEDREAM_PROMPT, overrides)
-        source = "seedream"
+    try:
+        if provider == "wanx":
+            mask_buf = BytesIO()
+            build_mask(init.size, meta, assets_by_id).save(mask_buf, "PNG")
+            out = wanx.edit_image(buf.getvalue(), mask_buf.getvalue(),
+                                  WANX_PROMPT, overrides)
+            source = "wanx"
+        else:
+            out = seedream.edit_image(buf.getvalue(), SEEDREAM_PROMPT, overrides)
+            source = "seedream"
+    except Exception as e:
+        out = None
+        source = "local"
+        reason = str(e) or e.__class__.__name__
 
     if out:
         try:
             result = Image.open(BytesIO(out)).convert("RGB")
-        except Exception:
+        except Exception as e:
             result = init.copy()
             source = "local"
+            reason = "生成图无法解析：%s" % e
     else:
         result = init.copy()
-        source = "local"
+        if source != "local":
+            source = "local"
+            reason = reason or "图像模型没有返回结果"
 
     _draw_watermark(result)
     final = BytesIO()
     result.save(final, "PNG")
-    return final.getvalue(), source, meta, warnings, round((time.time() - t0) * 1000, 1)
+    return (final.getvalue(), source, meta, warnings,
+            round((time.time() - t0) * 1000, 1), reason)

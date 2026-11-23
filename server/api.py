@@ -170,11 +170,15 @@ def _finite_number(value, field: str) -> float:
 def healthz():
     from server import BACKEND_VERSION
     from verda import __version__ as verda_version
-    from . import llm
+    from . import llm, seedream, wanx
     return jsonify(status="ok", verda=verda_version, backend=BACKEND_VERSION,
                    uptime_s=round(time.time() - _START, 1),
                    llm={"available": llm.available(),
-                        "model": llm._config()["model"]})
+                        "model": llm._config()["model"]},
+                   image={"provider": os.environ.get("IMAGE_PROVIDER", "seedream"),
+                          "ark_key": seedream.available(),
+                          "wanx_key": wanx.available(),
+                          "model": seedream._model()})
 
 
 _START = time.time()
@@ -609,7 +613,7 @@ def api_generate():
         normalized.append({"plant_id": pid, "x": x, "height_cm": height_cm, "layer": layer})
 
     with Image.open(photo_path) as base:
-        png, source, items_meta, gen_warnings, elapsed = generate_image(
+        png, source, items_meta, gen_warnings, elapsed, reason = generate_image(
             base, normalized, assets["by_id"], px_per_cm, ground_y,
             overrides=_image_cfg())
     warnings.extend(gen_warnings)
@@ -629,6 +633,7 @@ def api_generate():
         items_meta=items_meta,
         warnings=warnings,
         elapsed_ms=elapsed,
+        fallback_reason=reason,
         expires_at=expires.isoformat(timespec="seconds"),
     )
 
