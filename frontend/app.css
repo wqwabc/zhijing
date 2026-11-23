@@ -395,3 +395,6 @@ button.primary:hover:not(:disabled){background:linear-gradient(180deg,#17845C,#0
 }
 .drawer-head button:hover{color:var(--ink);}
 
+/* 已去掉落地线：隐藏锚定入口与提示 */
+.anchor-row, #anchorNote{display:none !important;}
+

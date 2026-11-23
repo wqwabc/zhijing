@@ -236,6 +236,15 @@
   /* ---------------------------------------------------------- 舞台 */
   function setPhoto(url, w, h, source, id) {
     S.photo = { url: url, w: w, h: h, source: source, id: id || null };
+    // 不再要求画落地线：给一个默认比例和落地基准，植物可自由拖动
+    var gy = Math.round(h * 0.88);
+    S.anchor = {
+      groundY: gy,
+      pxPerCm: Math.min(40, Math.max(0.5, h * 0.5 / 150)),
+      g1: { x: 0, y: gy }, g2: { x: w, y: gy },
+      r1: { x: w * 0.5, y: h * 0.2 }, r2: { x: w * 0.5, y: h * 0.8 },
+      refCm: 150, refType: 'custom'
+    };
     $('baseImg').src = url;
     $('stageEmpty').hidden = true;
     $('stageInner').hidden = false;
@@ -274,31 +283,11 @@
   function renderAll() { renderGuides(); renderLayers(); updateReadout(); }
 
   function renderGuides() {
+    // 已去掉落地线/参照线：画布只显示照片和植物
     var svg = $('guides');
     if (!S.photo) { svg.innerHTML = ''; return; }
-    var W = S.photo.w, H = S.photo.h;
-    svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
-    var parts = [];
-    if (S.anchor) {
-      var g = S.anchor;
-      parts.push('<line x1="' + g.g1.x + '" y1="' + g.g1.y + '" x2="' + g.g2.x + '" y2="' + g.g2.y +
-        '" stroke="rgba(29,158,117,.95)" stroke-width="2" stroke-dasharray="10 7" vector-effect="non-scaling-stroke"/>');
-      [g.g1, g.g2].forEach(function (p) {
-        parts.push('<circle cx="' + p.x + '" cy="' + p.y + '" r="4" fill="#fff" stroke="#0F6E56" stroke-width="2" vector-effect="non-scaling-stroke"/>');
-      });
-      if (g.r1 && g.r2) {
-        parts.push('<line x1="' + g.r1.x + '" y1="' + g.r1.y + '" x2="' + g.r2.x + '" y2="' + g.r2.y +
-          '" stroke="rgba(24,95,165,.85)" stroke-width="2" vector-effect="non-scaling-stroke"/>');
-        parts.push('<circle cx="' + g.r1.x + '" cy="' + g.r1.y + '" r="3.5" fill="#fff" stroke="#185FA5" stroke-width="2" vector-effect="non-scaling-stroke"/>');
-        parts.push('<circle cx="' + g.r2.x + '" cy="' + g.r2.y + '" r="3.5" fill="#fff" stroke="#185FA5" stroke-width="2" vector-effect="non-scaling-stroke"/>');
-      }
-    }
-    if (S.temp.length) {
-      S.temp.forEach(function (p) {
-        parts.push('<circle cx="' + p.x + '" cy="' + p.y + '" r="5" fill="rgba(29,158,117,.8)"/>');
-      });
-    }
-    svg.innerHTML = parts.join('');
+    svg.setAttribute('viewBox', '0 0 ' + S.photo.w + ' ' + S.photo.h);
+    svg.innerHTML = '';
   }
 
   function baseYOf(it) {
@@ -759,7 +748,8 @@
         photo_id: S.photo.id,
         anchor: { px_per_cm: S.anchor.pxPerCm, ground_y: S.anchor.groundY },
         items: S.plants.map(function (it) {
-          return { plant_id: it.plantId, x: Math.round(it.x), height_cm: it.heightCm, layer: it.layer };
+          return { plant_id: it.plantId, x: Math.round(it.x), height_cm: it.heightCm,
+                   layer: it.layer, base_y: it.baseY == null ? S.anchor.groundY : it.baseY };
         }),
         watermark: true
       }
@@ -996,7 +986,8 @@
     if (!S.online || !S.photo.id) { toast('生成需要后端：启动 python app.py 并加 ?api='); return; }
 
     var items = S.plants.slice(0, 6).map(function (it) {
-      return { plant_id: it.plantId, x: Math.round(it.x), height_cm: it.heightCm, layer: it.layer };
+      return { plant_id: it.plantId, x: Math.round(it.x), height_cm: it.heightCm,
+               layer: it.layer, base_y: it.baseY == null ? S.anchor.groundY : it.baseY };
     });
     var anchor = (S.anchor && S.anchor.pxPerCm)
       ? { px_per_cm: S.anchor.pxPerCm, ground_y: S.anchor.groundY }

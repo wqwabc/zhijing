@@ -163,6 +163,11 @@ def compose_photo(base_img: Image.Image, items, assets_by_id: dict,
         # x 是植物中轴线：夹回画布，保证整株可见（越界时记录 clipped）。
         requested_px = int(it["x"]) - plant.width // 2
         px = max(0, min(requested_px, max(0, canvas.width - plant.width)))
+        try:
+            base_y = float(it.get("base_y", ground_y))
+        except (TypeError, ValueError):
+            base_y = ground_y
+        base_y = min(max(base_y, plant.height), canvas.height)
         resolved.append({
             "it": it,
             "asset": asset,
@@ -170,6 +175,7 @@ def compose_photo(base_img: Image.Image, items, assets_by_id: dict,
             "layer": int(it.get("layer") or 0),
             "plant": plant,
             "px": px,
+            "base_y": base_y,
             "pot_px": pot_px * scale,
             "clipped": px != requested_px,
         })
@@ -182,14 +188,14 @@ def compose_photo(base_img: Image.Image, items, assets_by_id: dict,
     sdraw = ImageDraw.Draw(shadow_layer)
     for r in resolved:
         _contact_shadow(shadow_layer, sdraw, r["px"] + r["plant"].width // 2,
-                        ground_y, r["pot_px"])
+                        r["base_y"], r["pot_px"])
     canvas.paste(shadow_layer, (0, 0), shadow_layer)
 
     # 2. 植物按层级顺序贴入
     items_meta = []
     for r in resolved:
         it, asset, plant, px = r["it"], r["asset"], r["plant"], r["px"]
-        py = int(ground_y) - plant.height
+        py = int(r["base_y"]) - plant.height
         canvas.paste(plant, (px, py), plant)
 
         bbox = [px, py, px + plant.width, py + plant.height]
@@ -201,6 +207,7 @@ def compose_photo(base_img: Image.Image, items, assets_by_id: dict,
             "requested_height_cm": it.get("height_cm"),
             "actual_height_cm": r["h_cm"],
             "x_actual": px + plant.width // 2,
+            "base_y": round(r["base_y"], 1),
             "clipped": r["clipped"],
             "layer": r["layer"],
             "bbox": bbox,

@@ -377,8 +377,15 @@ def api_compose():
         if type(layer) is not int or layer < 0:
             raise ApiError(400, "E40001", "items[].layer 应为非负整数",
                            field="items[].layer")
+        base_y = it.get("base_y")
+        if base_y is not None:
+            base_y = _finite_number(base_y, "items[].base_y")
+            if not 0 < base_y <= photo_h:
+                raise ApiError(400, "E40001", "items[].base_y 超出照片范围",
+                               field="items[].base_y")
         normalized_items.append({"plant_id": pid, "x": x,
-                                 "height_cm": height_cm, "layer": layer})
+                                 "height_cm": height_cm, "layer": layer,
+                                 "base_y": base_y})
 
     watermark = body.get("watermark", True)
     if not isinstance(watermark, bool):
@@ -610,7 +617,14 @@ def api_generate():
         layer = it.get("layer", 0)
         if type(layer) is not int or layer < 0:
             raise ApiError(400, "E40001", "items[].layer 应为非负整数", field="items")
-        normalized.append({"plant_id": pid, "x": x, "height_cm": height_cm, "layer": layer})
+        base_y = it.get("base_y")
+        if base_y is not None:
+            base_y = _finite_number(base_y, "items[].base_y")
+            if not 0 < base_y <= photo_h:
+                raise ApiError(400, "E40001", "items[].base_y 超出照片范围",
+                               field="items[].base_y")
+        normalized.append({"plant_id": pid, "x": x, "height_cm": height_cm,
+                           "layer": layer, "base_y": base_y})
 
     with Image.open(photo_path) as base:
         png, source, items_meta, gen_warnings, elapsed, reason = generate_image(
