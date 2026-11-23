@@ -19,6 +19,7 @@ from .assets import load_assets
 from .chat import reply as chat_reply
 from .compose import MAX_ITEMS, PX_PER_CM_RANGE, compose_photo
 from .design import design
+from .gallery import list_items as gallery_list, path as gallery_path, save as gallery_save
 from .generate import generate as generate_image
 from .ground import detect_groundline
 from .store import RESULT_NAME_RE
@@ -38,6 +39,10 @@ def _store():
 
 def _repo_root() -> str:
     return current_app.config["REPO_ROOT"]
+
+
+def _gallery_dir() -> str:
+    return os.path.join(_repo_root(), "data", "generated")
 
 
 def _err(status: int, code: str, message: str, hint: str = None, field: str = None):
@@ -624,8 +629,22 @@ def api_generate():
     path = _store().result_path(name)
     expires = datetime.datetime.fromtimestamp(_store().expires_at(path))
 
+    saved = None
+    try:
+        saved = gallery_save(_gallery_dir(), png, {
+            "source": source,
+            "lighting": str(body.get("lighting", ""))[:20],
+            "time": str(body.get("time", ""))[:20],
+            "plants": len(normalized),
+            "elapsed_ms": elapsed,
+        })
+    except OSError:
+        saved = None
+
     return jsonify(
         image_url="/api/compose/%s" % name,
+        gallery_name=saved["name"] if saved else None,
+        gallery_url="/api/gallery/%s" % saved["name"] if saved else None,
         source=source,
         width=out_w,
         height=out_h,
@@ -635,6 +654,26 @@ def api_generate():
         fallback_reason=reason,
         expires_at=expires.isoformat(timespec="seconds"),
     )
+
+
+# ---------------------------------------------------------------- 生成历史
+
+@api_bp.get("/api/gallery")
+def api_gallery():
+    items = gallery_list(_gallery_dir(), 60)
+    for it in items:
+        it["image_url"] = "/api/gallery/%s" % it["name"]
+    return jsonify(items=items)
+
+
+@api_bp.get("/api/gallery/<name>")
+def gallery_image(name: str):
+    p = gallery_path(_gallery_dir(), name)
+    if not p:
+        raise ApiError(404, "E40401", "历史图片不存在")
+    resp = send_file(p, mimetype="image/png")
+    resp.headers["Cache-Control"] = "private, max-age=3600"
+    return resp
 
 
 # ---------------------------------------------------------------- 对话

@@ -1060,9 +1060,66 @@
         toast(d.source === 'local'
           ? '未调用图像 API：' + (d.fallback_reason || '未配置图像 Key')
           : 'AI 效果图已生成，耗时 ' + Math.round(d.elapsed_ms / 1000) + ' 秒', 4200);
+        if (!$('galleryPanel').hidden) loadGallery();
       })
       .catch(function (e) { toast('生成失败：' + e.message, 3600); })
       .then(function () { loading(false); });
+  });
+
+  /* ---------------------------------------------------------- 生成历史 */
+  var galleryItems = [];
+
+  function renderGallery() {
+    var grid = $('galleryGrid');
+    if (!galleryItems.length) {
+      grid.innerHTML = '<div class="gallery-empty">还没有生成记录，点「✨ 生成效果图」后会存在这里。</div>';
+      return;
+    }
+    grid.innerHTML = galleryItems.map(function (it) {
+      var meta = [it.created_at, it.source === 'seedream' ? 'Seedream'
+        : (it.source === 'wanx' ? '万相' : '本地')];
+      if (it.lighting) meta.push(it.lighting);
+      if (it.time) meta.push(it.time);
+      return '<div class="gallery-item" data-name="' + esc(it.name) + '">' +
+        '<img src="' + esc(apiUrl(it.image_url)) + '" alt="历史生成图" loading="lazy">' +
+        '<div class="gallery-meta">' + esc(meta.join(' · ')) + '</div></div>';
+    }).join('');
+  }
+
+  function loadGallery() {
+    req('/api/gallery').then(function (d) {
+      galleryItems = (d && d.items) || [];
+      renderGallery();
+    }).catch(function () {
+      $('galleryGrid').innerHTML = '<div class="gallery-empty">读取历史失败</div>';
+    });
+  }
+
+  function openCompare(item) {
+    var current = S.lastComposeUrl || (S.photo ? S.photo.url : '');
+    $('cmpA').src = current || '';
+    $('cmpB').src = apiUrl(item.image_url);
+    $('cmpALabel').textContent = current ? '当前效果' : '（还没有当前生成图）';
+    $('cmpBLabel').textContent = '历史 · ' + (item.created_at || '');
+    $('compareModal').hidden = false;
+  }
+
+  $('btnGallery').addEventListener('click', function () {
+    var panel = $('galleryPanel');
+    panel.hidden = !panel.hidden;
+    if (!panel.hidden) loadGallery();
+  });
+  $('galleryClose').addEventListener('click', function () { $('galleryPanel').hidden = true; });
+  $('compareClose').addEventListener('click', function () { $('compareModal').hidden = true; });
+  $('compareModal').addEventListener('click', function (e) {
+    if (e.target === this) this.hidden = true;
+  });
+  $('galleryGrid').addEventListener('click', function (e) {
+    var card = e.target.closest('.gallery-item');
+    if (!card) return;
+    var name = card.getAttribute('data-name');
+    var item = galleryItems.filter(function (x) { return x.name === name; })[0];
+    if (item) openCompare(item);
   });
 
   /* ---------------------------------------------------------- 导出 */

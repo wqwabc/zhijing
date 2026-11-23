@@ -65,6 +65,8 @@
                 style="position:absolute;left:14px;top:14px;z-index:8" hidden>换背景</button>
         <button class="primary" id="btnGenerate"
                 style="position:absolute;right:14px;top:14px;z-index:8">✨ 生成效果图</button>
+        <button class="ghost" id="btnGallery"
+                style="position:absolute;right:150px;top:14px;z-index:8">🖼 历史</button>
         <div class="plant-tools" id="plantTools" hidden>
           <button id="btnShrink" type="button" title="缩小">−</button>
           <span id="toolSize">—</span>
@@ -224,6 +226,21 @@
           <div class="note" id="exportNote">效果图长边 ≥1600，右下角标注「效果示意」。</div>
         </div>
       </div>
+    </div>
+  </div>
+</div>
+
+<div class="gallery-panel" id="galleryPanel" hidden>
+  <header><b>生成历史</b><button id="galleryClose" type="button" aria-label="关闭">×</button></header>
+  <div class="gallery-grid" id="galleryGrid"></div>
+</div>
+
+<div class="compare-modal" id="compareModal" hidden>
+  <div class="compare-box">
+    <header><b>效果对比</b><button id="compareClose" type="button" aria-label="关闭">×</button></header>
+    <div class="compare-body">
+      <figure><img id="cmpA" alt="当前效果"><figcaption id="cmpALabel">当前</figcaption></figure>
+      <figure><img id="cmpB" alt="历史效果"><figcaption id="cmpBLabel">历史</figcaption></figure>
     </div>
   </div>
 </div>

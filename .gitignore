@@ -19,6 +19,7 @@ _test.txt
 .tmp_test/
 .runtime/
 experiments/*/out/
+data/generated/
 
 # 编辑器
 .vscode/
