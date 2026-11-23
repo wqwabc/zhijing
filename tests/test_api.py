@@ -353,8 +353,6 @@ class TestComposeEndpoint(ApiTestBase):
         bad = [
             dict(good, anchor=[]),
             dict(good, anchor={"px_per_cm": 4.0, "ground_y": 5000}),
-            dict(good, items=[{"plant_id": "P01", "x": 99999}]),
-            dict(good, items=[{"plant_id": "P01", "x": -5000}]),
             dict(good, items=[{"plant_id": "P01", "x": None}]),
             dict(good, items=[{"plant_id": "P01", "x": 650,
                                "height_cm": "150"}]),

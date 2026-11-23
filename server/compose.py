@@ -45,19 +45,14 @@ def _find_font(size: int):
 
 
 def _resolve_height_cm(requested, height_range_cm) -> (float, bool):
-    """株高：缺省取区间中值；越界夹回区间。
-
-    返回 (actual_cm, clamped)。真实区间 [80, 180] 的植物请求 400cm
-    会被夹回 180cm。
-    """
+    """株高：缺省取区间中值；显式传入时按用户缩放自由取值，不再夹回区间。"""
     lo, hi = height_range_cm
     if requested is None:
         return round((lo + hi) / 2.0, 1), False
     requested = float(requested)
-    if not math.isfinite(requested):
-        raise ValueError("height_cm 应为有限数字")
-    actual = min(max(requested, lo), hi)
-    return round(actual, 1), actual != requested
+    if not math.isfinite(requested) or requested <= 0:
+        raise ValueError("height_cm 应为正数")
+    return round(requested, 1), False
 
 
 def _pot_width_px(src: Image.Image) -> int:
@@ -160,14 +155,12 @@ def compose_photo(base_img: Image.Image, items, assets_by_id: dict,
         target_w = max(2, int(round(src.width * scale)))
         plant = src.resize((target_w, target_h), Image.LANCZOS)
 
-        # x 是植物中轴线：夹回画布，保证整株可见（越界时记录 clipped）。
-        requested_px = int(it["x"]) - plant.width // 2
-        px = max(0, min(requested_px, max(0, canvas.width - plant.width)))
+        # x 是植物中轴线：不再夹回画布，允许贴边/出画布一部分
+        px = int(it["x"]) - plant.width // 2
         try:
             base_y = float(it.get("base_y", ground_y))
         except (TypeError, ValueError):
             base_y = ground_y
-        base_y = min(max(base_y, plant.height), canvas.height)
         resolved.append({
             "it": it,
             "asset": asset,
@@ -177,7 +170,7 @@ def compose_photo(base_img: Image.Image, items, assets_by_id: dict,
             "px": px,
             "base_y": base_y,
             "pot_px": pot_px * scale,
-            "clipped": px != requested_px,
+            "clipped": False,
         })
 
     # 层级：数值大的靠后先画，layer 0 最前最后画

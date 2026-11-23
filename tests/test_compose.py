@@ -43,15 +43,15 @@ class TestResolveHeight(unittest.TestCase):
         self.assertEqual(h, 150.0)
         self.assertFalse(clamped)
 
-    def test_over_is_clamped(self):
+    def test_over_is_free(self):
         h, clamped = _resolve_height_cm(400, [80, 180])
-        self.assertEqual(h, 180.0)
-        self.assertTrue(clamped)
+        self.assertEqual(h, 400.0)
+        self.assertFalse(clamped)
 
-    def test_under_is_clamped(self):
+    def test_under_is_free(self):
         h, clamped = _resolve_height_cm(20, [80, 180])
-        self.assertEqual(h, 80.0)
-        self.assertTrue(clamped)
+        self.assertEqual(h, 20.0)
+        self.assertFalse(clamped)
 
 
 class TestComposePhoto(unittest.TestCase):
@@ -159,13 +159,13 @@ class TestComposePhoto(unittest.TestCase):
             no_wm.getpixel((350, 570)), with_wm.getpixel((350, 570)),
             "右下角应有「效果示意」水印")
 
-    def test_height_clamp_warning(self):
+    def test_height_is_free(self):
         canvas, meta, warnings = self._compose(
             [{"plant_id": "PXX", "x": 200, "height_cm": 500}],
             px_per_cm=2.0, ground_y=550)
-        self.assertEqual(meta[0]["actual_height_cm"], 180.0)
-        self.assertTrue(any("株高" in w for w in warnings),
-                       "夹回区间要给出提示")
+        self.assertEqual(meta[0]["actual_height_cm"], 500.0)
+        self.assertFalse(any("株高" in w for w in warnings),
+                         "自由缩放不应再夹回区间")
 
     def test_bad_px_per_cm(self):
         with self.assertRaises(ValueError):

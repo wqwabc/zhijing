@@ -529,14 +529,13 @@
     var dx = e.clientX - d.sx, dy = e.clientY - d.sy;
     if (Math.abs(dx) < 1 && Math.abs(dy) < 1) return;
 
-    var span = groundSpan();
-    it.x = clamp(d.startX + dx / S.scale, span.min, span.max);
+    it.x = d.startX + dx / S.scale;
 
     var wantBase = d.startBase + dy / S.scale;
     var gy = S.anchor.groundY;
     // 靠近地面 8px 以内吸附，避免"差一点点没贴地"
     if (Math.abs(wantBase - gy) <= 8) it.baseY = null;
-    else it.baseY = clamp(wantBase, S.photo.h * 0.02, S.photo.h * 0.995);
+    else it.baseY = wantBase;
 
     var liftCm = (gy - baseYOf(it)) / S.anchor.pxPerCm;
     dragBadge(it.baseY == null ? '贴地' : ('离地 ' + Math.round(liftCm) + ' cm'));
@@ -587,10 +586,9 @@
   function addPlant(p, x, cm) {
     if (!p.available) { toast('「' + p.name + '」暂无去底素材，仅参考'); return null; }
     if (S.plants.length >= CFG.maxPlants) { toast('最多 ' + CFG.maxPlants + ' 株'); return null; }
-    var span = groundSpan();
     var it = {
       uid: ++S.uid, plantId: p.id,
-      x: clamp(x == null ? (span.min + span.max) / 2 : x, span.min + 2, span.max - 2),
+      x: (x == null ? S.photo.w / 2 : x),
       heightCm: cm || median(p),
       layer: 0
     };
@@ -680,10 +678,10 @@
     if (sel) {
       var p2 = byId(sel.plantId);
       $('heightBox').hidden = false;
-      $('hName').textContent = (p2 ? p2.name : sel.plantId) + '（' + p2.hMin + '–' + p2.hMax + 'cm）';
+      $('hName').textContent = (p2 ? p2.name : sel.plantId) + '（自由缩放）';
       $('hVal').textContent = sel.heightCm + ' cm';
       var r = $('hRange');
-      r.min = p2.hMin; r.max = p2.hMax; r.value = sel.heightCm;
+      r.min = 10; r.max = 800; r.value = sel.heightCm;
     } else {
       $('heightBox').hidden = true;
     }
@@ -719,6 +717,19 @@
     updateReadout();
   });
   $('hRange').addEventListener('change', function () { scheduleCompose(); });
+
+  /* 滚轮缩放选中植物（自由大小） */
+  $('stage').addEventListener('wheel', function (e) {
+    if (!S.selected || !S.photo) return;
+    var it = findPlant(S.selected);
+    if (!it) return;
+    e.preventDefault();
+    var factor = e.deltaY < 0 ? 1.06 : 0.94;
+    it.heightCm = Math.max(10, Math.min(800, Math.round(it.heightCm * factor)));
+    renderLayersPanel();
+    renderLayers();
+    scheduleCompose();
+  }, { passive: false });
 
   /* ---------------------------------------------------------- 合成 */
   var composeTimer = null;

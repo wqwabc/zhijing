@@ -364,9 +364,6 @@ def api_compose():
             raise ApiError(404, "E40403",
                            "%s 的素材文件缺失或不可用" % pid, field="items")
         x = _finite_number(it.get("x"), "items[].x")
-        if not 0 <= x <= photo_w:
-            raise ApiError(400, "E40001", "items[].x 超出照片范围",
-                           field="items[].x")
         height_cm = it.get("height_cm")
         if height_cm is not None:
             height_cm = _finite_number(height_cm, "items[].height_cm")
@@ -380,9 +377,6 @@ def api_compose():
         base_y = it.get("base_y")
         if base_y is not None:
             base_y = _finite_number(base_y, "items[].base_y")
-            if not 0 < base_y <= photo_h:
-                raise ApiError(400, "E40001", "items[].base_y 超出照片范围",
-                               field="items[].base_y")
         normalized_items.append({"plant_id": pid, "x": x,
                                  "height_cm": height_cm, "layer": layer,
                                  "base_y": base_y})
@@ -607,8 +601,6 @@ def api_generate():
         if not asset["available"]:
             raise ApiError(404, "E40403", "%s 的素材文件缺失或不可用" % pid, field="items")
         x = _finite_number(it.get("x"), "items[].x")
-        if not 0 <= x <= photo_w:
-            raise ApiError(400, "E40001", "items[].x 超出照片范围", field="items[].x")
         height_cm = it.get("height_cm")
         if height_cm is not None:
             height_cm = _finite_number(height_cm, "items[].height_cm")
@@ -620,9 +612,6 @@ def api_generate():
         base_y = it.get("base_y")
         if base_y is not None:
             base_y = _finite_number(base_y, "items[].base_y")
-            if not 0 < base_y <= photo_h:
-                raise ApiError(400, "E40001", "items[].base_y 超出照片范围",
-                               field="items[].base_y")
         normalized.append({"plant_id": pid, "x": x, "height_cm": height_cm,
                            "layer": layer, "base_y": base_y})
 
