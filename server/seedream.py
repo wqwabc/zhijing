@@ -73,8 +73,19 @@ def edit_image(base_png: bytes, prompt: str, overrides: dict = None) -> bytes:
         with urllib.request.urlopen(req, timeout=120) as resp:
             data = json.loads(resp.read().decode("utf-8"))
     except urllib.error.HTTPError as e:
-        detail = e.read().decode("utf-8", "replace")[:300]
-        raise SeedreamError("Seedream HTTP %s：%s" % (e.code, detail))
+        detail = e.read().decode("utf-8", "replace")
+        code = ""
+        try:
+            code = json.loads(detail).get("error", {}).get("code", "")
+        except ValueError:
+            pass
+        if e.code == 429 and "SetLimitExceeded" in code:
+            raise SeedreamError(
+                "火山方舟额度已用完（安全体验模式/用量上限）："
+                "请到控制台关闭「安全体验模式」或调整用量上限后重试")
+        if e.code == 401:
+            raise SeedreamError("火山方舟 ARK Key 无效或格式不对（401）")
+        raise SeedreamError("Seedream HTTP %s：%s" % (e.code, detail[:300]))
     except (urllib.error.URLError, ValueError, OSError) as e:
         raise SeedreamError("Seedream 请求失败：%s" % e)
 
