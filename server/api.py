@@ -481,9 +481,7 @@ def api_design():
         if not PX_PER_CM_RANGE[0] <= px_per_cm <= PX_PER_CM_RANGE[1]:
             raise ApiError(409, "E40901",
                            "px_per_cm=%.2f 超出合理范围" % px_per_cm, field="anchor")
-        if not 0 < ground_y <= photo_h:
-            raise ApiError(400, "E40001", "anchor.ground_y 超出照片范围",
-                           field="anchor.ground_y")
+        ground_y = min(max(ground_y, 1.0), float(photo_h))
 
     assets = load_assets(_repo_root())
     plan = design(photo_path, scene, _get_plants()[0], assets, count,
@@ -578,9 +576,7 @@ def api_generate():
         ground_y = _finite_number(anchor.get("ground_y"), "anchor.ground_y")
         if not PX_PER_CM_RANGE[0] <= px_per_cm <= PX_PER_CM_RANGE[1]:
             raise ApiError(409, "E40901", "px_per_cm 超出合理范围", field="anchor")
-        if not 0 < ground_y <= photo_h:
-            raise ApiError(400, "E40001", "anchor.ground_y 超出照片范围",
-                           field="anchor.ground_y")
+        ground_y = min(max(ground_y, 1.0), float(photo_h))
 
     items = body.get("items")
     if not isinstance(items, list) or not 1 <= len(items) <= MAX_ITEMS:

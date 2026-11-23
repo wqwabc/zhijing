@@ -234,17 +234,21 @@
   }
 
   /* ---------------------------------------------------------- 舞台 */
-  function setPhoto(url, w, h, source, id) {
-    S.photo = { url: url, w: w, h: h, source: source, id: id || null };
-    // 不再要求画落地线：给一个默认比例和落地基准，植物可自由拖动
+  function defaultAnchor(w, h) {
     var gy = Math.round(h * 0.88);
-    S.anchor = {
+    return {
       groundY: gy,
       pxPerCm: Math.min(40, Math.max(0.5, h * 0.5 / 150)),
       g1: { x: 0, y: gy }, g2: { x: w, y: gy },
       r1: { x: w * 0.5, y: h * 0.2 }, r2: { x: w * 0.5, y: h * 0.8 },
       refCm: 150, refType: 'custom'
     };
+  }
+
+  function setPhoto(url, w, h, source, id) {
+    S.photo = { url: url, w: w, h: h, source: source, id: id || null };
+    // 不再要求画落地线：给一个默认比例和落地基准，植物可自由拖动
+    S.anchor = defaultAnchor(w, h);
     $('baseImg').src = url;
     $('stageEmpty').hidden = true;
     $('stageInner').hidden = false;
@@ -365,11 +369,21 @@
         var fd = new FormData();
         fd.append('photo', file, file.name || 'room.jpg');
         req('/api/upload', { body: fd }).then(function (d) {
+          var oldW = S.photo.w, oldH = S.photo.h;
           S.photo.id = d.photo_id;
-          S.photo.w = d.width; S.photo.h = d.height;
+          if (d.width !== oldW || d.height !== oldH) {
+            // 服务端可能按 EXIF 旋转过，尺寸变了就重置比例与落地基准
+            S.photo.w = d.width; S.photo.h = d.height;
+            S.anchor = defaultAnchor(d.width, d.height);
+            S.plants.forEach(function (p) {
+              p.x = p.x / oldW * d.width;
+              if (p.baseY != null) p.baseY = p.baseY / oldH * d.height;
+            });
+            layout();
+          }
           renderChecks(d.checks, d.usable, d.suggestion);
           if (!d.usable) toast('照片可用性偏低，可继续，或改用立面模式', 3200);
-          else toast('照片已就绪，下一步：画落地线');
+          else toast('照片已就绪，拖动植物调整位置', 3200);
         }).catch(function (e) {
           toast('上传失败：' + e.message, 3600);
         }).then(function () { loading(false); done(); });
