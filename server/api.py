@@ -345,9 +345,7 @@ def api_compose():
     from PIL import Image
     with Image.open(photo_path) as photo:
         photo_w, photo_h = photo.size
-    if not 0 < ground_y <= photo_h:
-        raise ApiError(400, "E40001", "anchor.ground_y 超出照片范围",
-                       field="anchor.ground_y")
+    ground_y = min(max(ground_y, 1.0), float(photo_h))
 
     assets = load_assets(_repo_root())
     normalized_items = []
