@@ -256,15 +256,16 @@
     <button id="chatSettingsBtn" type="button" aria-label="模型设置" title="模型设置">⚙</button>
   </header>
   <div class="chat-settings" id="chatSettings" hidden>
-    <label>API Key
+    <label>对话模型 Key（DeepSeek，选株/聊天用）
       <input id="llmKey" type="password" placeholder="sk-..." autocomplete="off">
     </label>
-    <label>Base URL
+    <label>对话模型 Base URL
       <input id="llmBase" type="url" placeholder="https://api.deepseek.com" autocomplete="off">
     </label>
-    <label>图像 Key（火山方舟 Seedream）
+    <label>图像 Key（火山方舟 Seedream，生成效果图用）
       <input id="arkKey" type="password" placeholder="ARK_API_KEY" autocomplete="off">
     </label>
+    <div class="note" style="margin:0">图像模型固定走火山方舟，不需要填 Base URL</div>
     <div class="row">
       <button id="llmSave" class="primary mini" type="button">保存到本会话</button>
       <span class="note" id="llmSaved">只存 sessionStorage，不写服务端</span>
