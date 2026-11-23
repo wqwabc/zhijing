@@ -73,6 +73,11 @@
       init.body = JSON.stringify(opts.json);
     }
     if (opts.body) { init.method = 'POST'; init.body = opts.body; }
+    if (opts.headers) {
+      Object.keys(opts.headers).forEach(function (k) {
+        init.headers[k] = opts.headers[k];
+      });
+    }
     return fetch(url, init).then(function (r) {
       return r.text().then(function (txt) {
         var data = null;
@@ -997,17 +1002,27 @@
       ? { px_per_cm: S.anchor.pxPerCm, ground_y: S.anchor.groundY }
       : null;
 
+    var genHeaders = {};
+    var arkKey = sessionStorage.getItem('verda_ark_key') || '';
+    if (arkKey) genHeaders['X-Ark-Key'] = arkKey;
+    var wanxKey = sessionStorage.getItem('verda_wanx_key') || '';
+    if (wanxKey) genHeaders['X-Wanx-Key'] = wanxKey;
+
     loading(true, 'AI 正在融合，约 10–20 秒…');
-    req('/api/generate', { json: { photo_id: S.photo.id, items: items, anchor: anchor } })
+    req('/api/generate', {
+      json: { photo_id: S.photo.id, items: items, anchor: anchor },
+      headers: genHeaders
+    })
       .then(function (d) {
         S.lastComposeUrl = apiUrl(d.image_url);
         $('composedImg').src = S.lastComposeUrl;
         $('composedImg').classList.add('on');
         $('layers').classList.add('hide');
-        $('rCompose').textContent = d.source === 'wanx' ? 'AI 生成（万相）' : '本地合成';
-        toast(d.source === 'wanx'
-          ? 'AI 效果图已生成，耗时 ' + Math.round(d.elapsed_ms / 1000) + ' 秒'
-          : '未配置图像 Key，已用本地合成', 3200);
+        $('rCompose').textContent = d.source === 'seedream' ? 'AI 生成（Seedream）'
+          : (d.source === 'wanx' ? 'AI 生成（万相）' : '本地合成');
+        toast(d.source === 'local'
+          ? '未配置图像 Key，已用本地合成'
+          : 'AI 效果图已生成，耗时 ' + Math.round(d.elapsed_ms / 1000) + ' 秒', 3200);
       })
       .catch(function (e) { toast('生成失败：' + e.message, 3600); })
       .then(function () { loading(false); });

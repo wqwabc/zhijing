@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
-"""AI 效果图：mask 生成 + 无 Key 兜底 + mock 万相。"""
+"""AI 效果图：mask 生成 + 无 Key 兜底 + Seedream / 万相 mock。"""
 
 import io
+import os
 import unittest
 from unittest import mock
 
@@ -37,7 +38,7 @@ class TestGenerate(unittest.TestCase):
         self.assertEqual(mask.getpixel((5, 5)), 0)
 
     def test_fallback_without_key(self):
-        with mock.patch.object(gen_mod.wanx, "available", return_value=False), \
+        with mock.patch.object(gen_mod.seedream, "edit_image", return_value=None), \
                 mock.patch.object(gen_mod.wanx, "edit_image", return_value=None):
             r = self.client.post("/api/generate", json=self.body)
         self.assertEqual(r.status_code, 200, r.get_data(as_text=True))
@@ -46,9 +47,19 @@ class TestGenerate(unittest.TestCase):
         self.assertTrue(data["image_url"])
         self.assertEqual(data["width"], 400)
 
+    def test_seedream_path(self):
+        with mock.patch.object(gen_mod.seedream, "edit_image",
+                               return_value=_png(640, 480, (200, 210, 200))):
+            r = self.client.post("/api/generate", json=self.body)
+        self.assertEqual(r.status_code, 200, r.get_data(as_text=True))
+        data = r.get_json()
+        self.assertEqual(data["source"], "seedream")
+        self.assertEqual(data["width"], 640)
+
     def test_wanx_path(self):
-        with mock.patch.object(gen_mod.wanx, "available", return_value=True), \
-                mock.patch.object(gen_mod.wanx, "edit_image", return_value=_png(600, 450, (200, 210, 200))):
+        with mock.patch.dict(os.environ, {"IMAGE_PROVIDER": "wanx"}), \
+                mock.patch.object(gen_mod.wanx, "edit_image",
+                                  return_value=_png(600, 450, (200, 210, 200))):
             r = self.client.post("/api/generate", json=self.body)
         self.assertEqual(r.status_code, 200, r.get_data(as_text=True))
         data = r.get_json()

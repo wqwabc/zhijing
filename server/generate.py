@@ -1,20 +1,29 @@
 # -*- coding: utf-8 -*-
-"""AI 效果图：先按位置合成初稿 + 植物 mask，再交给通义万相做局部重绘。
+"""AI 效果图：先按位置合成初稿，再交给图像模型做真实感融合。
 
+默认用火山方舟 Seedream 5.0 Flash（参考图 + 指令编辑）。
+可用 IMAGE_PROVIDER=wanx 切回通义万相的 mask 局部重绘。
 没有 Key / 调用失败时退回初稿（本地合成），接口结构不变。
 """
 
+import os
 from io import BytesIO
 
 from PIL import Image, ImageDraw, ImageFilter
 
-from . import wanx
+from . import seedream, wanx
 from .compose import _draw_watermark, compose_photo
 
-PROMPT = (
+WANX_PROMPT = (
     "白色蒙版区域内是一株绿植（含花盆）。请保留它的叶片、枝干和花盆形态，"
     "只按照房间的自然光方向、色温和地面接触阴影调整明暗与颜色，"
     "让它真实地融入这个客厅；不要删除或替换植物，不要修改蒙版外的房间、家具和构图。"
+)
+
+SEEDREAM_PROMPT = (
+    "以这张室内照片为基础，把画面中的绿植自然地融入环境：保留房间、家具、"
+    "植物品种与摆放位置，只匹配自然光方向、色温和地面接触阴影，照片级真实；"
+    "不要新增或删除物体，不要改变构图。"
 )
 
 
@@ -46,6 +55,12 @@ def build_mask(size, items_meta, assets_by_id: dict = None,
     return mask.filter(ImageFilter.GaussianBlur(4))
 
 
+def _provider(overrides: dict = None) -> str:
+    if overrides and overrides.get("provider"):
+        return str(overrides["provider"]).lower()
+    return os.environ.get("IMAGE_PROVIDER", "seedream").lower()
+
+
 def generate(base: Image.Image, items, assets_by_id: dict, px_per_cm: float,
              ground_y: float, overrides: dict = None):
     """返回 (PNG bytes, source, items_meta, warnings, elapsed_ms)。"""
@@ -57,11 +72,18 @@ def generate(base: Image.Image, items, assets_by_id: dict, px_per_cm: float,
 
     buf = BytesIO()
     init.save(buf, "PNG")
-    mask_buf = BytesIO()
-    build_mask(init.size, meta, assets_by_id).save(mask_buf, "PNG")
+    provider = _provider(overrides)
 
-    out = wanx.edit_image(buf.getvalue(), mask_buf.getvalue(), PROMPT, overrides)
-    source = "wanx"
+    if provider == "wanx":
+        mask_buf = BytesIO()
+        build_mask(init.size, meta, assets_by_id).save(mask_buf, "PNG")
+        out = wanx.edit_image(buf.getvalue(), mask_buf.getvalue(),
+                              WANX_PROMPT, overrides)
+        source = "wanx"
+    else:
+        out = seedream.edit_image(buf.getvalue(), SEEDREAM_PROMPT, overrides)
+        source = "seedream"
+
     if out:
         try:
             result = Image.open(BytesIO(out)).convert("RGB")

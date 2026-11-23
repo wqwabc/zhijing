@@ -11,6 +11,7 @@
   var settings = document.getElementById('chatSettings');
   var keyInput = document.getElementById('llmKey');
   var baseInput = document.getElementById('llmBase');
+  var arkInput = document.getElementById('arkKey');
   var saveBtn = document.getElementById('llmSave');
   var savedNote = document.getElementById('llmSaved');
   var history = [];
@@ -67,6 +68,7 @@
     if (show) {
       keyInput.value = lsKey();
       baseInput.value = lsBase();
+      if (arkInput) arkInput.value = sessionStorage.getItem('verda_ark_key') || '';
       keyInput.focus();
     }
   }
@@ -131,11 +133,15 @@
   saveBtn.addEventListener('click', function () {
     var key = keyInput.value.trim();
     var base = baseInput.value.trim();
+    var ark = arkInput ? arkInput.value.trim() : '';
     if (key) sessionStorage.setItem('verda_llm_key', key);
     else sessionStorage.removeItem('verda_llm_key');
     if (base) sessionStorage.setItem('verda_llm_base', base);
     else sessionStorage.removeItem('verda_llm_base');
-    savedNote.textContent = key ? '已保存到本会话（刷新后失效）' : '已清除本会话 Key';
+    if (ark) sessionStorage.setItem('verda_ark_key', ark);
+    else sessionStorage.removeItem('verda_ark_key');
+    savedNote.textContent = (key || ark)
+      ? '已保存到本会话（刷新后失效）' : '已清除本会话 Key';
     syncHint();
     openSettings(false);
   });

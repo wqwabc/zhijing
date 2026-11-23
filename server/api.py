@@ -64,9 +64,27 @@ def _llm_cfg():
 
 
 def _image_cfg():
-    """前端填的通义万相 Key（X-Wanx-Key），仅本次请求使用。"""
-    key = request.headers.get("X-Wanx-Key", "").strip()
-    return {"api_key": key} if key else None
+    """前端填的图像模型 Key，仅本次请求使用。
+
+    X-Ark-Key  → 火山方舟 Seedream（默认）
+    X-Wanx-Key → 通义万相
+    X-Image-Provider / X-Image-Model 可显式覆盖。
+    """
+    ark = request.headers.get("X-Ark-Key", "").strip()
+    wanx = request.headers.get("X-Wanx-Key", "").strip()
+    provider = request.headers.get("X-Image-Provider", "").strip().lower()
+    model = request.headers.get("X-Image-Model", "").strip()
+    if ark:
+        cfg = {"api_key": ark, "provider": "seedream"}
+    elif wanx:
+        cfg = {"api_key": wanx, "provider": "wanx"}
+    else:
+        return None
+    if provider in ("seedream", "wanx"):
+        cfg["provider"] = provider
+    if model:
+        cfg["model"] = model
+    return cfg
 
 
 class ApiError(Exception):

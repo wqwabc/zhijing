@@ -118,8 +118,9 @@ gunicorn -w 4 -b 127.0.0.1:8000 app:app
 
 - 落地线自动估计：`POST /api/groundline`，纯 PIL 颜色/纹理启发式，不依赖 OpenCV；
   置信度低时前端会提示「请手动检查」，仍可手动画线修正。
-- AI 效果图：`POST /api/generate`，先合成初稿 + 植物 mask，再调通义万相
-  `wanx2.1-imageedit`；无 Key 自动退回本地合成。见 `docs/19_AI效果图.md`。
+- AI 效果图：`POST /api/generate`，默认调火山方舟 Seedream 5.0 Flash
+  （`doubao-seedream-5-0-flash-260915`）；`IMAGE_PROVIDER=wanx` 可切回通义万相，
+  无 Key 自动退回本地合成。见 `docs/19_AI效果图.md`。
 
 ## 大模型（看图选株）
 
