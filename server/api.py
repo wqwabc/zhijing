@@ -203,8 +203,26 @@ def upload():
         raise ApiError(415, "E40002", str(e),
                        hint="支持 JPG/PNG，不超过 10MB", field="photo")
 
+    # 手机照片常带 EXIF 方向：浏览器会转正，PIL 不会。
+    # 在上传入库时统一转正并重编码，后续合成/生成都用同一套像素方向。
+    fmt = img.format
+    try:
+        orientation = img.getexif().get(274, 1)
+    except Exception:
+        orientation = 1
+    if orientation not in (0, 1):
+        import io
+        from PIL import ImageOps
+        img = ImageOps.exif_transpose(img)
+        buf = io.BytesIO()
+        if fmt == "JPEG":
+            img.convert("RGB").save(buf, "JPEG", quality=92)
+        else:
+            img.save(buf, fmt or "PNG")
+        data = buf.getvalue()
+
     result = validate_photo(img)
-    photo_id = _store().put_photo(data, SUPPORTED_FORMATS[img.format])
+    photo_id = _store().put_photo(data, SUPPORTED_FORMATS[fmt])
 
     # 校验结论存元数据，供 /api/compose 拦截不可用照片（E40003）
     _store().put_meta(photo_id, {"usable": result["usable"]})
