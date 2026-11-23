@@ -14,7 +14,7 @@
     demo: new URLSearchParams(location.search).get('demo') === '1',
     dataRoot: '../data/',
     assetRoot: '../',
-    maxPlants: 6
+    maxPlants: 100
   };
 
   var $ = function (id) { return document.getElementById(id); };
@@ -252,6 +252,7 @@
     $('baseImg').src = url;
     $('stageEmpty').hidden = true;
     $('stageInner').hidden = false;
+    $('btnChangeBg').hidden = false;
     $('composedImg').classList.remove('on');
     $('composedImg').removeAttribute('src');
     S.lastComposeUrl = null;
@@ -348,8 +349,7 @@
   function updateReadout() {
     $('rScale').textContent = anchorReady() ? (fmt(S.anchor.pxPerCm, 2) + ' px/cm') : '未锚定';
     $('rScale').className = anchorReady() ? '' : 'warn';
-    $('rGround').textContent = S.anchor ? fmt(S.anchor.groundY, 0) + ' px' : '—';
-    $('rPlants').textContent = S.plants.length + ' / ' + CFG.maxPlants;
+    $('rPlants').textContent = String(S.plants.length);
     renderLayersPanel();
   }
 
@@ -696,8 +696,11 @@
       $('hVal').textContent = sel.heightCm + ' cm';
       var r = $('hRange');
       r.min = 10; r.max = 800; r.value = sel.heightCm;
+      $('plantTools').hidden = false;
+      $('toolSize').textContent = sel.heightCm + ' cm';
     } else {
       $('heightBox').hidden = true;
+      $('plantTools').hidden = true;
     }
   }
 
@@ -731,6 +734,23 @@
     updateReadout();
   });
   $('hRange').addEventListener('change', function () { scheduleCompose(); });
+
+  function scaleSelected(factor) {
+    var it = findPlant(S.selected);
+    if (!it) return;
+    it.heightCm = Math.max(10, Math.min(800, Math.round(it.heightCm * factor)));
+    renderLayers();
+    renderLayersPanel();
+    scheduleCompose();
+  }
+  $('btnGrow').addEventListener('click', function () { scaleSelected(1.12); });
+  $('btnShrink').addEventListener('click', function () { scaleSelected(0.89); });
+  $('btnDeletePlant').addEventListener('click', function () {
+    S.plants = S.plants.filter(function (it) { return it.uid !== S.selected; });
+    S.selected = null;
+    renderAll();
+    scheduleCompose();
+  });
 
   /* 滚轮缩放选中植物（自由大小） */
   $('stage').addEventListener('wheel', function (e) {
@@ -1026,7 +1046,8 @@
 
     loading(true, 'AI 正在融合，约 10–20 秒…');
     req('/api/generate', {
-      json: { photo_id: S.photo.id, items: items, anchor: anchor },
+      json: { photo_id: S.photo.id, items: items, anchor: anchor,
+              lighting: $('selLighting').value, time: $('selTime').value },
       headers: genHeaders
     })
       .then(function (d) {
@@ -1152,6 +1173,7 @@
   /* ---------------------------------------------------------- 入口动作 */
   $('btnUpload').addEventListener('click', function () { $('file').click(); });
   $('btnUpload2').addEventListener('click', function () { $('file').click(); });
+  $('btnChangeBg').addEventListener('click', function () { $('file').click(); });
   $('file').addEventListener('change', function (e) {
     var f = e.target.files && e.target.files[0];
     if (f) uploadFile(f);

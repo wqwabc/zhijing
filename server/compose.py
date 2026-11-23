@@ -19,7 +19,7 @@ import os
 
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
-MAX_ITEMS = 6                       # FR-07：自选最多 6 株
+MAX_ITEMS = 100                      # 不再限制株数
 PX_PER_CM_RANGE = (0.5, 40.0)       # docs/14：锚定合理区间
 
 _FONT_CANDIDATES = [

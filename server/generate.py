@@ -62,7 +62,8 @@ def _provider(overrides: dict = None) -> str:
 
 
 def generate(base: Image.Image, items, assets_by_id: dict, px_per_cm: float,
-             ground_y: float, overrides: dict = None):
+             ground_y: float, overrides: dict = None,
+             lighting: str = "", time_of_day: str = ""):
     """返回 (PNG bytes, source, items_meta, warnings, elapsed_ms, reason)。"""
     import time
     t0 = time.time()
@@ -75,15 +76,22 @@ def generate(base: Image.Image, items, assets_by_id: dict, px_per_cm: float,
     provider = _provider(overrides)
     reason = ""
 
+    env = ""
+    if lighting or time_of_day:
+        env = " 环境：光照为%s，时间为%s，请按这个光线条件匹配色温、明暗和阴影。" % (
+            lighting or "自然光", time_of_day or "白天")
+    seedream_prompt = SEEDREAM_PROMPT + env
+    wanx_prompt = WANX_PROMPT + env
+
     try:
         if provider == "wanx":
             mask_buf = BytesIO()
             build_mask(init.size, meta, assets_by_id).save(mask_buf, "PNG")
             out = wanx.edit_image(buf.getvalue(), mask_buf.getvalue(),
-                                  WANX_PROMPT, overrides)
+                                  wanx_prompt, overrides)
             source = "wanx"
         else:
-            out = seedream.edit_image(buf.getvalue(), SEEDREAM_PROMPT, overrides)
+            out = seedream.edit_image(buf.getvalue(), seedream_prompt, overrides)
             source = "seedream"
     except Exception as e:
         out = None

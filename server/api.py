@@ -612,7 +612,9 @@ def api_generate():
     with Image.open(photo_path) as base:
         png, source, items_meta, gen_warnings, elapsed, reason = generate_image(
             base, normalized, assets["by_id"], px_per_cm, ground_y,
-            overrides=_image_cfg())
+            overrides=_image_cfg(),
+            lighting=str(body.get("lighting", ""))[:20],
+            time_of_day=str(body.get("time", ""))[:20])
     warnings.extend(gen_warnings)
 
     import io

@@ -16,51 +16,24 @@
       <span>绿植审美搭配 Agent</span>
       <span class="badge" id="apiState">初始化</span>
     </div>
-    <div class="scene-bar">
-      <label>场景
-        <select id="selRoom">
-          <option value="living" selected>客厅</option>
-          <option value="bedroom">卧室</option>
-          <option value="study">书房</option>
-          <option value="balcony">阳台</option>
-          <option value="desk">办公桌</option>
-        </select>
-      </label>
-      <label>风格
-        <select id="selStyle">
-          <option value="nordic">北欧自然</option>
-          <option value="wabi">日式侘寂</option>
-          <option value="midcentury">中古复古</option>
-          <option value="minimal" selected>现代极简</option>
-          <option value="tropical">热带雨林</option>
-          <option value="industrial">工业冷调</option>
-        </select>
-      </label>
+    <div class="scene-bar gen-bar">
       <label>光照
-        <select id="selLight">
-          <option value="1">L1 耐阴</option>
-          <option value="2" selected>L2 散射</option>
-          <option value="3">L3 明亮散射</option>
-          <option value="4">L4 直射</option>
+        <select id="selLighting">
+          <option value="自然光" selected>自然光</option>
+          <option value="暖光">暖光</option>
+          <option value="冷光">冷光</option>
+          <option value="逆光">逆光</option>
+          <option value="室内灯光">室内灯光</option>
         </select>
       </label>
-      <label>每周养护
-        <select id="selWeekly">
-          <option value="10">10 分钟</option>
-          <option value="30" selected>30 分钟</option>
-          <option value="60">60 分钟</option>
-          <option value="120">2 小时</option>
+      <label>时间
+        <select id="selTime">
+          <option value="清晨" selected>清晨</option>
+          <option value="正午">正午</option>
+          <option value="黄昏">黄昏</option>
+          <option value="夜晚">夜晚</option>
         </select>
       </label>
-      <label>预算
-        <select id="selBudget">
-          <option value="300">300 元</option>
-          <option value="600" selected>600 元</option>
-          <option value="1200">1200 元</option>
-          <option value="3000">3000 元</option>
-        </select>
-      </label>
-      <label class="pet-check"><input type="checkbox" id="chkPet"> 有宠物</label>
     </div>
   </div>
 
@@ -88,15 +61,22 @@
         </div>
 
         <div class="drag-badge" id="dragBadge"></div>
+        <button class="ghost" id="btnChangeBg"
+                style="position:absolute;left:14px;top:14px;z-index:8" hidden>换背景</button>
         <button class="primary" id="btnGenerate"
                 style="position:absolute;right:14px;top:14px;z-index:8">✨ 生成效果图</button>
+        <div class="plant-tools" id="plantTools" hidden>
+          <button id="btnShrink" type="button" title="缩小">−</button>
+          <span id="toolSize">—</span>
+          <button id="btnGrow" type="button" title="放大">＋</button>
+          <button id="btnDeletePlant" type="button" class="ghost">删除</button>
+        </div>
         <div id="loading"><span class="spin"></span><span id="loadingText">处理中…</span></div>
       </div>
 
       <div class="readout">
         <span>比例 <b id="rScale">未锚定</b></span>
-        <span>落地线 <b id="rGround">—</b></span>
-        <span>植物 <b id="rPlants">0 / 6</b></span>
+        <span>植物 <b id="rPlants">0</b></span>
         <span>合成 <b id="rCompose">本地预览</b></span>
       </div>
 
@@ -160,7 +140,7 @@
             <div class="heightBox" id="heightBox" hidden>
               <div class="lab"><span id="hName">—</span><span id="hVal">—</span></div>
               <input type="range" id="hRange" min="20" max="200" step="5">
-              <div class="note" style="margin-top:2px">株高按品种区间选规格，不是自由缩放。</div>
+              <div class="note" style="margin-top:2px">自由缩放：拖滑块、滚轮，或画布底部的 − / ＋。</div>
             </div>
           </div>
 
@@ -266,6 +246,59 @@
       <input id="arkKey" type="password" placeholder="ARK_API_KEY" autocomplete="off">
     </label>
     <div class="note" style="margin:0">图像模型固定走火山方舟，不需要填 Base URL</div>
+    <div class="chat-scene">
+      <div class="note" style="margin:0 0 4px">问 AI 选植物时参考（不影响画布）</div>
+      <div class="row">
+        <label>场景
+          <select id="selRoom">
+            <option value="living" selected>客厅</option>
+            <option value="bedroom">卧室</option>
+            <option value="study">书房</option>
+            <option value="balcony">阳台</option>
+            <option value="desk">办公桌</option>
+          </select>
+        </label>
+        <label>风格
+          <select id="selStyle">
+            <option value="nordic">北欧自然</option>
+            <option value="wabi">日式侘寂</option>
+            <option value="midcentury">中古复古</option>
+            <option value="minimal" selected>现代极简</option>
+            <option value="tropical">热带雨林</option>
+            <option value="industrial">工业冷调</option>
+          </select>
+        </label>
+      </div>
+      <div class="row">
+        <label>耐阴档
+          <select id="selLight">
+            <option value="1">L1 耐阴</option>
+            <option value="2" selected>L2 散射</option>
+            <option value="3">L3 明亮散射</option>
+            <option value="4">L4 直射</option>
+          </select>
+        </label>
+        <label>养护
+          <select id="selWeekly">
+            <option value="10">10 分钟</option>
+            <option value="30" selected>30 分钟</option>
+            <option value="60">60 分钟</option>
+            <option value="120">2 小时</option>
+          </select>
+        </label>
+      </div>
+      <div class="row">
+        <label>预算
+          <select id="selBudget">
+            <option value="300">300 元</option>
+            <option value="600" selected>600 元</option>
+            <option value="1200">1200 元</option>
+            <option value="3000">3000 元</option>
+          </select>
+        </label>
+        <label class="pet-check"><input type="checkbox" id="chkPet"> 有宠物</label>
+      </div>
+    </div>
     <div class="row">
       <button id="llmSave" class="primary mini" type="button">保存到本会话</button>
       <span class="note" id="llmSaved">只存 sessionStorage，不写服务端</span>
